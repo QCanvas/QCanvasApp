@@ -6,7 +6,7 @@ from urllib.parse import unquote
 import httpx
 from httpx import URL, Response
 
-from SelfAuthenticating import SelfAuthenticating
+from self_authenticating import SelfAuthenticating
 
 
 class CanvasClient(SelfAuthenticating):

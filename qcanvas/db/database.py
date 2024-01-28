@@ -24,15 +24,22 @@ class Course(MappedAsDataclass, Base):
 
     id: Mapped[str] = mapped_column(primary_key=True)
 
-    term_id: Mapped[str] = mapped_column(ForeignKey("terms.id"), init=False)
+    term_id: Mapped[str] = mapped_column(ForeignKey("terms.id"))
     term: Mapped["Term"] = relationship(back_populates="courses")
 
     name: Mapped[str]
     local_name: Mapped[str]
 
-    modules: Mapped[List["Module"]] = relationship(back_populates="course", init=False)
-    assignments: Mapped[List["Assignment"]] = relationship(back_populates="course", init=False)
-    resources: Mapped[List["Resource"]] = relationship(back_populates="course", init=False)
+    modules: Mapped[List["Module"]] = relationship(back_populates="course")
+    assignments: Mapped[List["Assignment"]] = relationship(back_populates="course")
+    resources: Mapped[List["Resource"]] = relationship(back_populates="course")
+
+    def __init__(self, id: str, name: str, local_name: Optional[str] = None):
+        super().__init__()
+
+        self.id = id
+        self.name = name
+        self.local_name = local_name
 
 
 class Term(MappedAsDataclass, Base):
@@ -83,6 +90,10 @@ class Module(MappedAsDataclass, Base):
 
     items: Mapped[List["ModuleItem"]] = relationship(back_populates="module", init=False)
     # resources : Mapped[List]
+
+    def __init__(self, name : str):
+        super().__init__()
+        self.name = name
 
 
 resource_to_moduleitem_association_table = Table(

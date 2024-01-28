@@ -17,7 +17,7 @@ from pydantic import (  # noqa: F401 # pylint: disable=W0611
     Json,
 )
 
-from qcanvas.queries.CanvasCourseData import CanvasCourseData
+from qcanvas.queries.canvas_course_data import CanvasCourseData
 
 
 DEFINITION = """

@@ -1,5 +1,4 @@
 from PySide6.QtCore import QSettings
-from httpx import URL
 
 
 class _AppSettings:
