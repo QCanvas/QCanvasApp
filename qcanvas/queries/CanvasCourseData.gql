@@ -1,0 +1,51 @@
+# qenerate: plugin=pydantic_v1
+
+fragment CanvasCourseData on Course {
+    id
+    name
+    courseNickname
+    term {
+        endAt
+        startAt
+        name
+        id
+    }
+    assignmentsConnection @include(if: $detailed) {
+        nodes {
+            description
+            courseId
+            dueAt
+            createdAt
+            id
+            name
+            position
+            updatedAt
+        }
+    }
+    modulesConnection @include(if: $detailed) {
+        nodes {
+            name
+            id
+            moduleItems {
+                content {
+                    ... on File {
+                        id
+                        displayName
+                        createdAt
+                        updatedAt
+                        url
+                        size
+                        mimeClass
+                        contentType
+                    }
+                    ... on Page {
+                        id
+                        title
+                        updatedAt
+                        createdAt
+                    }
+                }
+            }
+        }
+    }
+}
