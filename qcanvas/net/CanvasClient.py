@@ -4,12 +4,9 @@ import logging
 from urllib.parse import unquote
 
 import httpx
-import sgqlc.operation
 from httpx import URL, Response
-from sgqlc.endpoint.http import HTTPEndpoint
-from sgqlc.operation import Operation
 
-from net.SelfAuthenticating import SelfAuthenticating
+from SelfAuthenticating import SelfAuthenticating
 
 
 class CanvasClient(SelfAuthenticating):

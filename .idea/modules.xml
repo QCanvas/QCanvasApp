@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/QCanvas.iml" filepath="$PROJECT_DIR$/.idea/QCanvas.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../QCanvas/.idea/QCanvas.iml" filepath="$PROJECT_DIR$/../QCanvas/.idea/QCanvas.iml" />
     </modules>
   </component>
 </project>
