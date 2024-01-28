@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/PyCanvasViewer.iml" filepath="$PROJECT_DIR$/.idea/PyCanvasViewer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/QCanvas.iml" filepath="$PROJECT_DIR$/.idea/QCanvas.iml" />
     </modules>
   </component>
 </project>
