@@ -1,3 +1,0 @@
-[submodule "packages/qenerate"]
-	path = packages/qenerate
-	url = git@codeberg.org:QCanvas/qenerate.git

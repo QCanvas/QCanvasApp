@@ -4,4 +4,6 @@ PySide6~=6.6.1
 pydantic~=2.5.3
 requests~=2.31.0
 setuptools~=68.2.0
-packages/qenerate
+gql~=3.5.0
+git+ssh://git@qcanvas.codeberg.org/QCanvas/qenerate.git
+git+https://github.com/bdraco/aiosqlite.git@speed_up_process_thread
