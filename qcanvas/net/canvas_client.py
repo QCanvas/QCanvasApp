@@ -1,12 +1,14 @@
-import asyncio
 import json
 import logging
 from urllib.parse import unquote
 
+import gql
 import httpx
+from gql.transport.exceptions import TransportQueryError
 from httpx import URL, Response
 
-from self_authenticating import SelfAuthenticating
+from qcanvas.net.custom_httpx_async_transport import CustomHTTPXAsyncTransport
+from qcanvas.net.self_authenticating import SelfAuthenticating, AuthenticationException
 
 
 class CanvasClient(SelfAuthenticating):
@@ -32,15 +34,16 @@ class CanvasClient(SelfAuthenticating):
         super().__init__()
         self.api_key = api_key
         self.canvas_url = canvas_url
-        self.client = httpx.AsyncClient()
+        self.client = httpx.AsyncClient(timeout=60)
         self.max_retries = 3
 
     async def get_courses(self):
         return await self.do_request_and_retry_if_unauthenticated(self.canvas_url.join("api/v1/courses"))
 
-    async def do_graphql_query(self, operation: Operation):
+    async def do_graphql_query(self, query: gql.client.DocumentNode, **kwargs):
         """
         Executes a graphql query and reauthenticates the client if needed
+        :param query:
         :param operation: The operation to execute
         :return: The result
         """
@@ -52,34 +55,23 @@ class CanvasClient(SelfAuthenticating):
                 if "_csrf_token" in self.client.cookies:
                     # If we have the csrf token then we should be right to make the request
 
-                    # Join all our cookies into a string
-                    cookie_header = ";".join([f"{cookie.name}={cookie.value}" for cookie in self.client.cookies.jar if
-                                              cookie.domain == self.canvas_url.host])
+                    gql_transport = CustomHTTPXAsyncTransport(self.client, self.canvas_url.join("api/graphql"))
+                    gql_client = gql.Client(transport=gql_transport)
 
-                    # Other required headers
-                    headers = {
-                        "cookie": cookie_header,
-                        "X-CSRF-Token": unquote(self.client.cookies["_csrf_token"]),  # Un-percent-encode the token
-                        "content-type": "application/json"
-                    }
-
-                    endpoint = HTTPEndpoint(str(self.canvas_url.join("api/graphql")), headers)
-
-                    # Use asyncio to put the request on a new thread because it's a blocking operation
-                    # TODO maybe investigate using httpx or something actually async instead
-                    #  see: https://github.com/profusion/sgqlc/discussions/162#discussioncomment-1040386
-                    data = await asyncio.to_thread(lambda: endpoint(operation))
-
-                    return operation + data
+                    return await gql_client.execute_async(query, variable_values=kwargs, extra_args={
+                        "headers": {
+                            "X-CSRF-Token": unquote(self.client.cookies["_csrf_token"]),  # Un-percent-encode the token
+                        }
+                    })
                 else:
                     # Otherwise reauthenticate ourselves
                     await self.reauthenticate()
                     retries += 1
-            except sgqlc.operation.GraphQLErrors as err:
+            except TransportQueryError as err:
                 # If an error occurred, try reauthenticating
                 print(err)
 
-                if retries + 1 >= self.max_retries:
+                if retries >= self.max_retries:
                     raise err
                 else:
                     await self.reauthenticate()
@@ -136,9 +128,9 @@ class CanvasClient(SelfAuthenticating):
                 req = await self.client.get(session_url)
                 if req.status_code != 302:
                     self._logger.error("Error when activating session from request")
-                    raise Exception("Authentication was not successful")
+                    raise AuthenticationException("Authentication was not successful")
             else:
-                raise Exception("Token response body was malformed")
+                raise AuthenticationException("Token response body was malformed")
         else:
             self._logger.error("Authentication failed, API key may be invalid")
-            raise Exception("Authentication failed, check your API key")
+            raise AuthenticationException("Authentication failed, check your API key")

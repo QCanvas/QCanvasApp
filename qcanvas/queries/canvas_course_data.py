@@ -17,7 +17,6 @@ from pydantic import (  # noqa: F401 # pylint: disable=W0611
     Json,
 )
 
-
 DEFINITION = """
 fragment CanvasCourseData on Course {
     id
@@ -140,5 +139,5 @@ class CanvasCourseData(ConfiguredBaseModel):
     name: str = Field(..., alias="name")
     course_nickname: Optional[str] = Field(..., alias="courseNickname")
     term: Optional[Term] = Field(..., alias="term")
-    assignments_connection: Optional[AssignmentConnection] = Field(..., alias="assignmentsConnection")
-    modules_connection: Optional[ModuleConnection] = Field(..., alias="modulesConnection")
+    assignments_connection: Optional[AssignmentConnection] = Field(None, alias="assignmentsConnection")
+    modules_connection: Optional[ModuleConnection] = Field(None, alias="modulesConnection")

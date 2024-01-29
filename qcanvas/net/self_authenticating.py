@@ -2,6 +2,9 @@ import logging
 from asyncio import Lock, Event
 
 
+class AuthenticationException(Exception):
+    pass
+
 # httpx does have an authentication flow mechanism that allows you to also make other requests but I don't know if it
 # will behave the same way as this does. I also finished this before I found out that existed.
 

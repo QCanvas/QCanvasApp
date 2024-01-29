@@ -29,7 +29,7 @@ fragment CanvasCourseData on Course {
             moduleItems {
                 content {
                     ... on File {
-                        id
+                        _id
                         displayName
                         createdAt
                         updatedAt
@@ -39,7 +39,7 @@ fragment CanvasCourseData on Course {
                         contentType
                     }
                     ... on Page {
-                        id
+                        _id
                         title
                         updatedAt
                         createdAt
