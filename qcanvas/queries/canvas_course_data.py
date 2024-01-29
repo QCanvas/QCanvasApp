@@ -17,8 +17,10 @@ from pydantic import (  # noqa: F401 # pylint: disable=W0611
     Json,
 )
 
+
 DEFINITION = """
 fragment CanvasCourseData on Course {
+    _id
     id
     name
     courseNickname
@@ -47,7 +49,7 @@ fragment CanvasCourseData on Course {
             moduleItems {
                 content {
                     ... on File {
-                        id
+                        _id
                         displayName
                         createdAt
                         updatedAt
@@ -57,7 +59,7 @@ fragment CanvasCourseData on Course {
                         contentType
                     }
                     ... on Page {
-                        id
+                        _id
                         title
                         updatedAt
                         createdAt
@@ -103,7 +105,7 @@ class ModuleItemInterface(ConfiguredBaseModel):
 
 
 class File(ModuleItemInterface):
-    q_id: str = Field(..., alias="id")
+    m_id: str = Field(..., alias="_id")
     display_name: Optional[str] = Field(..., alias="displayName")
     created_at: Optional[datetime] = Field(..., alias="createdAt")
     updated_at: Optional[datetime] = Field(..., alias="updatedAt")
@@ -114,7 +116,7 @@ class File(ModuleItemInterface):
 
 
 class Page(ModuleItemInterface):
-    q_id: str = Field(..., alias="id")
+    m_id: str = Field(..., alias="_id")
     title: Optional[str] = Field(..., alias="title")
     updated_at: Optional[datetime] = Field(..., alias="updatedAt")
     created_at: Optional[datetime] = Field(..., alias="createdAt")
@@ -135,6 +137,7 @@ class ModuleConnection(ConfiguredBaseModel):
 
 
 class CanvasCourseData(ConfiguredBaseModel):
+    m_id: str = Field(..., alias="_id")
     q_id: str = Field(..., alias="id")
     name: str = Field(..., alias="name")
     course_nickname: Optional[str] = Field(..., alias="courseNickname")

@@ -1,6 +1,7 @@
 # qenerate: plugin=pydantic_v1
 
 fragment CanvasCourseData on Course {
+    _id
     id
     name
     courseNickname

@@ -22,6 +22,7 @@ from qcanvas.queries.canvas_course_data import CanvasCourseData
 
 DEFINITION = """
 fragment CanvasCourseData on Course {
+    _id
     id
     name
     courseNickname
@@ -50,7 +51,7 @@ fragment CanvasCourseData on Course {
             moduleItems {
                 content {
                     ... on File {
-                        id
+                        _id
                         displayName
                         createdAt
                         updatedAt
@@ -60,7 +61,7 @@ fragment CanvasCourseData on Course {
                         contentType
                     }
                     ... on Page {
-                        id
+                        _id
                         title
                         updatedAt
                         createdAt
