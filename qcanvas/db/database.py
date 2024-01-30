@@ -24,7 +24,7 @@ class Course(MappedAsDataclass, Base):
     __tablename__ = "courses"
 
     id: Mapped[str] = mapped_column(primary_key=True)
-    legacy_id: Mapped[str]
+    # legacy_id: Mapped[str]
 
     term_id: Mapped[str] = mapped_column(ForeignKey("terms.id"))
     term: Mapped["Term"] = relationship(back_populates="courses")
@@ -33,14 +33,14 @@ class Course(MappedAsDataclass, Base):
     local_name: Mapped[Optional[str]]
 
     modules: Mapped[List["Module"]] = relationship(back_populates="course")
+    module_items: Mapped[List["ModuleItem"]] = relationship(back_populates="course")
     assignments: Mapped[List["Assignment"]] = relationship(back_populates="course")
     resources: Mapped[List["Resource"]] = relationship(back_populates="course")
 
-    def __init__(self, id: str, legacy_id : str, name: str, local_name: Optional[str]):
+    def __init__(self, id: str, name: str, local_name: Optional[str]):
         super().__init__()
 
         self.id = id
-        self.legacy_id = legacy_id
         self.name = name
         self.local_name = local_name
 
@@ -131,6 +131,7 @@ class Resource(MappedAsDataclass, Base):
     # type: Mapped[str]
     url: Mapped[str]
     friendly_name: Mapped[str]  # Human-readable name
+    # todo maybe delete file_name? not sure if it's needed
     file_name: Mapped[str]  # Internal name that references the file on disk
     file_size: Mapped[int]
     state: Mapped[ResourceState]
@@ -158,6 +159,12 @@ class Resource(MappedAsDataclass, Base):
         self.state = state
         self.date_discovered = date_discovered
 
+    def __eq__(self, __value):
+        if isinstance(__value, ModulePage):
+            return self.id == __value.id
+        else:
+            return super().__eq__(__value)
+
 
 class ModuleItem(MappedAsDataclass, Base):
     __tablename__ = "module_items"
@@ -166,6 +173,9 @@ class ModuleItem(MappedAsDataclass, Base):
 
     module_id: Mapped[str] = mapped_column(ForeignKey("modules.id"))
     module: Mapped["Module"] = relationship(back_populates="items")
+
+    course_id : Mapped[str] = mapped_column(ForeignKey("courses.id"))
+    course: Mapped["Course"] = relationship(back_populates="module_items")
 
     created_at: Mapped[datetime]
     updated_at: Mapped[datetime]
@@ -220,6 +230,12 @@ class ModulePage(ModuleItem):
 
         self.id = id
         self.content = content
+
+    def __eq__(self, __value):
+        if isinstance(__value, ModulePage):
+            return self.id == __value.id
+        else:
+            return super().__eq__(__value)
 
 
 class Assignment(MappedAsDataclass, Base):

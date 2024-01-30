@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 
@@ -11,6 +12,7 @@ from tenacity import retry, wait_exponential, wait_random, retry_if_exception, s
 from qcanvas.net.custom_httpx_async_transport import CustomHTTPXAsyncTransport
 from qcanvas.net.self_authenticating import SelfAuthenticating, AuthenticationException
 
+from qcanvas.net.canvas.legacy_canvas_types import LegacyFile, LegacyPage
 
 class RatelimitedException(Exception):
     def __init__(self):
@@ -19,6 +21,7 @@ class RatelimitedException(Exception):
 
 class CanvasClient(SelfAuthenticating):
     _logger = logging.getLogger(__name__)
+    _net_op_sem = asyncio.Semaphore(20)
 
     @staticmethod
     async def verify_config(canvas_url: URL, api_key: str) -> bool:
@@ -44,17 +47,51 @@ class CanvasClient(SelfAuthenticating):
         self.max_retries = 1
         self.client.headers["Authorization"] = f"Bearer {self.api_key}"
 
+    @retry(
+        wait=wait_exponential(exp_base=1.2, max=10) + wait_random(0, 1),
+        retry=retry_if_exception_type(RatelimitedException),
+        stop=stop_after_attempt(8)
+    )
     async def get_courses(self):
-        return await self.client.get(self.canvas_url.join("api/v1/courses"))
+        with self._net_op_sem:
+            return await self.client.get(self.canvas_url.join("api/v1/courses"))
 
     @retry(
         wait=wait_exponential(exp_base=1.2, max=10) + wait_random(0, 1),
         retry=retry_if_exception_type(RatelimitedException),
         stop=stop_after_attempt(8)
     )
-    async def get_page(self, page_id: str | int, course_id: str | int):
-        return self.detect_ratelimit_and_raise(
-            await self.client.get(self.canvas_url.join(f"api/v1/courses/{course_id}/pages/{page_id}"))).text
+    async def get_page(self, page_id: str | int, course_id: str | int) -> LegacyPage:
+        async with self._net_op_sem:
+            response = self.detect_ratelimit_and_raise(await self.client.get(self.canvas_url.join(f"api/v1/courses/{course_id}/pages/{page_id}")))
+
+            return LegacyPage.from_dict(json.loads(response.text))
+
+    @retry(
+        wait=wait_exponential(exp_base=1.2, max=10) + wait_random(0, 1),
+        retry=retry_if_exception_type(RatelimitedException),
+        stop=stop_after_attempt(8)
+    )
+    async def get_file(self, file_id: str | int, course_id: str | int) -> LegacyFile:
+        async with self._net_op_sem:
+            response = self.detect_ratelimit_and_raise(await self.client.get(self.canvas_url.join(f"api/v1/courses/{course_id}/files/{file_id}")))
+
+            response.raise_for_status()
+
+            return LegacyFile.from_dict(json.loads(response.text))
+
+    @retry(
+        wait=wait_exponential(exp_base=1.2, max=10) + wait_random(0, 1),
+        retry=retry_if_exception_type(RatelimitedException),
+        stop=stop_after_attempt(8)
+    )
+    async def get_file_from_endpoint(self, endpoint_url : str) -> LegacyFile:
+        async with self._net_op_sem:
+            response = self.detect_ratelimit_and_raise(await self.client.get(endpoint_url))
+
+            response.raise_for_status()
+
+            return LegacyFile.from_dict(json.loads(response.text))
 
     def detect_ratelimit_and_raise(self, response: Response) -> Response:
         # Who the FUCK decided to use 403 instead of 429?? With this stupid message??
@@ -67,7 +104,8 @@ class CanvasClient(SelfAuthenticating):
 
     @retry(
         stop=stop_after_attempt(3),
-        wait=wait_fixed(5) + wait_random(0, 1)
+        wait=wait_fixed(5) + wait_random(0, 1),
+        retry=retry_if_exception_type(TransportQueryError)
     )
     async def do_graphql_query(self, query: gql.client.DocumentNode, **kwargs):
         """
@@ -76,20 +114,11 @@ class CanvasClient(SelfAuthenticating):
         :param operation: The operation to execute
         :return: The result
         """
+        async with self._net_op_sem:
+            gql_transport = CustomHTTPXAsyncTransport(self.client, self.canvas_url.join("api/graphql"))
+            gql_client = gql.Client(transport=gql_transport, execute_timeout=60)
 
-        retries = 0
-
-        while retries < self.max_retries:
-            try:
-                gql_transport = CustomHTTPXAsyncTransport(self.client, self.canvas_url.join("api/graphql"))
-                gql_client = gql.Client(transport=gql_transport)
-
-                return await gql_client.execute_async(query, variable_values=kwargs)
-            except TransportQueryError as err:
-                if retries >= self.max_retries:
-                    raise err
-                else:
-                    retries += 1
+            return await gql_client.execute_async(query, variable_values=kwargs)
 
     async def do_request_and_retry_if_unauthenticated(self, url: URL):
         """

@@ -21,7 +21,7 @@ from pydantic import (  # noqa: F401 # pylint: disable=W0611
 DEFINITION = """
 fragment CanvasCourseData on Course {
     _id
-    id
+#    id
     name
     courseNickname
     term {
@@ -138,7 +138,6 @@ class ModuleConnection(ConfiguredBaseModel):
 
 class CanvasCourseData(ConfiguredBaseModel):
     m_id: str = Field(..., alias="_id")
-    q_id: str = Field(..., alias="id")
     name: str = Field(..., alias="name")
     course_nickname: Optional[str] = Field(..., alias="courseNickname")
     term: Optional[Term] = Field(..., alias="term")

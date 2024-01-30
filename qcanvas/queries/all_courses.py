@@ -23,7 +23,7 @@ from qcanvas.queries.canvas_course_data import CanvasCourseData
 DEFINITION = """
 fragment CanvasCourseData on Course {
     _id
-    id
+#    id
     name
     courseNickname
     term {
