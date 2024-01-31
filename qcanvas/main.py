@@ -89,6 +89,11 @@ async def run():
                 module.course_id = course.id
                 await session.merge(module)
 
+            for g_assignment in g_course.assignments_connection.nodes:
+                assignment = db.convert_assignment(g_assignment)
+                assignment.course_id = g_course.m_id
+                await session.merge(assignment)
+
         await session.flush()
         """
         select module_items.id, module_items.name, module_items.type
