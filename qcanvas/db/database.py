@@ -2,7 +2,6 @@ from datetime import datetime
 from enum import Enum
 from typing import List, Optional
 
-import sqlalchemy
 from sqlalchemy import ForeignKey, Table, Column
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped, relationship, MappedAsDataclass
@@ -143,11 +142,6 @@ class Resource(MappedAsDataclass, Base):
     assignments: Mapped[List["Assignment"]] = relationship(secondary=resource_to_assignment_association_table,
                                                            back_populates="resources")
 
-    # __mapper_args__ = {
-    #     "polymorphic_identity": "resource",
-    #     "polymorphic_on": "type",
-    # }
-
     def __init__(self, id : str, url: str, friendly_name: str, file_name : str, file_size : int, date_discovered : datetime, fail_message : Optional[str] = None, state = ResourceState.NOT_DOWNLOADED):
         super().__init__()
         self.id = id
@@ -247,8 +241,8 @@ class Assignment(MappedAsDataclass, Base):
     course: Mapped["Course"] = relationship(back_populates="assignments")
 
     name: Mapped[str]
-    description: Mapped[str]
-    due_at: Mapped[datetime]
+    description: Mapped[Optional[str]]
+    due_at: Mapped[Optional[datetime]]
     created_at: Mapped[datetime]
     updated_at: Mapped[datetime]
     position: Mapped[int]
