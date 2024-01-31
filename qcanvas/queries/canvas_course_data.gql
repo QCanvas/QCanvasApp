@@ -2,7 +2,6 @@
 
 fragment CanvasCourseData on Course {
     _id
-#    id
     name
     courseNickname
     term {
