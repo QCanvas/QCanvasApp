@@ -5,5 +5,7 @@ pydantic~=2.6.0
 requests~=2.31.0
 setuptools~=69.0.3
 gql~=3.6.0b0
+tenacity~=8.2.3
+beautifulsoup4~=4.12.3
 git+ssh://git@qcanvas.codeberg.org/QCanvas/qenerate.git
 git+https://github.com/bdraco/aiosqlite.git@speed_up_process_thread
