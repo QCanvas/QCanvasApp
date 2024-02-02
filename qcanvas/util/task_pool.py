@@ -50,7 +50,7 @@ class TaskPool(Generic[T]):
         self._restart_if_finished = restart_if_finished
         self._echo = echo
 
-    def add_completed_values(self, results: dict[object, T]) -> None:
+    def add_values(self, results: dict[object, T]) -> None:
         """
         Adds the specified values from the dictionary as stored results.
 

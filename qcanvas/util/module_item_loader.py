@@ -1,9 +1,12 @@
 import asyncio
+import logging
 from typing import Sequence
 
 from bs4 import BeautifulSoup, Tag
 from httpx import HTTPStatusError
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio.session import async_sessionmaker as AsyncSessionMaker
+from sqlalchemy.orm import selectinload, selectin_polymorphic
 
 import qcanvas.db as db
 import qcanvas.queries as queries
@@ -12,34 +15,107 @@ from qcanvas.util.link_scanner import LinkedResourceHandler
 from qcanvas.util.task_pool import TaskPool
 
 
-def scan_page_for_links(page: db.ModulePage) -> set[Tag]:
+def _scan_page_for_links(page: db.PageLike) -> list[Tag]:
     soup = BeautifulSoup(page.content, 'html.parser')
-    result: set[Tag] = set()
+    return list(soup.find_all('a'))
 
-    for link in soup.find_all('a'):
-        result.add(link)
 
-    return result
+_logger = logging.getLogger("module_item_loader")
 
 
 class ModuleItemLoader:
     link_scanners: Sequence[LinkedResourceHandler]
+    sessionmaker: AsyncSessionMaker
+    _resource_fetch_taskpool: TaskPool[db.Resource] = TaskPool()
+    _module_item_fetch_taskpool: TaskPool[db.ModuleItem] = TaskPool()
 
-    resource_fetch_taskpool: TaskPool[db.Resource] = TaskPool()
-    module_item_fetch_taskpool: TaskPool[db.ModuleItem] = TaskPool()
-
-    def __init__(self, existing_module_items: Sequence[db.ModuleItem], existing_resources: Sequence[db.Resource],
+    def __init__(self,
                  client: CanvasClient,
+                 sessionmaker: AsyncSessionMaker,
                  link_scanners: Sequence[LinkedResourceHandler]):
-        self.module_item_fetch_taskpool.add_completed_values(
-            dict((module_item.id, module_item) for module_item in existing_module_items))
-        self.resource_fetch_taskpool.add_completed_values(
-            dict((resource.id, resource) for resource in existing_resources))
 
         self.client = client
         self.link_scanners = link_scanners
+        self.sessionmaker = sessionmaker
+
+    async def load_data_from_query(self, query_data: queries.AllCoursesQueryData):
+        for g_course in query_data.all_courses:
+            course = await self._add_basic_data_for_course(g_course)
+
+            self._module_item_fetch_taskpool.add_values(dict((x.id, x) for x in course.module_items))
+            self._resource_fetch_taskpool.add_values(dict((x.id, x) for x in course.resources))
+
+            await self._load_pages(g_course)
+
+            await self._scan_pages_for_file_links(course.module_items)
+            await self._scan_pages_for_file_links(course.assignments)
+
+        await self.update_db()
+
+    async def _load_data_from_db(self):
+        async with self.sessionmaker.begin() as session:
+            # Options for eagarly loading ModuleItems
+            eager_load = [
+                selectinload(db.ModuleItem.resources),
+                selectin_polymorphic(db.ModuleItem, [db.ModulePage, db.ModuleFile])
+            ]
+
+            existing_module_items = (await session.execute(select(db.ModuleItem).options(*eager_load))).scalars().all()
+            existing_resources = (await session.execute(select(db.Resource))).scalars().all()
+            # assignments = (await session.execute(select(db.Assignment).options(selectinload(db.Assignment.resources)))).scalars().all()
+
+            return existing_module_items, existing_resources
+
+    async def _add_basic_data_for_course(self, g_course: queries.Course):
+        async with self.sessionmaker.begin() as session:
+
+            # Add term for coruse
+            await session.merge(db.convert_term(g_course.term))
+
+            eager_load = [
+                selectinload(db.Course.module_items)
+                    .selectin_polymorphic([db.ModulePage, db.ModulePage])
+                    .joinedload(db.ModuleItem.resources),
+                selectinload(db.Course.modules),
+                selectinload(db.Course.assignments)
+                    .joinedload(db.Assignment.resources),
+                selectinload(db.Course.resources)
+            ]
+
+            # Create the course and assign the term
+            course = await session.merge(db.convert_course(g_course), options=eager_load)
+            course.term_id = g_course.term.q_id
+
+            # Add modules for course
+            for g_module in g_course.modules_connection.nodes:
+                module = db.convert_module(g_module)
+                module.course_id = course.id
+                await session.merge(module)
+
+            # Add assignments for course
+            for g_assignment in g_course.assignments_connection.nodes:
+                assignment = db.convert_assignment(g_assignment)
+                assignment.course_id = g_course.m_id
+                await session.merge(assignment)
+
+            return course
+
+    async def _load_pages(self, g_course: queries.Course):
+        tasks = []
+
+        for g_module in g_course.modules_connection.nodes:
+            for g_module_item in g_module.module_items:
+                content = g_module_item.content
+                if isinstance(content, queries.File):
+                    tasks.append(asyncio.create_task(self.load_module_file(content, g_course, g_module)))
+                elif isinstance(content, queries.Page):
+                    tasks.append(asyncio.create_task(self.load_module_page(content, g_course, g_module)))
+
+        if len(tasks) > 0:
+            await asyncio.wait(tasks)
 
     async def _fetch_module_file_resource(self, file: queries.File, course_id: str) -> db.Resource:
+        _logger.debug(f"Fetching file (for module file) {file.m_id} {file.display_name}")
         result = await self.client.get_file(file.m_id, course_id)
         resource = db.convert_file(file, result.size)
         resource.course_id = course_id
@@ -48,6 +124,8 @@ class ModuleItemLoader:
 
     async def _fetch_module_file_page(self, file: queries.File, resource: db.Resource, course: queries.Course,
                                       module: queries.Module) -> db.ModuleFile:
+        _logger.debug(f"Creating page for module file {file.m_id} {file.display_name}")
+
         page = db.convert_file_page(file)
         page.module_id = module.q_id
         page.course_id = course.m_id
@@ -56,20 +134,23 @@ class ModuleItemLoader:
         return page
 
     async def load_module_file(self, g_file: queries.File, g_course: queries.Course, g_module: queries.Module):
+        # _logger.debug(f"Loading module file {g_file.m_id} {g_file.display_name}")
         file_id = f"canvas_{g_file.m_id}"
 
-        resource = await self.resource_fetch_taskpool.submit(
+        resource = await self._resource_fetch_taskpool.submit(
             file_id,
             lambda: self._fetch_module_file_resource(g_file, g_course.m_id)
         )
 
-        await self.module_item_fetch_taskpool.submit(
-            g_file.m_id, # don't use file_id
+        await self._module_item_fetch_taskpool.submit(
+            g_file.m_id,  # don't use file_id
             lambda: self._fetch_module_file_page(g_file, resource, g_course, g_module)
         )
 
     async def _fetch_module_item_page(self, page: queries.Page, course: queries.Course,
                                       module: queries.Module) -> db.ModulePage:
+        _logger.debug(f"Fetching module page {page.m_id} {page.title}")
+
         result = await self.client.get_page(page.m_id, course.m_id)
 
         page = db.convert_page(page, result.body)
@@ -79,72 +160,72 @@ class ModuleItemLoader:
         return page
 
     async def load_module_page(self, g_page: queries.Page, g_course: queries.Course, g_module: queries.Module):
-        await self.module_item_fetch_taskpool.submit(
+        await self._module_item_fetch_taskpool.submit(
             g_page.m_id,
             lambda: self._fetch_module_item_page(g_page, g_course, g_module)
         )
 
-    # fixme this is kinda shitty
-    async def scan_pages_for_file_links(self):
+    async def _scan_pages_for_file_links(self, pages: Sequence[db.PageLike]):
         tasks = []
-        # store it here so it doesn't change
-        pages = self.module_item_fetch_taskpool.results()
+        # pages = self.module_item_fetch_taskpool.results()
 
         for page in pages:
-            if not isinstance(page, db.ModulePage):
+            if not isinstance(page, db.PageLike):
                 continue
 
-            # print(f"Now scanning page {page.name}")
-
-            tasks.append(asyncio.create_task(self.do_thing(page)))
+            tasks.append(asyncio.create_task(self._scan_page(page)))
 
         if len(tasks) > 0:
             await asyncio.wait(tasks)
 
-    async def do_thing(self, page: db.ModulePage):
-        async def task(link, obj):
-            await obj.add_scanned_resource_to_page(page, await obj.process_link(link, page.course_id))
-
+    async def _scan_page(self, page: db.PageLike):
+        _logger.debug(f"Scanning {page.id} {page.name} for files")
         tasks = []
 
-        for link in scan_page_for_links(page):
-            tasks.append(asyncio.create_task(task(link, self)))
+        # Assignment descriptions may be null
+        if page.content is None:
+            return
+
+        for link in _scan_page_for_links(page):
+            tasks.append(asyncio.create_task(self._add_scanned_resource_to_page(page, link)))
 
         if len(tasks) > 0:
             await asyncio.wait(tasks)
 
-    async def add_scanned_resource_to_page(self, page: db.ModulePage, resource: db.Resource | None):
+    async def _add_scanned_resource_to_page(self, page: db.PageLike, link: Tag):
+        resource = await self._process_link(link, page.course_id)
+
         if resource is None or resource in page.resources:
             return
 
-        page.resources.append(resource)
+        _logger.debug(f"Found {resource.id} {resource.file_name} on page {page.id} {page.name}")
 
-        # print(f"{resource.id} -> {page.id}")
-        # print(f"Found {resource.friendly_name} for {page.name} ({resource.course_id})")
+        page.resources.append(resource)
 
     async def _extract_file_info(self, link: Tag, scanner: LinkedResourceHandler, course_id: str):
         try:
+            _logger.debug(f"Fetching info for file {scanner.extract_id(link)} with scanner {scanner}")
+
             result = await scanner.extract_resource(link)
             result.course_id = course_id
-            # print(f"Found {result.friendly_name}")
             return result
-        except HTTPStatusError:
+        except BaseException as e:
+            _logger.error(f"Failed to retrieve info for link {scanner.extract_id(link)}: {e}")
             return None
 
-    async def process_link(self, link: Tag, course_id: str) -> db.Resource | None:
+    async def _process_link(self, link: Tag, course_id: str) -> db.Resource | None:
         for scanner in self.link_scanners:
             if scanner.accepts_link(link):
                 id = scanner.extract_id(link)
 
-                return await self.resource_fetch_taskpool.submit(
+                return await self._resource_fetch_taskpool.submit(
                     id,
                     lambda: self._extract_file_info(link, scanner, course_id)
                 )
 
         return None
 
-    # todo I'm confused about how i'm supposed to use the session here. sessionmaker
-    async def update_db(self, engine: AsyncEngine):
-        async with AsyncSession(engine) as session, session.begin():
-            session.add_all(self.module_item_fetch_taskpool.results())
-            session.add_all(self.resource_fetch_taskpool.results())
+    async def update_db(self):
+        async with self.sessionmaker.begin() as session:
+            session.add_all(self._module_item_fetch_taskpool.results())
+            session.add_all(self._resource_fetch_taskpool.results())

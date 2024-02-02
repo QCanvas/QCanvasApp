@@ -1,23 +1,38 @@
+from abc import abstractmethod, ABC
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Sequence, Collection, MutableSequence
 
 from sqlalchemy import ForeignKey, Table, Column
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped, relationship, MappedAsDataclass
 
 
+class PageLike:
+    @property
+    def content(self) -> str | None:
+        raise NotImplementedError()
+
+    @property
+    def name(self) -> str:
+        raise NotImplementedError()
+
+    @property
+    def id(self) -> str:
+        raise NotImplementedError()
+
+    @property
+    def resources(self) -> MutableSequence["Resource"]:
+        raise NotImplementedError()
+
+    @property
+    def course_id(self) -> str:
+        raise NotImplementedError()
+
+
 class Base(AsyncAttrs, DeclarativeBase):
     pass
 
-
-# Checks:
-# 0. tablename
-# 1. Correct init=False
-# 2. selectin loading for list columns
-# 3. joined loading for backreferences
-# 4. cascade delete
-# 5. primary key
 
 class Course(MappedAsDataclass, Base):
     __tablename__ = "courses"
@@ -73,7 +88,7 @@ class Term(MappedAsDataclass, Base):
 
     courses: Mapped[List["Course"]] = relationship(back_populates="term", cascade="all, delete")
 
-    def __init__(self, id : str, name: str, end_at: Optional[datetime], start_at: Optional[datetime]):
+    def __init__(self, id: str, name: str, end_at: Optional[datetime], start_at: Optional[datetime]):
         super().__init__()
         self.id = id
         self.name = name
@@ -91,9 +106,10 @@ class Module(MappedAsDataclass, Base):
     name: Mapped[str]
 
     items: Mapped[List["ModuleItem"]] = relationship(back_populates="module")
+
     # resources : Mapped[List]
 
-    def __init__(self, id : str, name : str):
+    def __init__(self, id: str, name: str):
         super().__init__()
         self.id = id
         self.name = name
@@ -142,7 +158,8 @@ class Resource(MappedAsDataclass, Base):
     assignments: Mapped[List["Assignment"]] = relationship(secondary=resource_to_assignment_association_table,
                                                            back_populates="resources")
 
-    def __init__(self, id : str, url: str, friendly_name: str, file_name : str, file_size : int, date_discovered : datetime, fail_message : Optional[str] = None, state = ResourceState.NOT_DOWNLOADED):
+    def __init__(self, id: str, url: str, friendly_name: str, file_name: str, file_size: int, date_discovered: datetime,
+                 fail_message: Optional[str] = None, state=ResourceState.NOT_DOWNLOADED):
         super().__init__()
         self.id = id
         self.url = url
@@ -168,7 +185,7 @@ class ModuleItem(MappedAsDataclass, Base):
     module_id: Mapped[str] = mapped_column(ForeignKey("modules.id"))
     module: Mapped["Module"] = relationship(back_populates="items")
 
-    course_id : Mapped[str] = mapped_column(ForeignKey("courses.id"))
+    course_id: Mapped[str] = mapped_column(ForeignKey("courses.id"))
     course: Mapped["Course"] = relationship(back_populates="module_items")
 
     created_at: Mapped[datetime]
@@ -184,7 +201,7 @@ class ModuleItem(MappedAsDataclass, Base):
         "polymorphic_on": "type",
     }
 
-    def __init__(self, id : str, created_at : datetime, updated_at : datetime, name : str):
+    def __init__(self, id: str, created_at: datetime, updated_at: datetime, name: str):
         super().__init__()
 
         self.id = id
@@ -202,13 +219,13 @@ class ModuleFile(ModuleItem):
         "polymorphic_identity": "module_file",
     }
 
-    def __init__(self, id : str, created_at : datetime, updated_at : datetime, name : str):
+    def __init__(self, id: str, created_at: datetime, updated_at: datetime, name: str):
         super().__init__(id, created_at, updated_at, name)
 
         self.id = id
 
 
-class ModulePage(ModuleItem):
+class ModulePage(ModuleItem, PageLike):
     __tablename__ = "module_pages"
 
     id: Mapped[str] = mapped_column(ForeignKey("module_items.id"), primary_key=True)
@@ -219,7 +236,7 @@ class ModulePage(ModuleItem):
         "polymorphic_identity": "module_page",
     }
 
-    def __init__(self, id : str, created_at : datetime, updated_at : datetime, name : str, content : str = "Not loaded"):
+    def __init__(self, id: str, created_at: datetime, updated_at: datetime, name: str, content: str = "Not loaded"):
         super().__init__(id, created_at, updated_at, name)
 
         self.id = id
@@ -232,7 +249,7 @@ class ModulePage(ModuleItem):
             return super().__eq__(__value)
 
 
-class Assignment(MappedAsDataclass, Base):
+class Assignment(MappedAsDataclass, Base, PageLike):
     __tablename__ = "assignments"
 
     id: Mapped[str] = mapped_column(primary_key=True)
@@ -250,7 +267,8 @@ class Assignment(MappedAsDataclass, Base):
     resources: Mapped[List["Resource"]] = relationship(secondary=resource_to_assignment_association_table,
                                                        back_populates="assignments")
 
-    def __init__(self, id : str, name : str, description : str, due_at : datetime, created_at : datetime, updated_at : datetime, position : int):
+    def __init__(self, id: str, name: str, description: str, due_at: datetime, created_at: datetime,
+                 updated_at: datetime, position: int):
         super().__init__()
 
         self.id = id
@@ -261,3 +279,6 @@ class Assignment(MappedAsDataclass, Base):
         self.updated_at = updated_at
         self.position = position
 
+    @property
+    def content(self) -> str:
+        return self.description
