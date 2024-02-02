@@ -1,22 +1,9 @@
 from bs4 import Tag
 from httpx import URL
 
-import qcanvas.db as db
+from qcanvas import db as db
 from qcanvas.net.canvas import CanvasClient
-
-
-class LinkedResourceHandler:
-    def accepts_link(self, link: Tag) -> bool:
-        raise NotImplementedError()
-
-    async def extract_resource(self, link: Tag) -> db.Resource:
-        raise NotImplementedError()
-
-    def extract_id(self, link: Tag) -> str:
-        raise NotImplementedError()
-
-    async def download(self):
-        raise NotImplementedError()
+from qcanvas.util.linkscanner.link_scanner import LinkedResourceHandler
 
 
 class CanvasLinkedResourceHandler(LinkedResourceHandler):
