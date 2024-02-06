@@ -1,8 +1,16 @@
 import asyncio
 import sys
-from typing import Awaitable, TypeVar, Generic
+from typing import Awaitable, TypeVar, Generic, Callable
 
 T = TypeVar("T")
+
+
+def restart_always(x) -> bool:
+    return True
+
+
+def restart_never(x) -> bool:
+    return False
 
 
 class TaskPool(Generic[T]):
@@ -23,7 +31,8 @@ class TaskPool(Generic[T]):
     _echo: bool
 
     def __init__(self, remember_result: bool = True, wait_if_in_progress: bool = True,
-                 wait_if_just_started: bool = True, restart_if_finished: bool = False, echo: bool = False):
+                 wait_if_just_started: bool = True, restart_task_predicate: Callable[[T], bool] = restart_never,
+                 echo: bool = False):
         """
         Parameters
         ----------
@@ -47,7 +56,7 @@ class TaskPool(Generic[T]):
         self._remember_result = remember_result
         self._wait_if_in_progress = wait_if_in_progress
         self._wait_if_just_started = wait_if_just_started
-        self._restart_if_finished = restart_if_finished
+        self._restart_task_predicate = restart_task_predicate
         self._echo = echo
 
     def add_values(self, results: dict[object, T]) -> None:
@@ -101,7 +110,7 @@ class TaskPool(Generic[T]):
                 return None
 
             if not isinstance(self._results[task_id], asyncio.Event):
-                if self._restart_if_finished:
+                if self._restart_task_predicate(self._results[task_id]):
                     if self._echo: print(
                         f"Task {task_id} already finished but configured to restart if finished, restarting.")
                     # start_task releases the semaphore, no need to do it here
@@ -231,6 +240,7 @@ class TaskPool(Generic[T]):
         list[T]
             The results of all currently completed tasks, excluding Nones
         """
+
         def filter_func(it):
             return not isinstance(it, asyncio.Event) and it is not None
 
@@ -262,3 +272,27 @@ class TaskPool(Generic[T]):
             return result
         else:
             raise KeyError(f"{task_id} has not been started")
+
+    # def get_completed_result_or_default(self, task_id: object, default : T | None = None) -> T | None:
+    #     """
+    #     Returns the result of an already completed task
+    #
+    #     Returns
+    #     -------
+    #     object
+    #         The result of the task or the default if the task has not been started
+    #
+    #     Raises
+    #     ------
+    #     ValueError
+    #         If the task is still in progress
+    #     """
+    #     if task_id in self._results:
+    #         result = self._results[task_id]
+    #
+    #         if isinstance(result, asyncio.Event):
+    #             raise ValueError(f"{task_id} is still in progress")
+    #
+    #         return result
+    #     else:
+    #         return default
