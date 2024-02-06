@@ -19,9 +19,7 @@ from qcanvas.util.linkscanner.link_scanner import LinkedResourceHandler
 from qcanvas.util.task_pool import TaskPool
 
 
-def _scan_page_for_links(page: db.PageLike) -> list[Tag]:
-    soup = BeautifulSoup(page.content, 'html.parser')
-    return list(soup.find_all('a'))
+
 
 
 _logger = logging.getLogger("course_loader")
@@ -39,7 +37,7 @@ course_creation_eager_load = [
 
 @dataclass
 class TransientModulePage:
-    page: queries.Page
+    page: queries.Page | queries.File
     course_id: str
     module_id: str
 
@@ -68,6 +66,10 @@ class TransientResourceToPageLink:
         return hash(self.page_id) ^ hash(self.resource_id) ^ hash(self.page_type.value)
 
 
+def _scan_page_for_links(page: db.PageLike) -> list[Tag]:
+    soup = BeautifulSoup(page.content, 'html.parser')
+    return list(soup.find_all('a'))
+
 def _remove_up_to_date_pages(g_courses: Sequence[queries.Course], _pages: Sequence[db.ModuleItem]) -> list[
     TransientModulePage]:
     pages_id_mapped = dict((x.id, x) for x in _pages)
@@ -79,7 +81,7 @@ def _remove_up_to_date_pages(g_courses: Sequence[queries.Course], _pages: Sequen
             for g_moduleitem in g_module.module_items:
                 content = g_moduleitem.content
 
-                if isinstance(content, queries.Page):
+                if isinstance(content, queries.Page) or isinstance(content, queries.File):
                     if content.m_id not in pages_id_mapped or content.updated_at.replace(tzinfo=None) > pages_id_mapped[
                         content.m_id].updated_at:
                         result.append(TransientModulePage(content, g_course.m_id, g_module.q_id))
@@ -169,6 +171,7 @@ class CourseLoader:
                     session.add(db.ResourceToModuleItemAssociation(relation.page_id, relation.resource_id))
 
             session.add_all(module_items)
+            session.add_all(self._resource_pool.results())
 
             for g_course in g_courses:
                 term = await session.get(db.Term, g_course.term.q_id)
