@@ -36,12 +36,16 @@ class TransientModulePage:
     page: queries.Page | queries.File
     course_id: str
     module_id: str
+    position: int
 
 
 @dataclass
 class TransientResourceToPageLink:
     page_id: str
     resource_id: str
+
+    def __hash__(self):
+        return hash(self.page_id) ^ hash(self.resource_id)
 
 
 def _scan_page_for_links(page: db.PageLike) -> list[Tag]:
@@ -74,7 +78,7 @@ def _remove_up_to_date_pages(g_courses: Sequence[queries.Course], pages: Sequenc
 
     for g_course in g_courses:
         for g_module in g_course.modules_connection.nodes:
-            for g_moduleitem in g_module.module_items:
+            for item_position, g_moduleitem in enumerate(g_module.module_items):
                 content = g_moduleitem.content
 
                 if isinstance(content, queries.Page) or isinstance(content, queries.File):
@@ -82,7 +86,7 @@ def _remove_up_to_date_pages(g_courses: Sequence[queries.Course], pages: Sequenc
                             content.m_id not in pages_id_mapped
                             or content.updated_at.replace(tzinfo=None) > pages_id_mapped[content.m_id].updated_at
                     ):
-                        result.append(TransientModulePage(content, g_course.m_id, g_module.q_id))
+                        result.append(TransientModulePage(content, g_course.m_id, g_module.q_id, item_position))
                     else:
                         _logger.debug("Page %s is already up to date", content.m_id)
 
@@ -120,12 +124,13 @@ async def _extract_file_info(link: Tag, scanner: ResourceScanner, course_id: str
 
 
 async def _fetch_module_file_page(file: queries.File, resource: db.Resource, course_id: str,
-                                  module_id: str) -> db.ModuleFile:
+                                  module_id: str, position: int) -> db.ModuleFile:
     _logger.debug(f"Creating page for module file %s %s", file.m_id, file.display_name)
 
     page = db.convert_file_page(file)
     page.module_id = module_id
     page.course_id = course_id
+    page.position = position
     page.resources.append(resource)
 
     return page
@@ -282,9 +287,9 @@ class CourseLoader:
             content = page.page
 
             if isinstance(content, queries.File):
-                tasks.append(asyncio.create_task(self._load_module_file(content, page.course_id, page.module_id)))
+                tasks.append(asyncio.create_task(self._load_module_file(content, page.course_id, page.module_id, page.position)))
             elif isinstance(content, queries.Page):
-                tasks.append(asyncio.create_task(self.load_module_page(content, page.course_id, page.module_id)))
+                tasks.append(asyncio.create_task(self.load_module_page(content, page.course_id, page.module_id, page.position)))
 
         if len(tasks) > 0:
             await asyncio.wait(tasks)
@@ -293,7 +298,7 @@ class CourseLoader:
         else:
             return []
 
-    async def _load_module_file(self, g_file: queries.File, course_id: str, module_id: str) -> db.ModuleFile:
+    async def _load_module_file(self, g_file: queries.File, course_id: str, module_id: str, position : int) -> db.ModuleFile:
         _logger.debug(f"Loading module file %s %s", g_file.m_id, g_file.display_name)
 
         resource = await self._resource_pool.submit(
@@ -303,7 +308,7 @@ class CourseLoader:
 
         return await self._moduleitem_pool.submit(
             g_file.m_id,
-            lambda: _fetch_module_file_page(g_file, resource, course_id, module_id)
+            lambda: _fetch_module_file_page(g_file, resource, course_id, module_id, position)
         )
 
     async def _fetch_module_file_resource(self, file: queries.File, course_id: str) -> db.Resource:
@@ -314,13 +319,13 @@ class CourseLoader:
 
         return resource
 
-    async def load_module_page(self, g_page: queries.Page, course_id: str, module_id: str) -> db.ModulePage:
+    async def load_module_page(self, g_page: queries.Page, course_id: str, module_id: str, position: int) -> db.ModulePage:
         return await self._moduleitem_pool.submit(
             g_page.m_id,
-            lambda: self._fetch_module_item_page(g_page, course_id, module_id)
+            lambda: self._fetch_module_item_page(g_page, course_id, module_id, position)
         )
 
-    async def _fetch_module_item_page(self, page: queries.Page, course_id: str, module_id: str) -> db.ModulePage:
+    async def _fetch_module_item_page(self, page: queries.Page, course_id: str, module_id: str, position: int) -> db.ModulePage:
         _logger.debug(f"Fetching module page %s %s", page.m_id, page.title)
 
         result = await self._client.get_page(page.m_id, course_id)
@@ -328,6 +333,7 @@ class CourseLoader:
         page = db.convert_page(page, result.body)
         page.module_id = module_id
         page.course_id = course_id
+        page.position = position
 
         return page
 

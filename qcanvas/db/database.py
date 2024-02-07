@@ -1,12 +1,12 @@
-from abc import abstractmethod, ABC
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional, Sequence, Collection, MutableSequence
+from typing import List, Optional, Sequence, MutableSequence, Any
 
-from sqlalchemy import ForeignKey, Table, Column, Text
+from sqlalchemy import ForeignKey, Text
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped, relationship, MappedAsDataclass
 
+import qcanvas.util.tree_util as tree
 
 class PageLike:
     @property
@@ -42,7 +42,7 @@ class Base(AsyncAttrs, DeclarativeBase):
     pass
 
 
-class Course(MappedAsDataclass, Base, init=False):
+class Course(MappedAsDataclass, Base, tree.HasColumnData, tree.HasChildren, init=False):
     __tablename__ = "courses"
 
     id: Mapped[str] = mapped_column(primary_key=True)
@@ -59,17 +59,14 @@ class Course(MappedAsDataclass, Base, init=False):
     assignments: Mapped[List["Assignment"]] = relationship(back_populates="course")
     resources: Mapped[List["Resource"]] = relationship(back_populates="course")
 
-    # def __init__(self, id: str, name: str, local_name: Optional[str]):
-    #     super().__init__()
-    #
-    #     self.id = id
-    #     self.name = name
-    #     self.local_name = local_name
-    #
-        # self.module_items = []
-        # self.resources = []
-        # self.assignments = []
-        # self.modules = []
+    def get_children(self) -> Sequence:
+        return self.modules
+
+    def get_column_data(self, column: int) -> str | None:
+        if column == 0:
+            return self.name
+        else:
+            return None
 
 
 class Term(MappedAsDataclass, Base):
@@ -109,7 +106,7 @@ class Term(MappedAsDataclass, Base):
         self.start_at = start_at
 
 
-class Module(MappedAsDataclass, Base, init = False):
+class Module(MappedAsDataclass, Base, tree.HasParent, tree.HasColumnData, tree.HasChildren, init = False):
     __tablename__ = "modules"
     id: Mapped[str] = mapped_column(primary_key=True)
 
@@ -118,22 +115,24 @@ class Module(MappedAsDataclass, Base, init = False):
 
     name: Mapped[str]
 
-    items: Mapped[List["ModuleItem"]] = relationship(back_populates="module")
-
-    # resources : Mapped[List]
-
-    # def __init__(self, id: str, name: str):
-    #     super().__init__()
-    #     self.id = id
-    #     self.name = name
+    items: Mapped[List["ModuleItem"]] = relationship(back_populates="module", order_by="ModuleItem.position")
 
 
-# resource_to_moduleitem_association_table = Table(
-#     "resource_to_module_item_table",
-#     Base.metadata,
-#     Column("module_item_id", ForeignKey("module_items.id"), primary_key=True),
-#     Column("resource_id", ForeignKey("resources.id"), primary_key=True)
-# )
+    def parent(self) -> Any:
+        return self.course
+
+    def index_of_self(self) -> int:
+        return self.course.modules.index(self)
+
+    def get_column_data(self, column: int) -> str | None:
+        if column == 0:
+            return self.name
+        else:
+            return None
+
+    def get_children(self) -> Sequence:
+        return self.items
+
 
 class ResourceToModuleItemAssociation(MappedAsDataclass, Base):
     __tablename__ = "resource_to_moduleitem"
@@ -170,7 +169,7 @@ class Resource(MappedAsDataclass, Base):
     date_discovered: Mapped[datetime]
 
     module_items: Mapped[List["ModuleItem"]] = relationship(secondary=ResourceToModuleItemAssociation.__table__,
-                                                            back_populates="resources")
+                                                            back_populates="resources", order_by="ModuleItem.position")
     assignments: Mapped[List["Assignment"]] = relationship(secondary=ResourceToAssignmentAssociation.__table__,
                                                            back_populates="resources")
 
@@ -193,7 +192,7 @@ class Resource(MappedAsDataclass, Base):
             return super().__eq__(__value)
 
 
-class ModuleItem(MappedAsDataclass, Base):
+class ModuleItem(MappedAsDataclass, Base, tree.HasParent, tree.HasColumnData):
     __tablename__ = "module_items"
 
     id: Mapped[str] = mapped_column(primary_key=True)
@@ -207,6 +206,7 @@ class ModuleItem(MappedAsDataclass, Base):
     created_at: Mapped[datetime]
     updated_at: Mapped[datetime]
     name: Mapped[str]
+    position : Mapped[int]
     type: Mapped[str]
 
     resources: Mapped[List["Resource"]] = relationship(secondary=ResourceToModuleItemAssociation.__table__,
@@ -224,6 +224,18 @@ class ModuleItem(MappedAsDataclass, Base):
         self.created_at = created_at
         self.updated_at = updated_at
         self.name = name
+
+    def parent(self) -> Any:
+        return self.module
+
+    def index_of_self(self) -> int:
+        return self.module.items.index(self)
+
+    def get_column_data(self, column: int) -> str | None:
+        if column == 0:
+            return self.name
+        else:
+            return None
 
 
 class ModuleFile(ModuleItem):
