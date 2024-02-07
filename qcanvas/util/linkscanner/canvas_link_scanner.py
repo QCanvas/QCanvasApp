@@ -3,16 +3,19 @@ from httpx import URL
 
 from qcanvas import db as db
 from qcanvas.net.canvas import CanvasClient
-from qcanvas.util.linkscanner.link_scanner import LinkedResourceHandler
+from qcanvas.util.linkscanner.resource_scanner import ResourceScanner
 
 
-class CanvasLinkedResourceHandler(LinkedResourceHandler):
+class CanvasFileScanner(ResourceScanner):
     _canvas_client: CanvasClient
 
     def __init__(self, canvas_client: CanvasClient):
         self._canvas_client = canvas_client
 
     def accepts_link(self, link: Tag) -> bool:
+        if link.name != "a":
+            return False
+
         return "data-api-returntype" in link.attrs.keys() and link["data-api-returntype"] == "File"
 
     async def extract_resource(self, link: Tag) -> db.Resource:
@@ -23,3 +26,9 @@ class CanvasLinkedResourceHandler(LinkedResourceHandler):
 
     async def download(self):
         pass
+
+    @property
+    def name(self) -> str:
+        return "canvas_file_scanner"
+
+

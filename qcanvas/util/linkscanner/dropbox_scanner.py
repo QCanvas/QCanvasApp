@@ -5,7 +5,7 @@ from httpx import URL
 # from httpx import URL
 
 from qcanvas import db as db
-from qcanvas.util.linkscanner import LinkedResourceHandler
+from qcanvas.util.linkscanner import ResourceScanner
 
 
 def parse_content_disposition(header: str) -> dict[str, str | None]:
@@ -20,7 +20,7 @@ def parse_content_disposition(header: str) -> dict[str, str | None]:
     return result
 
 
-class DropboxScanner(LinkedResourceHandler):
+class DropboxScanner(ResourceScanner):
     def __init__(self, client: httpx.AsyncClient):
         self.client = client
 

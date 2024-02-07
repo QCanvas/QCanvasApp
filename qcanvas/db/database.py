@@ -25,9 +25,12 @@ class PageLike:
     def resources(self) -> MutableSequence["Resource"]:
         raise NotImplementedError()
 
-    #todo figure out how the fuck to make this read-write???
     @property
     def course_id(self) -> str:
+        raise NotImplementedError()
+
+    @course_id.setter
+    def course_id(self, value : str):
         raise NotImplementedError()
 
     @property

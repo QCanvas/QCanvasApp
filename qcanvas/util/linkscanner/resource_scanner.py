@@ -3,7 +3,11 @@ from bs4 import Tag
 import qcanvas.db as db
 
 
-class LinkedResourceHandler:
+class ResourceScanner:
+    @property
+    def name(self) -> str:
+        raise NotImplementedError()
+
     def accepts_link(self, link: Tag) -> bool:
         raise NotImplementedError()
 

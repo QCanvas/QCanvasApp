@@ -1,2 +1,2 @@
-from .link_scanner import LinkedResourceHandler
-from .canvas_link_scanner import CanvasLinkedResourceHandler
+from .resource_scanner import ResourceScanner
+from .canvas_link_scanner import CanvasFileScanner
