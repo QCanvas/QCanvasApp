@@ -29,6 +29,6 @@ class CanvasFileScanner(ResourceScanner):
 
     @property
     def name(self) -> str:
-        return "canvas_file_scanner"
+        return "canvas_file"
 
 

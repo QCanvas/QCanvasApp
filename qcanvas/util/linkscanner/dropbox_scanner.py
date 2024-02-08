@@ -25,6 +25,9 @@ class DropboxScanner(ResourceScanner):
         self.client = client
 
     def accepts_link(self, link: Tag) -> bool:
+        if link.name != "a":
+            return False
+
         if "href" in link.attrs:
             url = URL(link.attrs["href"])
 
@@ -34,7 +37,7 @@ class DropboxScanner(ResourceScanner):
 
     async def extract_resource(self, link: Tag) -> db.Resource:
         url = URL(link.attrs["href"]).copy_set_param("dl", 1)
-        id = self._id_helper(url)
+        resource_id = self._id_helper(url)
 
         req = self.client.build_request(
             method="GET",
@@ -49,7 +52,7 @@ class DropboxScanner(ResourceScanner):
             filename = parse_content_disposition(resp.headers["content-disposition"])["filename"]
             size = int(resp.headers["content-length"])
 
-            return db.Resource(id, str(url), filename, id, file_size=size)
+            return db.Resource(resource_id, str(url), filename, resource_id, file_size=size)
         finally:
             await resp.aclose()
 
@@ -61,3 +64,9 @@ class DropboxScanner(ResourceScanner):
 
     async def download(self):
         pass
+
+    @property
+    def name(self) -> str:
+        return "dropbox"
+
+
