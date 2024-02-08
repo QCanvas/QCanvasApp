@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from typing import List, Optional, Sequence, MutableSequence, Any
@@ -7,8 +8,10 @@ from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped, relationship, MappedAsDataclass
 
 import qcanvas.util.tree_util as tree
+from qcanvas.util.tree_util import HasColumnData
 
-class PageLike:
+
+class PageLike(tree.HasColumnData):
     @property
     def content(self) -> str | None:
         raise NotImplementedError()
@@ -37,9 +40,49 @@ class PageLike:
     def updated_at(self) -> datetime:
         raise NotImplementedError()
 
+    def get_column_data(self, column: int) -> str | None:
+        if column == 0:
+            return self.name
+        else:
+            return None
+
 
 class Base(AsyncAttrs, DeclarativeBase):
     pass
+
+def default_assignment_module(module : "Module") -> bool:
+    result = module.name.lower() in ["assessments", "assessment"]
+
+    return result
+
+
+@dataclass
+class AssignmentsContainer(tree.HasColumnData, tree.HasParent, tree.HasChildren):
+    course: "Course"
+    normal_assignment_moduleitems : list["ModuleItem"] | None = None
+
+    def get_column_data(self, column: int) -> str | None:
+        if column == 0:
+            return "Putting the ASS in ASSignments"
+        else:
+            return None
+
+    def parent(self) -> Any:
+        return self.course
+
+    def index_of_self(self) -> int:
+        return len(self.course.modules) + 1
+
+    def get_children(self) -> Sequence[HasColumnData]:
+        if self.normal_assignment_moduleitems is None:
+            assessments_module: Module | None = next(filter(default_assignment_module, self.course.modules), None)
+
+            if assessments_module is not None:
+                self.normal_assignment_moduleitems = assessments_module.items
+            else:
+                self.normal_assignment_moduleitems = []
+
+        return self.normal_assignment_moduleitems + self.course.assignments
 
 
 class Course(MappedAsDataclass, Base, tree.HasColumnData, tree.HasChildren, init=False):
@@ -59,8 +102,15 @@ class Course(MappedAsDataclass, Base, tree.HasColumnData, tree.HasChildren, init
     assignments: Mapped[List["Assignment"]] = relationship(back_populates="course")
     resources: Mapped[List["Resource"]] = relationship(back_populates="course")
 
-    def get_children(self) -> Sequence:
-        return self.modules
+    assignments_container : AssignmentsContainer | None = None
+
+    def get_children(self) -> Sequence[tree.HasColumnData]:
+
+        if self.assignments_container is None:
+            self.assignments_container = AssignmentsContainer(self)
+
+        print(f"Fuck {datetime.now()}")
+        return list(filter(lambda x: not default_assignment_module(x), self.modules)) + [self.assignments_container]
 
     def get_column_data(self, column: int) -> str | None:
         if column == 0:
@@ -231,12 +281,6 @@ class ModuleItem(MappedAsDataclass, Base, tree.HasParent, tree.HasColumnData):
     def index_of_self(self) -> int:
         return self.module.items.index(self)
 
-    def get_column_data(self, column: int) -> str | None:
-        if column == 0:
-            return self.name
-        else:
-            return None
-
 
 class ModuleFile(ModuleItem):
     __tablename__ = "module_files"
@@ -277,7 +321,7 @@ class ModulePage(ModuleItem, PageLike):
             return super().__eq__(__value)
 
 
-class Assignment(MappedAsDataclass, Base, PageLike, init =False):
+class Assignment(MappedAsDataclass, Base, PageLike, tree.HasParent, init =False):
     __tablename__ = "assignments"
 
     id: Mapped[str] = mapped_column(primary_key=True)
@@ -310,3 +354,13 @@ class Assignment(MappedAsDataclass, Base, PageLike, init =False):
     @property
     def content(self) -> str:
         return self.description
+
+    def parent(self) -> Any:
+        return self.course.assignments_container
+
+    def index_of_self(self) -> int:
+        return self.course.assignments.index(self)
+
+
+
+

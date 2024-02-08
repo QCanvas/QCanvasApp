@@ -240,7 +240,7 @@ class CourseLoader:
                     elif g_assignment.updated_at.replace(tzinfo=None) <= assignment.updated_at:
                         continue
 
-                    assignment.name = g_assignment.name
+                    assignment.name = g_assignment.name.strip("\t  ")
                     assignment.description = g_assignment.description
                     assignment.created_at = g_assignment.created_at
                     assignment.updated_at = g_assignment.updated_at

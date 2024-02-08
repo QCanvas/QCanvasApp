@@ -19,5 +19,5 @@ class HasParent:
 class HasChildren:
     collapsed: Mapped[bool] = mapped_column(default=False, init=False)
 
-    def get_children(self) -> Sequence:
+    def get_children(self) -> Sequence[HasColumnData]:
         raise NotImplementedError()
