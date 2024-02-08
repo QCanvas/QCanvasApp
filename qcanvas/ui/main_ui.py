@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 from typing import Sequence
 
+from bs4 import BeautifulSoup
+
 from qcanvas.QtVersionHelper.QtGui import QStandardItemModel, QStandardItem
-from qcanvas.QtVersionHelper.QtWidgets import QMainWindow, QTreeView
-from qcanvas.QtVersionHelper.QtCore import Qt
+from qcanvas.QtVersionHelper.QtWidgets import *
+from qcanvas.QtVersionHelper.QtCore import Qt, QItemSelection, Slot
 
 import qcanvas.util.tree_util as tree
 
@@ -13,24 +15,24 @@ from qcanvas.util.tree_util import ExpandingTreeView
 
 
 class MyItem(QStandardItem):
-    _data: tree.HasText
+    content: tree.HasText
 
     def __init__(self, data: tree.HasText):
         super().__init__()
-        self._data = data
+        self.content = data
 
     def data(self, role=257):
         if role == Qt.ItemDataRole.DisplayRole:
-            return self._data.text
+            return self.content.text
 
 
 class AppMainWindow(QMainWindow):
     def __init__(self, courses: Sequence[db.Course]):
         super().__init__()
 
-        model = QStandardItemModel()
+        self.model = QStandardItemModel()
 
-        root: QStandardItem = model.invisibleRootItem()
+        root: QStandardItem = self.model.invisibleRootItem()
 
         for course in courses:
             course_node = MyItem(course)
@@ -79,6 +81,33 @@ class AppMainWindow(QMainWindow):
 
             root.appendRow(course_node)
 
+        splitter = QSplitter()
+        self.text = QTextBrowser()
+
         self.tree = QTreeView()
-        self.tree.setModel(model)
-        self.setCentralWidget(self.tree)
+        self.tree.setModel(self.model)
+        self.tree.selectionModel().selectionChanged.connect(self.on_item_clicked)
+
+        splitter.addWidget(self.tree)
+        splitter.addWidget(self.text)
+
+        self.setCentralWidget(splitter)
+
+    @Slot()
+    def on_item_clicked(self, selected: QItemSelection, deselected: QItemSelection):
+        node = self.model.itemFromIndex(selected.indexes()[0])
+
+        if isinstance(node, MyItem):
+            item = node.content
+
+            if isinstance(item, db.PageLike):
+                bs = BeautifulSoup(item.content, "html.parser")
+
+                for ele in bs.find_all("link", {"rel": "stylesheet"}):
+                    ele.decompose()
+
+                self.text.setHtml(str(bs))
+
+
+
+
