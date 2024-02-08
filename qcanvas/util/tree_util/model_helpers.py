@@ -8,6 +8,12 @@ class HasColumnData:
         raise NotImplementedError()
 
 
+class HasText:
+    @property
+    def text(self) -> str:
+        raise NotImplementedError()
+
+
 class HasParent:
     def parent(self) -> Any:
         raise NotImplementedError()
