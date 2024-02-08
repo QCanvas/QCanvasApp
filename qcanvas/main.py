@@ -57,20 +57,22 @@ async def run():
 
 async def get_course_data() -> Sequence[db.Course]:
     async with AsyncSession(engine, expire_on_commit=False) as session, session.begin():
+        module_items_load = selectinload(db.Course.modules).joinedload(db.Module.items)
+
         return (await session.execute(select(db.Course)
                                       .options(
             selectinload(db.Course.modules)
             .joinedload(db.Module.course),
-            selectinload(db.Course.modules)
-            .joinedload(db.Module.items)
-            .selectin_polymorphic([db.ModulePage, db.ModuleFile])
+
+            module_items_load.selectin_polymorphic([db.ModulePage, db.ModuleFile])
             .joinedload(db.ModuleItem.module),
+
+            module_items_load.joinedload(db.ModuleItem.resources),
             selectinload(db.Course.assignments)
             .joinedload(db.Assignment.course),
+
             selectinload(db.Course.assignments)
             .joinedload(db.Assignment.resources)
-            # .joinedload(db.ModuleItem.module)
-            # .joinedload(db.ModuleItem.)
         ))).scalars().all()
 
 
