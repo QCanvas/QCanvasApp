@@ -24,7 +24,7 @@ class CanvasMediaObjectScanner(ResourceScanner):
                 and link.attrs["data-media-type"] == "video"
         )
 
-    async def extract_resource(self, link: Tag) -> db.Resource:
+    async def extract_resource(self, link: Tag, file_id: str) -> db.Resource:
         # Get the page for the embedded player (I could not find another way to get the needed data from canvas)
         response = (await self.client.get(link.attrs["src"])).text
         # Parse the HTML response
@@ -50,17 +50,15 @@ class CanvasMediaObjectScanner(ResourceScanner):
         media_source = media_data["media_sources"][0]
 
         return db.Resource(
-            self.extract_id(link),
-            media_source["src"],
-            media_data["title"],
-            media_data["media_id"],
-            media_source["size"]
+            id=file_id,
+            url=media_source["src"],
+            friendly_name=media_data["title"],
+            file_size=media_source["size"]
         )
 
     def extract_id(self, link: Tag) -> str:
-        url = URL(link.attrs["src"])
-
-        return "canvas_media_" + url.path.rsplit("/", 2)[-1]
+        #todo also fucking explain
+        return URL(link.attrs["src"]).path.rsplit("/", 2)[-1]
 
     async def download(self):
         pass

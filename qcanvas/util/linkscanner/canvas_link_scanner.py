@@ -5,6 +5,8 @@ from qcanvas import db as db
 from qcanvas.net.canvas import CanvasClient
 from qcanvas.util.linkscanner.resource_scanner import ResourceScanner
 
+canvas_resource_id_prefix = "canvas_file"
+
 
 class CanvasFileScanner(ResourceScanner):
     _canvas_client: CanvasClient
@@ -18,17 +20,16 @@ class CanvasFileScanner(ResourceScanner):
 
         return "data-api-returntype" in link.attrs.keys() and link["data-api-returntype"] == "File"
 
-    async def extract_resource(self, link: Tag) -> db.Resource:
+    async def extract_resource(self, link: Tag, file_id: str) -> db.Resource:
         return db.convert_legacy_file(await self._canvas_client.get_file_from_endpoint(link["data-api-endpoint"]))
 
     def extract_id(self, link: Tag) -> str:
-        return "canvas_" + URL(link["data-api-endpoint"]).path.rsplit('/', 2)[-1]
+        #todo please fucking explain what the hell this does
+        return URL(link["data-api-endpoint"]).path.rsplit('/', 2)[-1]
 
     async def download(self):
         pass
 
     @property
     def name(self) -> str:
-        return "canvas_file"
-
-
+        return canvas_resource_id_prefix

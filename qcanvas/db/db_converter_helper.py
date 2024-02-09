@@ -41,13 +41,13 @@ def convert_file_page(file: gql.File) -> db.ModuleFile:
 
 
 def convert_file(file: gql.File, file_size: int) -> db.Resource:
-    return db.Resource(id=f"canvas_{file.m_id}", url=file.url, friendly_name=clean_string(file.display_name),
-                       file_name=f"{file.m_id}", date_discovered=datetime.now(), file_size=file_size)
+    return db.Resource(id=str(file.m_id), url=file.url, friendly_name=clean_string(file.display_name),
+                       date_discovered=datetime.now(), file_size=file_size)
 
 
 def convert_legacy_file(file: LegacyFile) -> db.Resource:
-    return db.Resource(id=f"canvas_{file.id}", url=file.url, friendly_name=clean_string(file.display_name),
-                       file_name=str(file.id), date_discovered=datetime.now(), file_size=file.size)
+    return db.Resource(id=str(file.id), url=file.url, friendly_name=clean_string(file.display_name),
+                       date_discovered=datetime.now(), file_size=file.size)
 
 
 def convert_module(module: gql.Module) -> db.Module:

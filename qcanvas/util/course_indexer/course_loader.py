@@ -19,6 +19,8 @@ from qcanvas.util.task_pool import TaskPool
 import qcanvas.util.course_indexer.conversion_helpers as conv_helper
 import qcanvas.util.course_indexer.resource_helpers as resource_helper
 
+from qcanvas.util.linkscanner.canvas_link_scanner import canvas_resource_id_prefix
+
 _logger = logging.getLogger("course_loader")
 
 
@@ -182,7 +184,7 @@ class CourseLoader:
         _logger.debug(f"Loading module file %s %s", g_file.m_id, g_file.display_name)
 
         resource = await self._resource_pool.submit(
-            f"canvas_{g_file.m_id}",  # to match the format used by canvas link extractor
+            f"${canvas_resource_id_prefix}:{g_file.m_id}",  # to match the format used by canvas link extractor
             lambda: self._fetch_module_file_resource(g_file, course_id)
         )
 
@@ -195,6 +197,7 @@ class CourseLoader:
         _logger.debug(f"Fetching file (for module file) %s %s", file.m_id, file.display_name)
         result = await self._client.get_file(file.m_id, course_id)
         resource = db.convert_file(file, result.size)
+        resource.id = f"{canvas_resource_id_prefix}:{resource.id}"
         resource.course_id = course_id
 
         return resource

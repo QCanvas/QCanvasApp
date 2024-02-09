@@ -151,11 +151,8 @@ class Resource(MappedAsDataclass, Base, tree.HasText):
     course_id: Mapped[str] = mapped_column(ForeignKey("courses.id"))
     course: Mapped["Course"] = relationship(back_populates="resources")
 
-    # type: Mapped[str]
     url: Mapped[str]
     friendly_name: Mapped[str]  # Human-readable name
-    # todo maybe delete file_name? not sure if it's needed
-    file_name: Mapped[str]  # Internal name that references the file on disk
     file_size: Mapped[int]
     state: Mapped[ResourceState]
     fail_message: Mapped[Optional[str]]
@@ -166,14 +163,13 @@ class Resource(MappedAsDataclass, Base, tree.HasText):
     assignments: Mapped[List["Assignment"]] = relationship(secondary=ResourceToAssignmentAssociation.__table__,
                                                            back_populates="resources")
 
-    def __init__(self, id: str, url: str, friendly_name: str, file_name: str, file_size: int,
+    def __init__(self, id: str, url: str, friendly_name: str, file_size: int,
                  date_discovered: datetime = datetime.now(),
                  fail_message: Optional[str] = None, state=ResourceState.NOT_DOWNLOADED):
         super().__init__()
         self.id = id
         self.url = url
         self.friendly_name = friendly_name
-        self.file_name = file_name
         self.file_size = file_size
         self.fail_message = fail_message
         self.state = state

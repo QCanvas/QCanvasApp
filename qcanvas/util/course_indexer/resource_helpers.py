@@ -110,13 +110,13 @@ async def _process_link(link_scanners: Sequence[ResourceScanner], resource_pool:
 
             return await resource_pool.submit(
                 resource_id,
-                lambda: _extract_file_info(link, scanner, course_id)
+                lambda: _extract_file_info(link, scanner, resource_id, course_id)
             )
 
     return None
 
 
-async def _extract_file_info(link: Tag, scanner: ResourceScanner, course_id: str) -> db.Resource | None:
+async def _extract_file_info(link: Tag, scanner: ResourceScanner, resource_id : str, course_id: str) -> db.Resource | None:
     """
     Extracts file info from `link` using `scanner` and assigns the course_id to the resulting resource.
 
@@ -138,9 +138,10 @@ async def _extract_file_info(link: Tag, scanner: ResourceScanner, course_id: str
     try:
         _logger.debug(f"Fetching info for file %s with scanner %s", scanner.extract_id(link), scanner.name)
 
-        result = await scanner.extract_resource(link)
+        result = await scanner.extract_resource(link, resource_id)
+        result.id = f"{scanner.name}:{result.id}"
         result.course_id = course_id
         return result
     except BaseException as e:
-        _logger.error(f"Failed to retrieve info for link %s: %s", scanner.extract_id(link), str(e))
+        _logger.error(f"Failed to retrieve info for file id %s: %s", f"{scanner.name}:{resource_id}", str(e))
         return None
