@@ -5,10 +5,10 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Sequence
 
-from bs4 import BeautifulSoup, Tag
+import httpx
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio.session import async_sessionmaker as AsyncSessionMaker, AsyncSession
-from sqlalchemy.orm import selectinload, selectin_polymorphic
+from sqlalchemy.orm import selectin_polymorphic
 
 import qcanvas.db as db
 import qcanvas.queries as queries
@@ -56,13 +56,13 @@ def _prepare_out_of_date_pages_for_loading(g_courses: Sequence[queries.Course], 
                 content = g_moduleitem.content
 
                 if isinstance(content, queries.Page) or isinstance(content, queries.File):
-                    if (
-                            content.m_id not in pages_id_mapped
-                            or content.updated_at.replace(tzinfo=None) > pages_id_mapped[content.m_id].updated_at
-                    ):
-                        result.append(TransientModulePage(content, g_course.m_id, g_module.q_id, item_position))
-                    else:
-                        _logger.debug("Page %s is already up to date", content.m_id)
+                    # if (
+                    #         content.m_id not in pages_id_mapped
+                    #         or content.updated_at.replace(tzinfo=None) > pages_id_mapped[content.m_id].updated_at
+                    # ):
+                    result.append(TransientModulePage(content, g_course.m_id, g_module.q_id, item_position))
+                    # else:
+                    #     _logger.debug("Page %s is already up to date", content.m_id)
 
     return result
 
@@ -158,7 +158,7 @@ class CourseLoader:
         -------
             The list of complete pages with page content loaded.
         """
-        tasks: list[Task[db.ModuleItem]] = []
+        tasks: list[Task[db.ModuleItem | None]] = []
 
         for page in pages:
             content = page.page
@@ -173,7 +173,7 @@ class CourseLoader:
         if len(tasks) > 0:
             await asyncio.wait(tasks)
 
-            return [task.result() for task in tasks]
+            return [task.result() for task in tasks if task.result() is not None]
         else:
             return []
 
@@ -200,17 +200,25 @@ class CourseLoader:
         return resource
 
     async def load_module_page(self, g_page: queries.Page, course_id: str, module_id: str,
-                               position: int) -> db.ModulePage:
+                               position: int) -> db.ModulePage | None:
         return await self._moduleitem_pool.submit(
             g_page.m_id,
             lambda: self._fetch_module_item_page(g_page, course_id, module_id, position)
         )
 
     async def _fetch_module_item_page(self, page: queries.Page, course_id: str, module_id: str,
-                                      position: int) -> db.ModulePage:
-        _logger.debug(f"Fetching module page %s %s", page.m_id, page.title)
+                                      position: int) -> db.ModulePage | None:
+        _logger.debug("Fetching module page %s %s", page.m_id, page.title)
 
-        result = await self._client.get_page(page.m_id, course_id)
+        try:
+            result = await self._client.get_page(page.m_id, course_id)
+        except httpx.HTTPStatusError as e:
+            _logger.warning(e)
+            return None
+
+        if result.locked_for_user:
+            _logger.warning("Page %s %s is locked", page.m_id, page.title)
+            return None
 
         page = db.convert_page(page, result.body)
         page.module_id = module_id
