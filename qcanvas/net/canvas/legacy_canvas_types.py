@@ -28,9 +28,9 @@ class LegacyPage:
     published: bool
     hide_from_students: bool
     locked_for_user: bool
-    body: str
+    body: str | None
 
-    def __init__(self, published: bool, hide_from_students: bool, locked_for_user: bool, body: str) -> None:
+    def __init__(self, published: bool, hide_from_students: bool, locked_for_user: bool, body: str | None) -> None:
         self.published = published
         self.hide_from_students = hide_from_students
         self.locked_for_user = locked_for_user
@@ -42,7 +42,7 @@ class LegacyPage:
         published = from_bool(obj.get("published"))
         hide_from_students = from_bool(obj.get("hide_from_students"))
         locked_for_user = from_bool(obj.get("locked_for_user"))
-        body = from_str(obj.get("body"))
+        body = None if locked_for_user else from_str(obj.get("body"))
         return LegacyPage(published, hide_from_students, locked_for_user, body)
 
     def to_dict(self) -> dict:
