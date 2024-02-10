@@ -109,7 +109,7 @@ async def _process_link(link_scanners: Sequence[ResourceScanner], resource_pool:
             resource_id = scanner.extract_id(link)
 
             return await resource_pool.submit(
-                resource_id,
+                f"{scanner.name}:{resource_id}",
                 lambda: _extract_file_info(link, scanner, resource_id, course_id)
             )
 

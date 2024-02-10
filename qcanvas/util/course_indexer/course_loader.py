@@ -184,7 +184,7 @@ class CourseLoader:
         _logger.debug(f"Loading module file %s %s", g_file.m_id, g_file.display_name)
 
         resource = await self._resource_pool.submit(
-            f"${canvas_resource_id_prefix}:{g_file.m_id}",  # to match the format used by canvas link extractor
+            f"{canvas_resource_id_prefix}:{g_file.m_id}",  # to match the format used by canvas link extractor
             lambda: self._fetch_module_file_resource(g_file, course_id)
         )
 
