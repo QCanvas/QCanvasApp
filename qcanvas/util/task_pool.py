@@ -21,7 +21,7 @@ class TaskPool(Generic[T]):
     submitted again.
     """
 
-    _results: dict[object, asyncio.Event | T | None] = {}
+    _results: dict[object, asyncio.Event | T | None]
     _semaphore = asyncio.Semaphore()
 
     _remember_result: bool
@@ -49,6 +49,8 @@ class TaskPool(Generic[T]):
             Whether to print the status of tasks as they are awaited and submitted
         """
         super().__init__()
+
+        self._results = {}
 
         if not wait_if_in_progress and remember_result:
             raise ValueError("Can't remember result without waiting")

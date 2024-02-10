@@ -62,7 +62,7 @@ def _prepare_out_of_date_pages_for_loading(g_courses: Sequence[queries.Course], 
                     #         content.m_id not in pages_id_mapped
                     #         or content.updated_at.replace(tzinfo=None) > pages_id_mapped[content.m_id].updated_at
                     # ):
-                    result.append(TransientModulePage(content, g_course.m_id, g_module.q_id, item_position))
+                        result.append(TransientModulePage(content, g_course.m_id, g_module.q_id, item_position))
                     # else:
                     #     _logger.debug("Page %s is already up to date", content.m_id)
 
@@ -87,7 +87,7 @@ class CourseLoader:
         self._session_maker = sessionmaker
         self._last_update = last_update
 
-        self._resource_pool = TaskPool()
+        self._resource_pool = TaskPool(echo=True)
         self._moduleitem_pool = TaskPool()
 
     async def load_courses_data(self, g_courses: Sequence[queries.Course]):
@@ -104,9 +104,9 @@ class CourseLoader:
 
             await resource_helper.create_assignment_resource_relations(
                 await resource_helper.map_links_in_pages(
-                    self._link_scanners,
-                    self._resource_pool,
-                    assignments
+                    link_scanners=self._link_scanners,
+                    resource_pool=self._resource_pool,
+                    items=assignments
                 ),
                 session
             )
@@ -128,16 +128,16 @@ class CourseLoader:
             .where(db.Resource.course_id.in_(course_ids))
         )).scalars().all()
 
-        self._add_resources_and_pages_to_taskpool(existing_pages, existing_resources)
+        self._add_resources_and_pages_to_taskpool(existing_pages=existing_pages, existing_resources=existing_resources)
 
         pages_to_update = _prepare_out_of_date_pages_for_loading(g_courses, existing_pages)
         module_items = await self._load_page_content(pages_to_update)
 
         await resource_helper.create_module_item_resource_relations(
             await resource_helper.map_links_in_pages(
-                self._link_scanners,
-                self._resource_pool,
-                list(filter(lambda x: isinstance(x, db.PageLike), module_items))
+                link_scanners=self._link_scanners,
+                resource_pool=self._resource_pool,
+                items=list(filter(lambda x: isinstance(x, db.PageLike), module_items))
             ),
             session
         )
