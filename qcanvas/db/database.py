@@ -152,7 +152,7 @@ class Resource(MappedAsDataclass, Base, tree.HasText):
     course: Mapped["Course"] = relationship(back_populates="resources")
 
     url: Mapped[str]
-    friendly_name: Mapped[str]  # Human-readable name
+    file_name: Mapped[str]  # Human-readable name
     file_size: Mapped[int]
     state: Mapped[ResourceState]
     fail_message: Mapped[Optional[str]]
@@ -163,13 +163,13 @@ class Resource(MappedAsDataclass, Base, tree.HasText):
     assignments: Mapped[List["Assignment"]] = relationship(secondary=ResourceToAssignmentAssociation.__table__,
                                                            back_populates="resources")
 
-    def __init__(self, id: str, url: str, friendly_name: str, file_size: int,
+    def __init__(self, id: str, url: str, file_name: str, file_size: int,
                  date_discovered: datetime = datetime.now(),
                  fail_message: Optional[str] = None, state=ResourceState.NOT_DOWNLOADED):
         super().__init__()
         self.id = id
         self.url = url
-        self.friendly_name = friendly_name
+        self.file_name = file_name
         self.file_size = file_size
         self.fail_message = fail_message
         self.state = state
@@ -183,7 +183,7 @@ class Resource(MappedAsDataclass, Base, tree.HasText):
 
     @property
     def text(self) -> str:
-        return self.friendly_name
+        return self.file_name
 
 
 class ModuleItem(MappedAsDataclass, Base, tree.HasText):

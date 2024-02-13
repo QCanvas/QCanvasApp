@@ -35,7 +35,7 @@ class DropboxScanner(ResourceScanner):
         else:
             return False
 
-    async def extract_resource(self, link: Tag, file_id : str) -> db.Resource:
+    async def extract_resource(self, link: Tag, file_id: str) -> db.Resource:
         url = URL(link.attrs["href"]).copy_set_param("dl", 1)
 
         req = self.client.build_request(
@@ -51,12 +51,13 @@ class DropboxScanner(ResourceScanner):
             filename = parse_content_disposition(resp.headers["content-disposition"])["filename"]
             size = int(resp.headers["content-length"])
 
-            return db.Resource(id=file_id, url=str(url), friendly_name=filename, file_size=size)
+            return db.Resource(id=file_id, url=str(url), file_name=filename, file_size=size)
         finally:
             await resp.aclose()
 
     def extract_id(self, link: Tag) -> str:
-        #todo fuck you
+        # ***REMOVED***
+        # ------- Extract this part ^^^^^^^^^^^^^^^
         return URL(link.attrs["href"]).path.split("/", 3)[2]
 
     async def download(self):
@@ -65,5 +66,3 @@ class DropboxScanner(ResourceScanner):
     @property
     def name(self) -> str:
         return "dropbox"
-
-

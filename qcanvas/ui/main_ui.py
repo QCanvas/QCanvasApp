@@ -1,56 +1,45 @@
-from dataclasses import dataclass
+from datetime import datetime
 from typing import Sequence
 
 from bs4 import BeautifulSoup
 
 from qcanvas.QtVersionHelper.QtGui import QStandardItemModel, QStandardItem
 from qcanvas.QtVersionHelper.QtWidgets import *
-from qcanvas.QtVersionHelper.QtCore import Qt, QItemSelection, Slot
-
-import qcanvas.util.tree_util as tree
+from qcanvas.QtVersionHelper.QtCore import QItemSelection, Slot
 
 import qcanvas.db.database as db
-# from qcanvas.ui.course_model import CourseModel
-from qcanvas.util.tree_util import ExpandingTreeView
-
-
-class MyItem(QStandardItem):
-    content: tree.HasText
-
-    def __init__(self, data: tree.HasText):
-        super().__init__()
-        self.content = data
-
-    def data(self, role=257):
-        if role == Qt.ItemDataRole.DisplayRole:
-            return self.content.text
+from qcanvas.ui.container_item import ContainerItem
+from qcanvas.util import canvas_garbage_remover
 
 
 class AppMainWindow(QMainWindow):
     def __init__(self, courses: Sequence[db.Course]):
         super().__init__()
 
+        courses = sorted(courses, key=lambda x: x.term.start_at or datetime.min)
+
         self.model = QStandardItemModel()
+        self.model.setHorizontalHeaderItem(0, QStandardItem("Course"))
 
         root: QStandardItem = self.model.invisibleRootItem()
 
         for course in courses:
-            course_node = MyItem(course)
+            course_node = ContainerItem(course)
 
-            default_assessments_module : db.Module | None = None
+            default_assessments_module: db.Module | None = None
 
             for module in course.modules:
                 if module.name.lower() in ["assessments", "assessment"]:
                     default_assessments_module = module
                     continue
 
-                module_node = MyItem(module)
+                module_node = ContainerItem(module)
 
                 for module_item in list[db.ModuleItem](module.items):
-                    module_item_node = MyItem(module_item)
+                    module_item_node = ContainerItem(module_item)
 
                     for resource in module_item.resources:
-                        module_item_node.appendRow(MyItem(resource))
+                        module_item_node.appendRow(ContainerItem(resource))
 
                     module_node.appendRow(module_item_node)
 
@@ -62,18 +51,18 @@ class AppMainWindow(QMainWindow):
                 assignments_node.setText("Putting the ASS in assignments")
 
                 for module_item in default_assessments_module.items:
-                    page_node = MyItem(module_item)
+                    page_node = ContainerItem(module_item)
 
                     for resource in module_item.resources:
-                        page_node.appendRow(MyItem(resource))
+                        page_node.appendRow(ContainerItem(resource))
 
                     assignments_node.appendRow(page_node)
 
                 for assignment in course.assignments:
-                    assignment_node = MyItem(assignment)
+                    assignment_node = ContainerItem(assignment)
 
                     for resource in assignment.resources:
-                        assignment_node.appendRow(MyItem(resource))
+                        assignment_node.appendRow(ContainerItem(resource))
 
                     assignments_node.appendRow(assignment_node)
 
@@ -97,17 +86,11 @@ class AppMainWindow(QMainWindow):
     def on_item_clicked(self, selected: QItemSelection, deselected: QItemSelection):
         node = self.model.itemFromIndex(selected.indexes()[0])
 
-        if isinstance(node, MyItem):
+        if isinstance(node, ContainerItem):
             item = node.content
 
             if isinstance(item, db.PageLike):
-                bs = BeautifulSoup(item.content, "html.parser")
+                if item.content is None:
+                    return
 
-                for ele in bs.find_all("link", {"rel": "stylesheet"}):
-                    ele.decompose()
-
-                self.text.setHtml(str(bs))
-
-
-
-
+                self.text.setHtml(canvas_garbage_remover.remove_stylesheets_from_html(item.content))

@@ -52,13 +52,12 @@ class CanvasMediaObjectScanner(ResourceScanner):
         return db.Resource(
             id=file_id,
             url=media_source["src"],
-            friendly_name=media_data["title"],
+            file_name=media_data["title"],
             file_size=media_source["size"]
         )
 
     def extract_id(self, link: Tag) -> str:
-        #todo also fucking explain
-        return URL(link.attrs["src"]).path.rsplit("/", 2)[-1]
+        return link.attrs["data-media-id"]
 
     async def download(self):
         pass
