@@ -21,8 +21,6 @@ class TreeModel(QAbstractItemModel, Generic[T]):
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = ...) -> Any:
         if not index.isValid():
             return None
-        # if not (role == Qt.ItemDataRole.DisplayRole or role == Qt.ItemDataRole.EditRole) or not index.isValid():
-        #     return None
 
         item = self.get_item(index)
 
