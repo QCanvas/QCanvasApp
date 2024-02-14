@@ -1,10 +1,6 @@
 import random
 from typing import Sequence, Any
 
-import qdarktheme
-from PySide6.QtWidgets import QProxyStyle
-from qdarktheme._proxy_style import QDarkThemeStyle
-
 from qcanvas.QtVersionHelper.QtWidgets import QStyledItemDelegate, QStyleOptionProgressBar, QApplication, QStyle
 from qcanvas.QtVersionHelper.QtCore import QModelIndex, QPersistentModelIndex, Qt
 
@@ -91,17 +87,17 @@ class PageResourceModel(tree.TreeModel):
 
 class PageResourceDelegate(QStyledItemDelegate):
     def paint(self, painter, option, index):
+        if not isinstance(index.internalPointer(), FileContainer):
+            return super().paint(painter, option, index)
+
         # fixme please dont hardcode this
-        if index.column() == 3 and isinstance(index.internalPointer(), FileContainer):
-            style: QStyleOptionProgressBar = QStyleOptionProgressBar()
+        style: QStyleOptionProgressBar = QStyleOptionProgressBar()
 
-            style.rect = option.rect
-            style.minimum = 0
-            style.maximum = 100
-            style.progress = random.Random().randint(0, 100)
-            style.text = "Test"
-            style.textVisible = True
+        style.rect = option.rect
+        style.minimum = 0
+        style.maximum = 100
+        style.progress = 0
+        style.text = "Test"
+        style.textVisible = True
 
-            QApplication.style().drawControl(QStyle.ControlElement.CE_ProgressBar, style, painter)
-        else:
-            super().paint(painter, option, index)
+        QApplication.style().drawControl(QStyle.ControlElement.CE_ProgressBar, style, painter)
