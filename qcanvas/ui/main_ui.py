@@ -1,11 +1,13 @@
 import dataclasses
+import random
 from asyncio import Semaphore, Lock, Event
 from datetime import datetime
+
 from qasync import asyncSlot
 
 from qcanvas.QtVersionHelper.QtGui import QStandardItemModel, QStandardItem
 from qcanvas.QtVersionHelper.QtWidgets import *
-from qcanvas.QtVersionHelper.QtCore import QItemSelection, Slot, Signal, QStringListModel, Qt
+from qcanvas.QtVersionHelper.QtCore import QItemSelection, Slot, Signal, QStringListModel, Qt, QModelIndex, QItemSelectionModel
 
 import qcanvas.db.database as db
 from qcanvas.ui.container_item import ContainerItem
@@ -39,7 +41,7 @@ class AppMainWindow(QMainWindow):
         self.file_tree_model = PageResourceModel()
         self.file_tree.setModel(self.file_tree_model)
         self.file_tree.header().setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents)
-        self.file_tree.setItemDelegate(file_list.PageResourceDelegate())
+        self.file_tree.setItemDelegateForColumn(3, file_list.PageResourceDelegate())
         self.file_tree.setAlternatingRowColors(True)
 
         self.page_viewer = QTextBrowser()
@@ -65,13 +67,15 @@ class AppMainWindow(QMainWindow):
 
     @asyncSlot()
     async def sync_data(self):
-
-        # self.operation_lock.
+        # # self.operation_lock.
         self.sync_button.setEnabled(False)
         self.sync_button.setText("Synchronizing")
         try:
             await self.loader.synchronize_with_canvas()
             await self.load_data()
+            # self.course_tree.setIndexWidget(self.course_tree_model.index(1, 0), QPushButton("Fart"))
+            # self.course_tree.selectionModel().select(self.course_tree_model.index()))
+
         finally:
             self.sync_button.setEnabled(True)
             self.sync_button.setText("Synchronize")
