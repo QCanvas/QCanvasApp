@@ -1,5 +1,5 @@
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QStandardItem
+from qcanvas.QtVersionHelper.QtCore import Qt
+from qcanvas.QtVersionHelper.QtGui import QStandardItem
 
 from qcanvas.util import tree_util as tree
 
