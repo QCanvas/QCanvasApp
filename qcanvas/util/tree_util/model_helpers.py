@@ -4,7 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 
 class HasColumnData:
-    def get_column_data(self, column: int) -> str | None:
+    def get_column_data(self, column: int, role : int) -> str | None:
         raise NotImplementedError()
 
 
@@ -15,15 +15,24 @@ class HasText:
 
 
 class HasParent:
+    @property
     def parent(self) -> Any:
         raise NotImplementedError()
 
+    @property
     def index_of_self(self) -> int:
         raise NotImplementedError()
 
 
 class HasChildren:
-    collapsed: Mapped[bool] = mapped_column(default=False, init=False)
+    @property
+    def collapsed(self) -> bool:
+        raise NotImplementedError()
 
-    def get_children(self) -> Sequence[HasColumnData]:
+    @collapsed.setter
+    def collapsed(self, value: bool):
+        raise NotImplementedError()
+
+    @property
+    def children(self) -> Sequence[HasColumnData]:
         raise NotImplementedError()

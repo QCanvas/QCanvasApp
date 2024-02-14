@@ -12,10 +12,6 @@ class TreeModel(QAbstractItemModel, Generic[T]):
         super().__init__(parent)
         self.root: Sequence[T] = []
 
-    # @Slot()
-    # def reload_data(self) -> None:
-    #     raise NotImplementedError()
-
     def get_item(self, index: QModelIndex | QPersistentModelIndex) -> object:
         if index.isValid():
             return index.internalPointer()
@@ -23,13 +19,15 @@ class TreeModel(QAbstractItemModel, Generic[T]):
         return self.root
 
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = ...) -> Any:
-        if not (role == Qt.ItemDataRole.DisplayRole or role == Qt.ItemDataRole.EditRole) or not index.isValid():
+        if not index.isValid():
             return None
+        # if not (role == Qt.ItemDataRole.DisplayRole or role == Qt.ItemDataRole.EditRole) or not index.isValid():
+        #     return None
 
         item = self.get_item(index)
 
         if isinstance(item, HasColumnData):
-            return item.get_column_data(index.column())
+            return item.get_column_data(index.column(), role)
         else:
             return None
 
@@ -40,12 +38,12 @@ class TreeModel(QAbstractItemModel, Generic[T]):
         parent_item = self.get_item(parent)
 
         if isinstance(parent_item, HasChildren):
-            parent_list = parent_item.get_children()
+            parent_list = parent_item.children
         elif isinstance(parent_item, Sequence):
             parent_list = parent_item
         else:
             raise TypeError(
-                f"Expected parent of item to be Sequence or HasChildren, actually {parent_item.__class__.name}")
+                f"Expected parent of item to be Sequence or HasChildren, actually {parent_item.__class__}")
 
         if row > len(parent_list) or row < 0:
             return QModelIndex()
@@ -61,7 +59,7 @@ class TreeModel(QAbstractItemModel, Generic[T]):
         # We don't need to handle the root items here because... they are the root and have no parents
 
         if isinstance(child_item, HasParent):
-            return self.createIndex(child_item.index_of_self(), 0, child_item.parent())
+            return self.createIndex(child_item.index_of_self, 0, child_item.parent)
 
         return QModelIndex()
 
@@ -72,7 +70,7 @@ class TreeModel(QAbstractItemModel, Generic[T]):
         parent_item = self.get_item(parent)
 
         if isinstance(parent_item, HasChildren):
-            return len(parent_item.get_children())
+            return len(parent_item.children)
         elif isinstance(parent_item, Sequence):
             return len(parent_item)
         else:

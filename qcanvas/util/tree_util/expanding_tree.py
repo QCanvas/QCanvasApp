@@ -19,15 +19,14 @@ class ExpandingTreeView(QTreeView):
     duplicate objects are present in the tree. Does NOT support multi-selection.
     """
 
-    def __init__(self, session_factory: async_sessionmaker, parent: Optional[QWidget] = None):
+    def __init__(self, parent: Optional[QWidget] = None):
         """
         Constructor
         :param session_factory: The session that will be used to update an item's expanded/collapsed state when it is changed
         :param parent: The parent of this treeview
         """
         super().__init__(parent)
-        # self.session_factory = session_factory
-        # self._connect_expanded_listeners()
+        self._connect_expanded_listeners()
 
     def reexpand(self) -> None:
         """
@@ -46,18 +45,16 @@ class ExpandingTreeView(QTreeView):
             self._connect_expanded_listeners()
 
     def _connect_expanded_listeners(self):
-        pass
-        # self.expanded.connect(self.tree_item_expanded)
-        # self.collapsed.connect(self.tree_item_collapsed)
+        self.expanded.connect(self.tree_item_expanded)
+        self.collapsed.connect(self.tree_item_collapsed)
 
     def _disconnect_expanded_listeners(self):
-        pass
-        # self.expanded.disconnect(self.tree_item_expanded)
-        # self.collapsed.disconnect(self.tree_item_collapsed)
+        self.expanded.disconnect(self.tree_item_expanded)
+        self.collapsed.disconnect(self.tree_item_collapsed)
 
     def _reexpand_recur(self, item: HasChildren, index: QModelIndex) -> None:
         """
-        Internal function to expand an item in the tree. Recurrs to any children it has.
+        Internal function to expand an item in the tree. Recurs to any children it has.
         :param item: The object to expand in the tree
         :param index: The index of that object
         """
@@ -85,9 +82,7 @@ class ExpandingTreeView(QTreeView):
 
         # Update the item's state
         if isinstance(item, HasChildren):
-            with self.session_factory.begin() as session:
-                session.add(item)
-                item.collapsed = False
+            item.collapsed = False
 
     @Slot()
     def tree_item_collapsed(self, index: QModelIndex) -> None:
@@ -99,9 +94,7 @@ class ExpandingTreeView(QTreeView):
 
         # Update the item's state
         if isinstance(item, HasChildren):
-            with self.session_factory.begin() as session:
-                session.add(item)
-                item.collapsed = True
+            item.collapsed = True
 
     def get_path_of_indexes_for_item(self, item: Any) -> list[int]:
         """
@@ -116,8 +109,8 @@ class ExpandingTreeView(QTreeView):
         # Keep going until we reach the root
         while isinstance(item, HasParent):
             # Add the index of the item to the path and then go to the parent of that child until there is no parent
-            path.insert(0, item.index_of_self())
-            item = item.parent()
+            path.insert(0, item.index_of_self)
+            item = item.parent
 
         # Insert the index of the item belonging to the root list to the path
         path.insert(0, self.model().get_root().index(item))
@@ -169,6 +162,6 @@ class ExpandingTreeView(QTreeView):
                     raise TypeError("Parent object does not have any children but a child was expected")
 
                 # Go to the children of this child next
-                children = children.get_children()[item_index]
+                children = children.children[item_index]
 
         return model_index
