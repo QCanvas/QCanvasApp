@@ -1,14 +1,15 @@
 import asyncio
 import logging
-from asyncio import Task
+from asyncio import Task, Semaphore
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Sequence
 
 import httpx
+from gql import gql
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio.session import async_sessionmaker as AsyncSessionMaker, AsyncSession
-from sqlalchemy.orm import selectin_polymorphic
+from sqlalchemy.orm import selectin_polymorphic, selectinload
 
 import qcanvas.db as db
 import qcanvas.queries as queries
@@ -77,6 +78,8 @@ class CourseLoader:
     _resource_pool: TaskPool[db.Resource]
     _moduleitem_pool: TaskPool[db.ModuleItem]
 
+    # _operation_semaphore = Semaphore()
+
     def __init__(self,
                  client: CanvasClient,
                  sessionmaker: AsyncSessionMaker,
@@ -91,10 +94,50 @@ class CourseLoader:
         self._resource_pool = TaskPool(echo=True)
         self._moduleitem_pool = TaskPool()
 
+    async def get_data(self):
+        """
+        Loads all the course data
+        """
+        async with self._session_maker.begin() as session:
+            module_items_load = selectinload(db.Course.modules).joinedload(db.Module.items)
+
+            options = [
+                selectinload(db.Course.modules)
+                .joinedload(db.Module.course),
+
+                module_items_load.selectin_polymorphic([db.ModulePage, db.ModuleFile])
+                .joinedload(db.ModuleItem.module),
+
+                module_items_load.joinedload(db.ModuleItem.resources),
+                selectinload(db.Course.assignments)
+                .joinedload(db.Assignment.course),
+
+                selectinload(db.Course.assignments)
+                .joinedload(db.Assignment.resources),
+
+                selectinload(db.Course.term),
+
+                selectinload(db.Course.module_items)
+                .joinedload(db.ModuleItem.course)
+            ]
+
+            return (await session.execute(select(db.Course).options(*options))).scalars().all()
+
+    async def synchronize_with_canvas(self):
+        print("Querying index")
+        raw_query = (await self._client.do_graphql_query(gql(queries.all_courses.DEFINITION), detailed=True))
+        print("Loading data")
+        await self.load_courses_data(queries.AllCoursesQueryData(**raw_query).all_courses)
+
     async def load_courses_data(self, g_courses: Sequence[queries.Course]):
         """
         Loads data for all specified courses, including loading module pages and scanning for resources.
         """
+        # if self._operation_semaphore.locked():
+        #     raise Exception("Only 1 sync operation may happen at once")
+
+        # async with self._operation_semaphore:
+
         async with self._session_maker.begin() as session:
             # Load module pages/files for the courses
             await self._load_module_items(g_courses, session)
@@ -121,6 +164,8 @@ class CourseLoader:
         """
         Scans assignments for resources
         """
+        print("Scanning assignments for resources")
+
         await resource_helper.create_assignment_resource_relations(
             await resource_helper.map_resources_in_pages(
                 link_scanners=self._link_scanners,
@@ -153,6 +198,7 @@ class CourseLoader:
         pages_to_update = _prepare_out_of_date_pages_for_loading(g_courses, existing_pages)
         module_items = await self._load_page_content(pages_to_update)
 
+        print("Scanning pages for resources")
         await resource_helper.create_module_item_resource_relations(
             await resource_helper.map_resources_in_pages(
                 link_scanners=self._link_scanners,
@@ -186,8 +232,9 @@ class CourseLoader:
             content = page.page
 
             if isinstance(content, queries.File):
-                tasks.append(
-                    asyncio.create_task(self._load_module_file(content, page.course_id, page.module_id, page.position)))
+                task = asyncio.create_task(self._load_module_file(content, page.course_id, page.module_id, page.position))
+                task.add_done_callback(lambda x: print(f"Done {page.page.title}"))
+                tasks.append(task)
             elif isinstance(content, queries.Page):
                 tasks.append(
                     asyncio.create_task(self.load_module_page(content, page.course_id, page.module_id, page.position)))
