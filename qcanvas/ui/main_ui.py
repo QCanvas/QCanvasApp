@@ -137,5 +137,5 @@ class AppMainWindow(QMainWindow):
 
                 self.page_viewer.setHtml(canvas_garbage_remover.remove_stylesheets_from_html(item.content))
             elif isinstance(item, db.Course):
-                self.file_tree_model.update_page_list(item.module_items)
+                self.file_tree_model.update_page_list(item.module_items + item.assignments)
                 self.file_tree.expandAll()

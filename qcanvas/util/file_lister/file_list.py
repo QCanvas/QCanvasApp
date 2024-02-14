@@ -68,7 +68,7 @@ class PageContainer(tree.HasColumnData, tree.HasChildren):
 
 
 class PageResourceModel(tree.TreeModel):
-    def __init__(self, pages: Sequence[db.ModuleItem] = []):
+    def __init__(self, pages: Sequence[db.ModuleItem | db.PageLike] = []):
         super().__init__()
         self.root = [PageContainer(page) for page in pages if len(page.resources) > 0]
 
