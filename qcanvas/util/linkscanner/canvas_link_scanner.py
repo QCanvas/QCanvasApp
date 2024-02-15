@@ -15,7 +15,7 @@ class CanvasFileScanner(ResourceScanner):
         self._canvas_client = canvas_client
 
     def accepts_link(self, link: Tag) -> bool:
-        if link.name != "a":
+        if link.name not in ["a", "img"]:
             return False
 
         return "data-api-returntype" in link.attrs.keys() and link["data-api-returntype"] == "File"

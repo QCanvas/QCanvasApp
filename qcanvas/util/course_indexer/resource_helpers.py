@@ -128,7 +128,7 @@ def scan_page_for_links(page: db.PageLike) -> list[Tag]:
     Extracts (potential) resource elements from a PageLike object
     """
     soup = BeautifulSoup(page.content, 'html.parser')
-    return list(soup.find_all(["a", "iframe"]))
+    return list(soup.find_all(["a", "iframe", "img"]))
 
 
 async def _process_link(link_scanners: Sequence[ResourceScanner], resource_pool: TaskPool[db.Resource], link: Tag,
