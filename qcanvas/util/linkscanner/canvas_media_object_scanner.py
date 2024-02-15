@@ -53,7 +53,7 @@ class CanvasMediaObjectScanner(ResourceScanner):
             id=file_id,
             url=media_source["src"],
             file_name=media_data["title"],
-            file_size=media_source["size"]
+            file_size=int(media_source["size"]) * 1024  # Seems to be recorded in KiB, not bytes
         )
 
     def extract_id(self, link: Tag) -> str:
