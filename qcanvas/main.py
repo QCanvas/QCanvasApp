@@ -1,9 +1,7 @@
 import asyncio
-import json
 import logging
 import sys
 from datetime import datetime
-from typing import Sequence
 
 import httpx
 from qcanvas.QtVersionHelper.QtWidgets import QApplication

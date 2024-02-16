@@ -94,6 +94,10 @@ class CourseLoader:
         self._resource_pool = TaskPool(echo=True)
         self._moduleitem_pool = TaskPool()
 
+    async def update_course_preferences(self, preferences : db.CoursePreferences):
+        async with self._session_maker.begin() as session:
+            await session.merge(preferences)
+
     async def get_data(self):
         """
         Loads all the course data
@@ -118,7 +122,10 @@ class CourseLoader:
                 selectinload(db.Course.term),
 
                 selectinload(db.Course.module_items)
-                .joinedload(db.ModuleItem.course)
+                .joinedload(db.ModuleItem.course),
+
+                selectinload(db.Course.preferences)
+                .joinedload(db.CoursePreferences.course)
             ]
 
             return (await session.execute(select(db.Course).options(*options))).scalars().all()

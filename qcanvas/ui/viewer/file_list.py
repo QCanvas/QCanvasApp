@@ -48,16 +48,16 @@ class FileContainer(tree.HasColumnData, tree.HasParent):
         return self._index_of_self
 
 
-class PageContainer(tree.HasColumnData, tree.HasChildren):
-    def __init__(self, page: db.ModuleItem):
+class GroupedResourceContainer(tree.HasColumnData, tree.HasChildren):
+    def __init__(self, owner_name:str, resources: Sequence[db.Resource]):
         self._collapsed: bool = False
-        self._page = page
-        self._children = [FileContainer(file, self, index) for index, file in enumerate(page.resources)]
+        self._owner_name = owner_name
+        self._children = [FileContainer(file, self, index) for index, file in enumerate(resources)]
 
     def get_column_data(self, column: int, role: int) -> str | None:
         if role == Qt.DisplayRole:
             if column == 0:
-                return self._page.name
+                return self._owner_name
 
         return None
 
@@ -79,7 +79,7 @@ class PageContainer(tree.HasColumnData, tree.HasChildren):
 class FileColumnModel(tree.TreeModel):
     def __init__(self, pages: Sequence[db.ModuleItem | db.PageLike] = []):
         super().__init__()
-        self.root = [PageContainer(page) for page in pages if len(page.resources) > 0]
+        self.root = [GroupedResourceContainer(page) for page in pages if len(page.resources) > 0]
 
     def columnCount(self, parent: QModelIndex | QPersistentModelIndex = None) -> int:
         return 4
@@ -90,9 +90,29 @@ class FileColumnModel(tree.TreeModel):
 
     def load_page_list(self, pages: Sequence[db.ModuleItem]):
         self.beginResetModel()
-        self.root = [PageContainer(page) for page in pages if len(page.resources) > 0]
+        self.root = [GroupedResourceContainer(page.name, page.resources) for page in pages if len(page.resources) > 0]
         self.endResetModel()
 
+    def load_module_list(self, modules: Sequence[db.Module]):
+        self.beginResetModel()
+
+        self.root = []
+
+        for module in modules:
+            resources = []
+
+            for item in module.items:
+                resources.extend(item.resources)
+
+            if len(resources) > 0:
+                self.root.append(GroupedResourceContainer(module.name, resources))
+
+        self.endResetModel()
+
+    def clear(self):
+        self.beginResetModel()
+        self.root = []
+        self.endResetModel()
 
 class FileColumnDelegate(QStyledItemDelegate):
     def paint(self, painter, option, index):

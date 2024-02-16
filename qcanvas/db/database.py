@@ -51,17 +51,33 @@ def default_assignment_module(module: "Module") -> bool:
     return result
 
 
+class GroupByPreference(Enum):
+    GROUP_BY_PAGES = 0
+    GROUP_BY_MODULES = 1
+
+class CoursePreferences(Base):
+    __tablename__ = "preferences"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+
+    local_name: Mapped[Optional[str]]
+    files_group_by_preference: Mapped["GroupByPreference"] = mapped_column(default=GroupByPreference.GROUP_BY_PAGES)
+
+    course_id: Mapped[str] = mapped_column(ForeignKey("courses.id"))
+    course: Mapped["Course"] = relationship(back_populates="preferences")
+
+
 class Course(MappedAsDataclass, Base, tree.HasText, init=False):
     __tablename__ = "courses"
 
     id: Mapped[str] = mapped_column(primary_key=True)
-    # legacy_id: Mapped[str]
 
     term_id: Mapped[str] = mapped_column(ForeignKey("terms.id"))
     term: Mapped["Term"] = relationship(back_populates="courses")
 
+    preferences: Mapped["CoursePreferences"] = relationship(back_populates="course")
+
     name: Mapped[str]
-    local_name: Mapped[Optional[str]]
 
     modules: Mapped[List["Module"]] = relationship(back_populates="course")
     module_items: Mapped[List["ModuleItem"]] = relationship(back_populates="course")
@@ -225,6 +241,7 @@ class ModuleItem(MappedAsDataclass, Base, tree.HasText):
     @property
     def text(self) -> str:
         return self.name
+
 
 class ModuleFile(ModuleItem):
     __tablename__ = "module_files"

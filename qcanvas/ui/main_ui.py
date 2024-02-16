@@ -19,7 +19,6 @@ from qcanvas.util.course_indexer import CourseLoader
 from qcanvas.ui.viewer import file_list
 from qcanvas.ui.viewer.file_list import FileColumnModel
 
-
 T = TypeVar("T")
 
 
@@ -30,6 +29,8 @@ class AppMainWindow(QMainWindow):
 
     def __init__(self, data_loader: CourseLoader):
         super().__init__()
+
+        self.selected_course: db.Course | None = None
 
         self.setWindowTitle("QCanvas (Under construction)")
 
@@ -51,6 +52,7 @@ class AppMainWindow(QMainWindow):
         self.pages_viewer = PagesViewer()
 
         self.file_viewer = FileViewTab()
+        self.file_viewer.group_by_preference_changed.connect(self.course_file_group_by_preference_changed)
 
         self.tab_widget.insertTab(0, self.file_viewer, "Files")
         self.tab_widget.insertTab(1, self.assignment_viewer, "Assignments")
@@ -107,6 +109,7 @@ class AppMainWindow(QMainWindow):
     async def load_course_list(self):
         self.courses = (await self.loader.get_data())
 
+        self.selected_course = None
         self.course_selector_model.clear()
         self.course_selector_model.setHorizontalHeaderLabels(["Course"])
 
@@ -122,10 +125,10 @@ class AppMainWindow(QMainWindow):
 
         self.course_selector.expandAll()
 
-
     @Slot(QItemSelection, QItemSelection)
     def on_item_clicked(self, selected: QItemSelection, deselected: QItemSelection):
         if len(selected.indexes()) == 0:
+            self.selected_course = None
             return
 
         node = self.course_selector_model.itemFromIndex(selected.indexes()[0])
@@ -134,7 +137,17 @@ class AppMainWindow(QMainWindow):
             item = node.content
 
             if isinstance(item, db.Course):
+                self.selected_course = item
                 self.pages_viewer.fill_tree(item)
                 self.assignment_viewer.fill_tree(item)
-
                 self.file_viewer.load_course_files(item)
+                return
+
+        self.selected_course = None
+        self.file_viewer.clear()
+
+    @asyncSlot(db.CoursePreferences)
+    async def course_file_group_by_preference_changed(self, preference: db.GroupByPreference):
+        self.selected_course.preferences.files_group_by_preference = preference
+        await self.loader.update_course_preferences(self.selected_course.preferences)
+        self.file_viewer.load_course_files(self.selected_course)

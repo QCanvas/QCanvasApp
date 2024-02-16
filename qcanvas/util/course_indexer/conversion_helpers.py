@@ -61,7 +61,9 @@ async def create_course(g_course: queries.Course, session: AsyncSession, term: d
     if course is None:
         course = db.Course()
         course.id = g_course.m_id
+        course.preferences = db.CoursePreferences()
         session.add(course)
+
     course.name = canvas_garbage_remover.remove_garbage_from_title(g_course.name)
     course.term = term
 
