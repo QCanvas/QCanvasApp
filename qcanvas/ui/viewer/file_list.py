@@ -49,9 +49,8 @@ class FileContainer(tree.HasColumnData, tree.HasParent):
 
 
 class PageContainer(tree.HasColumnData, tree.HasChildren):
-    collapsed: bool = False
-
     def __init__(self, page: db.ModuleItem):
+        self._collapsed: bool = False
         self._page = page
         self._children = [FileContainer(file, self, index) for index, file in enumerate(page.resources)]
 
@@ -66,8 +65,18 @@ class PageContainer(tree.HasColumnData, tree.HasChildren):
     def children(self) -> Sequence[HasColumnData]:
         return self._children
 
+    @property
+    def collapsed(self):
+        return self._collapsed
 
-class PageResourceModel(tree.TreeModel):
+    @collapsed.setter
+    def collapsed(self, value : bool):
+        self._collapsed = value
+
+
+#todo maybe have this thing show pages with only a single file as just the file? it will reduce clutter
+#todo maybe an option to group by module (looking at YOU, OPERATING SYSTEMS)
+class FileColumnModel(tree.TreeModel):
     def __init__(self, pages: Sequence[db.ModuleItem | db.PageLike] = []):
         super().__init__()
         self.root = [PageContainer(page) for page in pages if len(page.resources) > 0]
@@ -79,13 +88,13 @@ class PageResourceModel(tree.TreeModel):
         if orientation == Qt.Orientation.Horizontal and role == Qt.ItemDataRole.DisplayRole:
             return ["Name", "Date Found", "Size", "Download"][section]
 
-    def update_page_list(self, pages: Sequence[db.ModuleItem]):
+    def load_page_list(self, pages: Sequence[db.ModuleItem]):
         self.beginResetModel()
         self.root = [PageContainer(page) for page in pages if len(page.resources) > 0]
         self.endResetModel()
 
 
-class PageResourceDelegate(QStyledItemDelegate):
+class FileColumnDelegate(QStyledItemDelegate):
     def paint(self, painter, option, index):
         if not isinstance(index.internalPointer(), FileContainer):
             return super().paint(painter, option, index)

@@ -1,5 +1,5 @@
-from abc import ABC, abstractmethod
-from asyncio import Semaphore, Lock, Event
+from abc import abstractmethod
+from asyncio import Event
 from datetime import datetime
 from typing import Sequence, TypeVar, Generic
 
@@ -7,104 +7,20 @@ from qasync import asyncSlot
 
 from qcanvas.QtVersionHelper.QtGui import QStandardItemModel, QStandardItem
 from qcanvas.QtVersionHelper.QtWidgets import *
-from qcanvas.QtVersionHelper.QtCore import QItemSelection, Slot, Signal, QStringListModel, Qt, QModelIndex, \
-    QItemSelectionModel
+from qcanvas.QtVersionHelper.QtCore import QItemSelection, Slot, Signal, Qt
 
 import qcanvas.db.database as db
 from qcanvas.ui.container_item import ContainerItem
+from qcanvas.ui.viewer.file_view_tab import FileViewTab
+from qcanvas.ui.viewer.page_list_viewer import AssignmentsViewer, PagesViewer
 from qcanvas.util import canvas_garbage_remover
+from qcanvas.util.constants import default_assignments_module_names
 from qcanvas.util.course_indexer import CourseLoader
-from qcanvas.util.file_lister import file_list
-from qcanvas.util.file_lister.file_list import PageResourceModel
+from qcanvas.ui.viewer import file_list
+from qcanvas.ui.viewer.file_list import FileColumnModel
 
-default_assignments_module_names = ["assessments", "assessment"]
 
 T = TypeVar("T")
-
-
-class PageLikeViewer(QWidget, Generic[T]):
-    def __init__(self):
-        super().__init__()
-        self.viewer = QTextBrowser()
-        self.tree = QTreeView()
-        self.model = QStandardItemModel()
-
-        self.tree.setModel(self.model)
-        self.tree.selectionModel().selectionChanged.connect(self.on_item_clicked)
-
-        layout = QHBoxLayout()
-        layout.addWidget(self.tree)
-        layout.addWidget(self.viewer)
-
-        layout.setStretch(1, 1)
-
-        self.setLayout(layout)
-
-    @abstractmethod
-    def fill_tree(self, data: T):
-        ...
-
-    @Slot(QItemSelection, QItemSelection)
-    def on_item_clicked(self, selected: QItemSelection, deselected: QItemSelection):
-        if len(selected.indexes()) == 0:
-            self.viewer.clear()
-            return
-
-        node = self.model.itemFromIndex(selected.indexes()[0])
-
-        if isinstance(node, ContainerItem):
-            item = node.content
-
-            if isinstance(item, db.PageLike):
-                if item.content is None:
-                    return
-
-                self.viewer.setHtml(canvas_garbage_remover.remove_stylesheets_from_html(item.content))
-
-
-class PagesViewer(PageLikeViewer[db.Course]):
-
-    def fill_tree(self, course: db.Course):
-        self.model.clear()
-
-        root = self.model.invisibleRootItem()
-
-        for module in course.modules:
-            if module.name.lower() in default_assignments_module_names:
-                continue
-
-            module_node = ContainerItem(module)
-
-            for module_item in list[db.ModuleItem](module.items):
-                module_node.appendRow(ContainerItem(module_item))
-
-            root.appendRow(module_node)
-
-        self.model.setHorizontalHeaderLabels(["Pages"])
-        self.tree.expandAll()
-
-class AssignmentsViewer(PageLikeViewer[db.Course]):
-
-    def fill_tree(self,  course: db.Course):
-        self.model.clear()
-
-        root = self.model.invisibleRootItem()
-
-        default_assessments_module = None
-
-        for module in course.modules:
-            if module.name.lower() in default_assignments_module_names:
-                default_assessments_module = module
-                break
-
-        if default_assessments_module is not None:
-            for module_item in default_assessments_module.items:
-                root.appendRow(ContainerItem(module_item))
-            for assignment in course.assignments:
-                root.appendRow(ContainerItem(assignment))
-
-        self.model.setHorizontalHeaderLabels(["Putting the ASS in assignments"])
-        self.tree.expandAll()
 
 
 class AppMainWindow(QMainWindow):
@@ -122,18 +38,6 @@ class AppMainWindow(QMainWindow):
 
         self.loader = data_loader
 
-        self.file_tree, self.file_tree_model = self.setup_file_tree()
-        self.assignment_file_tree, self.assignment_file_tree_model = self.setup_file_tree()
-
-        file_view_layout = QHBoxLayout()
-        file_view_layout.addWidget(self.setup_file_column("Files", self.file_tree))
-        file_view_layout.addWidget(self.setup_file_column("Assignment Files", self.assignment_file_tree))
-
-        file_view = QWidget()
-        file_view.setLayout(file_view_layout)
-
-        self.page_viewer = QTextBrowser()
-
         self.sync_button = QPushButton("Synchronize")
         self.sync_button.clicked.connect(self.sync_data)
 
@@ -146,7 +50,9 @@ class AppMainWindow(QMainWindow):
         self.assignment_viewer = AssignmentsViewer()
         self.pages_viewer = PagesViewer()
 
-        self.tab_widget.insertTab(0, file_view, "Files")
+        self.file_viewer = FileViewTab()
+
+        self.tab_widget.insertTab(0, self.file_viewer, "Files")
         self.tab_widget.insertTab(1, self.assignment_viewer, "Assignments")
         self.tab_widget.insertTab(2, self.pages_viewer, "Pages")
 
@@ -165,31 +71,6 @@ class AppMainWindow(QMainWindow):
 
         self.loaded.connect(self.load_course_list)
         self.loaded.emit()
-
-    @staticmethod
-    def setup_file_column(name : str, file_tree : QWidget) -> QWidget:
-        gbox = QGroupBox(name)
-        layout = QBoxLayout(QBoxLayout.Direction.TopToBottom)
-        layout.addWidget(file_tree)
-        gbox.setLayout(layout)
-
-        return gbox
-
-
-
-    @staticmethod
-    def setup_file_tree():
-        file_tree = QTreeView()
-        file_tree_model = PageResourceModel()
-        file_tree.setModel(file_tree_model)
-        file_tree.header().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
-        file_tree.header().setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
-        file_tree.header().setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
-        file_tree.header().setStretchLastSection(0)
-        file_tree.setItemDelegateForColumn(3, file_list.PageResourceDelegate())
-        file_tree.setAlternatingRowColors(True)
-
-        return file_tree, file_tree_model
 
     @asyncSlot()
     async def sync_data(self):
@@ -256,10 +137,4 @@ class AppMainWindow(QMainWindow):
                 self.pages_viewer.fill_tree(item)
                 self.assignment_viewer.fill_tree(item)
 
-                # fixme this does not move assignment pages from the default assignment module into the assignments column
-                # todo make this not stupid
-                self.file_tree_model.update_page_list([x for x in item.module_items if x.module.name.lower() not in default_assignments_module_names])
-                self.file_tree.expandAll()
-
-                self.assignment_file_tree_model.update_page_list(item.assignments + [x for x in item.module_items if x.module.name.lower() in default_assignments_module_names])
-                self.assignment_file_tree.expandAll()
+                self.file_viewer.load_course_files(item)
