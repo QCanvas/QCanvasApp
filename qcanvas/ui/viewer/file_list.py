@@ -74,8 +74,6 @@ class GroupedResourceContainer(tree.HasColumnData, tree.HasChildren):
         self._collapsed = value
 
 
-#todo maybe have this thing show pages with only a single file as just the file? it will reduce clutter
-#todo maybe an option to group by module (looking at YOU, OPERATING SYSTEMS)
 class FileColumnModel(tree.TreeModel):
     def __init__(self, pages: Sequence[db.ModuleItem | db.PageLike] = []):
         super().__init__()
@@ -113,6 +111,7 @@ class FileColumnModel(tree.TreeModel):
         self.beginResetModel()
         self.root = []
         self.endResetModel()
+
 
 class FileColumnDelegate(QStyledItemDelegate):
     def paint(self, painter, option, index):
