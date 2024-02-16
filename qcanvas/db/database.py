@@ -109,6 +109,9 @@ class Term(MappedAsDataclass, Base):
         self.end_at = end_at
         self.start_at = start_at
 
+    def __hash__(self):
+        return hash(self.id) ^ hash(self.end_at) ^ hash(self.start_at) ^ hash(self.name)
+
 
 class Module(MappedAsDataclass, Base, tree.HasText, init=False):
     __tablename__ = "modules"

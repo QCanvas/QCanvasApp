@@ -77,7 +77,7 @@ class PageResourceModel(tree.TreeModel):
 
     def headerData(self, section, orientation, role=None, *args, **kwargs):
         if orientation == Qt.Orientation.Horizontal and role == Qt.ItemDataRole.DisplayRole:
-            return ["Name", "Date Found", "Size", "Download progress"][section]
+            return ["Name", "Date Found", "Size", "Download"][section]
 
     def update_page_list(self, pages: Sequence[db.ModuleItem]):
         self.beginResetModel()
@@ -90,7 +90,6 @@ class PageResourceDelegate(QStyledItemDelegate):
         if not isinstance(index.internalPointer(), FileContainer):
             return super().paint(painter, option, index)
 
-        # fixme please dont hardcode this
         style: QStyleOptionProgressBar = QStyleOptionProgressBar()
 
         style.rect = option.rect
