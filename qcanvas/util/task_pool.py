@@ -5,14 +5,6 @@ from typing import Awaitable, TypeVar, Generic, Callable
 T = TypeVar("T")
 
 
-def restart_always(x) -> bool:
-    return True
-
-
-def restart_never(x) -> bool:
-    return False
-
-
 class TaskPool(Generic[T]):
     """
     A TaskPool is a utility that receives submitted tasks which have an identity and which should be executed no more
@@ -21,17 +13,8 @@ class TaskPool(Generic[T]):
     submitted again.
     """
 
-    _results: dict[object, asyncio.Event | T | None]
-    _semaphore = asyncio.Semaphore()
-
-    _remember_result: bool
-    _wait_if_in_progress: bool
-    _wait_if_just_started: bool
-    _restart_if_finished: bool
-    _echo: bool
-
     def __init__(self, remember_result: bool = True, wait_if_in_progress: bool = True,
-                 wait_if_just_started: bool = True, restart_task_predicate: Callable[[T], bool] = restart_never,
+                 wait_if_just_started: bool = True, restart_if_finished: bool = False,
                  echo: bool = False):
         """
         Parameters
@@ -50,16 +33,16 @@ class TaskPool(Generic[T]):
         """
         super().__init__()
 
-        self._results = {}
-
         if not wait_if_in_progress and remember_result:
             raise ValueError("Can't remember result without waiting")
 
-        self._remember_result = remember_result
-        self._wait_if_in_progress = wait_if_in_progress
-        self._wait_if_just_started = wait_if_just_started
-        self._restart_task_predicate = restart_task_predicate
-        self._echo = echo
+        self._results: dict[object, asyncio.Event | T | None] = {}
+        self._semaphore = asyncio.Semaphore()
+        self._remember_result: bool = remember_result
+        self._wait_if_in_progress: bool = wait_if_in_progress
+        self._wait_if_just_started: bool = wait_if_just_started
+        self._restart_if_finished: bool = restart_if_finished
+        self._echo: bool = echo
 
     def add_values(self, results: dict[object, T]) -> None:
         """
@@ -112,7 +95,7 @@ class TaskPool(Generic[T]):
                 return None
 
             if not isinstance(self._results[task_id], asyncio.Event):
-                if self._restart_task_predicate(self._results[task_id]):
+                if self._restart_if_finished:
                     if self._echo: print(
                         f"Task {task_id} already finished but configured to restart if finished, restarting.")
                     # start_task releases the semaphore, no need to do it here
