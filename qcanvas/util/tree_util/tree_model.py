@@ -56,7 +56,7 @@ class TreeModel(QAbstractItemModel, Generic[T]):
 
         # We don't need to handle the root items here because... they are the root and have no parents
 
-        if isinstance(child_item, HasParent):
+        if isinstance(child_item, HasParent) and child_item.parent is not None:
             return self.createIndex(child_item.index_of_self, 0, child_item.parent)
 
         return QModelIndex()

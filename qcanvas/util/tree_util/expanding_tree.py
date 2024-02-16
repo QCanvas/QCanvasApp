@@ -107,7 +107,7 @@ class ExpandingTreeView(QTreeView):
         path: list[int] = []
 
         # Keep going until we reach the root
-        while isinstance(item, HasParent):
+        while isinstance(item, HasParent) and item.parent is not None:
             # Add the index of the item to the path and then go to the parent of that child until there is no parent
             path.insert(0, item.index_of_self)
             item = item.parent
