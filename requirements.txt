@@ -9,3 +9,5 @@ tenacity~=8.2.3
 beautifulsoup4~=4.12.3
 git+ssh://git@qcanvas.codeberg.org/QCanvas/qenerate.git
 git+https://github.com/bdraco/aiosqlite.git@speed_up_process_thread
+qasync~=0.27.1
+bs4~=0.0.1
