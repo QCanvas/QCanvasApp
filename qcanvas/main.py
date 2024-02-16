@@ -21,7 +21,7 @@ from qcanvas.util.linkscanner.canvas_media_object_scanner import CanvasMediaObje
 from qcanvas.util.linkscanner.dropbox_scanner import DropboxScanner
 
 from qasync import QEventLoop
-
+import qcanvas.db as db
 import qdarktheme
 
 client = CanvasClient(canvas_url=URL(AppSettings.canvas_url), api_key=AppSettings.canvas_api_key)
@@ -40,7 +40,15 @@ loader = CourseLoader(
     last_update=datetime.min
 )
 
+
+async def create_meta():
+    async with engine.begin() as conn:
+        await conn.run_sync(db.Base.metadata.create_all)
+
+
 if __name__ == '__main__':
+    asyncio.run(create_meta())
+
     app = QApplication(sys.argv)
 
     qdarktheme.setup_theme("light")
