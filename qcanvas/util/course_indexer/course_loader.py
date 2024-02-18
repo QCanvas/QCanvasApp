@@ -1,11 +1,11 @@
 import asyncio
 import logging
-from asyncio import Task, Semaphore
+import sys
+from asyncio import Task
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Sequence
 
-import httpx
 from gql import gql
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio.session import async_sessionmaker as AsyncSessionMaker, AsyncSession
@@ -14,6 +14,7 @@ from sqlalchemy.orm import selectin_polymorphic, selectinload
 import qcanvas.db as db
 import qcanvas.queries as queries
 from qcanvas.net.canvas import CanvasClient
+from qcanvas.util.download_pool import DownloadPool
 from qcanvas.util.linkscanner.resource_scanner import ResourceScanner
 from qcanvas.util.task_pool import TaskPool
 
@@ -71,15 +72,8 @@ def _prepare_out_of_date_pages_for_loading(g_courses: Sequence[queries.Course], 
     return result
 
 # todo make this reusable and add some way of refreshing only a list of pages or one page or one course or something
+# todo use logger instead of print and put some signals around the place for useful things, e.g. indexing progress
 class CourseLoader:
-    _link_scanners: Sequence[ResourceScanner]
-    _session_maker: AsyncSessionMaker
-
-    _resource_pool: TaskPool[db.Resource]
-    _moduleitem_pool: TaskPool[db.ModuleItem]
-
-    # _operation_semaphore = Semaphore()
-
     def __init__(self,
                  client: CanvasClient,
                  sessionmaker: AsyncSessionMaker,
@@ -91,10 +85,52 @@ class CourseLoader:
         self._session_maker = sessionmaker
         self._last_update = last_update
 
-        self._resource_pool = TaskPool(echo=True)
-        self._moduleitem_pool = TaskPool()
+        self._resource_pool = TaskPool[db.Resource]()
+        self._moduleitem_pool = TaskPool[db.ModuleItem]()
+        self.download_pool = DownloadPool()
 
-    async def update_course_preferences(self, preferences : db.CoursePreferences):
+        # Map all the scanners we have to their own name
+        self._scanner_name_map = {scanner.name: scanner for scanner in self._link_scanners}
+
+        self._init_called = False
+
+    async def init(self):
+        self._init_called = True
+
+        async with self._session_maker.begin() as session:
+            # Load existing pages and resources from the database
+            existing_pages = (await session.execute(
+                select(db.ModuleItem)
+                .options(selectin_polymorphic(db.ModuleItem, [db.ModulePage]))
+            )).scalars().all()
+
+            existing_resources = (await session.execute(
+                select(db.Resource)
+            )).scalars().all()
+
+            # Add the existing items to the relevant taskpools
+            self._add_resources_and_pages_to_taskpool(existing_pages=existing_pages,
+                                                      existing_resources=existing_resources)
+
+    async def _download_resource_helper(self, channel : asyncio.Queue, link_handler : ResourceScanner, resource: db.Resource):
+        await link_handler.download(channel, resource)
+
+        # Do this here because this function will only be called once for this resource
+        async with self._session_maker.begin() as session:
+            session.add(resource)
+            resource.state = db.ResourceState.DOWNLOADED
+
+    async def download_resource(self, resource: db.Resource):
+        if not self._init_called:
+            sys.stderr.write("WARNING! INIT NOT CALLED FOR COURSE LOADER!! YOU'VE FUCKED UP!!!!!!!!!!!")
+
+        scanner_name: str = resource.id.split(':', 2)[0]
+        # Find the scanner that will deal with this resource
+        scanner = self._scanner_name_map[scanner_name]
+
+        await self.download_pool.submit(resource.id, lambda channel: self._download_resource_helper(channel, scanner, resource))
+
+    async def update_course_preferences(self, preferences: db.CoursePreferences):
         async with self._session_maker.begin() as session:
             await session.merge(preferences)
 
@@ -105,6 +141,7 @@ class CourseLoader:
         async with self._session_maker.begin() as session:
             module_items_load = selectinload(db.Course.modules).joinedload(db.Module.items)
 
+            # Eagerly load fucking everything
             options = [
                 selectinload(db.Course.modules)
                 .joinedload(db.Module.course),
@@ -137,6 +174,9 @@ class CourseLoader:
         await self.load_courses_data(queries.AllCoursesQueryData(**raw_query).all_courses)
 
     async def load_courses_data(self, g_courses: Sequence[queries.Course]):
+        if not self._init_called:
+            sys.stderr.write("WARNING! INIT NOT CALLED FOR COURSE LOADER!! YOU'VE FUCKED UP!!!!!!!!!!!")
+
         """
         Loads data for all specified courses, including loading module pages and scanning for resources.
         """
@@ -186,22 +226,12 @@ class CourseLoader:
         # Get the ids of all the courses we are going to index/load
         course_ids = [g_course.m_id for g_course in g_courses]
 
-        # Load existing pages and resources from the database
-        existing_pages = (await session.execute(
-            select(db.ModuleItem)
-            .where(db.ModuleItem.course_id.in_(course_ids))
-            .options(selectin_polymorphic(db.ModuleItem, [db.ModulePage]))
-        )).scalars().all()
-
-        existing_resources = (await session.execute(
-            select(db.Resource)
-            .where(db.Resource.course_id.in_(course_ids))
-        )).scalars().all()
-
-        # Add the existing items to the relevant taskpools
-        self._add_resources_and_pages_to_taskpool(existing_pages=existing_pages, existing_resources=existing_resources)
-
         # Prepare pages for loading
+        existing_pages = (
+            await session.execute(
+                select(db.ModulePage)
+                .where(db.ModuleItem.course_id.in_(course_ids))
+            )).scalars().all()
         pages_to_update = _prepare_out_of_date_pages_for_loading(g_courses, existing_pages)
         module_items = await self._load_page_content(pages_to_update)
 
@@ -220,7 +250,9 @@ class CourseLoader:
     def _add_resources_and_pages_to_taskpool(self, existing_pages: Sequence[db.ModuleItem],
                                              existing_resources: Sequence[db.Resource]):
         self._moduleitem_pool.add_values({page.id: page for page in existing_pages})
-        self._resource_pool.add_values(dict((resource.id, resource) for resource in existing_resources))
+        self._resource_pool.add_values({resource.id: resource for resource in existing_resources})
+        # Add downloaded resources to the resource pool so we don't download them again
+        self.download_pool.add_values({resource.id: None for resource in existing_resources if resource.state == db.ResourceState.DOWNLOADED})
 
     async def _load_page_content(self, pages: Sequence[TransientModulePage]) -> list[db.ModuleItem]:
         """

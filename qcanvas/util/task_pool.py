@@ -31,7 +31,6 @@ class TaskPool(Generic[T]):
         echo : bool
             Whether to print the status of tasks as they are awaited and submitted
         """
-        super().__init__()
 
         if not wait_if_in_progress and remember_result:
             raise ValueError("Can't remember result without waiting")
@@ -42,7 +41,7 @@ class TaskPool(Generic[T]):
         self._wait_if_in_progress: bool = wait_if_in_progress
         self._wait_if_just_started: bool = wait_if_just_started
         self._restart_if_finished: bool = restart_if_finished
-        self._echo: bool = echo
+        self._echo = echo
 
     def add_values(self, results: dict[object, T]) -> None:
         """
@@ -147,18 +146,18 @@ class TaskPool(Generic[T]):
 
         if not self._wait_if_just_started:
             # noinspection PyAsyncCall
-            asyncio.create_task(self._handle_task(func(**kwargs), task_id, event))
+            asyncio.create_task(self._handle_task(func, task_id, event, func_args=kwargs))
             return None
 
-        return await self._handle_task(func(**kwargs), task_id, event)
+        return await self._handle_task(func, task_id, event, func_args=kwargs)
 
-    async def _handle_task(self, task: Awaitable[object], task_id: object, event: asyncio.Event) -> T:
+    async def _handle_task(self, func: Callable, task_id: object, event: asyncio.Event, func_args : dict) -> T:
         """
         Handles the specified task
 
         Parameters
         ----------
-        task
+        func
             The task to handle
         task_id
             The ID of the task
@@ -172,7 +171,7 @@ class TaskPool(Generic[T]):
         """
         sem = self._semaphore
 
-        result = await task
+        result = await func(**func_args)
 
         if isinstance(result, asyncio.Event):
             print("Result was of type asyncio.Event, this will break things!", file=sys.stderr)
