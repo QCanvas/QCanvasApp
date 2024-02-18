@@ -1,11 +1,10 @@
 import asyncio
 from typing import Callable, Any
 
-from qcanvas.QtVersionHelper.QtCore import QObject, Signal, Slot
-from qcanvas.util.task_pool import TaskPool, T
+from qcanvas.QtVersionHelper.QtCore import QObject, Signal
+from qcanvas.util.task_pool import TaskPool
 
 DOWNLOAD_FINISHED_SENTINEL = ":)"
-
 
 
 class DownloadPool(TaskPool[None], QObject):

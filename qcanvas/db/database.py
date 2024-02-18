@@ -1,3 +1,4 @@
+import pathlib
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
@@ -162,6 +163,15 @@ class ResourceState(Enum):
     DOWNLOADED = 1
     FAILED = 2
 
+    @staticmethod
+    def human_readable(value: "ResourceState"):
+        match value:
+            case ResourceState.NOT_DOWNLOADED: return "Not downloaded"
+            case ResourceState.DOWNLOADED: return "Downloaded"
+            case ResourceState.FAILED: return "Failed"
+
+        raise ValueError(value)
+
 
 class Resource(MappedAsDataclass, Base, tree.HasText):
     __tablename__ = "resources"
@@ -203,6 +213,10 @@ class Resource(MappedAsDataclass, Base, tree.HasText):
     @property
     def text(self) -> str:
         return self.file_name
+
+    @property
+    def download_location(self) -> pathlib.Path:
+        return pathlib.Path("download", f"{self.id}@{self.file_name}")
 
 
 class ModuleItem(MappedAsDataclass, Base, tree.HasText):

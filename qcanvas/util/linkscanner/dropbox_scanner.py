@@ -43,6 +43,8 @@ class DropboxScanner(ResourceScanner):
             url=url
         )
 
+        # The following code essentially starts downloading the file, reads the headers and then stops downloading it,
+        # just to ge the size of the file
         resp = await self.client.send(req, follow_redirects=True, stream=True)
 
         try:
@@ -59,9 +61,6 @@ class DropboxScanner(ResourceScanner):
         # ***REMOVED***
         # ------- Extract this part ^^^^^^^^^^^^^^^
         return URL(link.attrs["href"]).path.split("/", 3)[2]
-
-    async def download(self):
-        pass
 
     @property
     def name(self) -> str:

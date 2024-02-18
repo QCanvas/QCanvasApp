@@ -27,7 +27,7 @@ client = CanvasClient(canvas_url=URL(AppSettings.canvas_url), api_key=AppSetting
 engine = create_async_engine("sqlite+aiosqlite:///meme", echo=False)
 
 logging.basicConfig()
-logging.getLogger("module_item_loader").setLevel(logging.DEBUG)
+logging.getLogger("canvas_client").setLevel(logging.DEBUG)
 # logging.getLogger("aiosqlite").setLevel(logging.DEBUG)
 
 loader = CourseLoader(
@@ -38,14 +38,18 @@ loader = CourseLoader(
     last_update=datetime.min
 )
 
+loader.download_pool.download_progress_updated.connect(lambda x, y: print(f"Progress {x} {y}"))
 
-async def create_meta():
+async def begin():
+    # Create meta stuff
     async with engine.begin() as conn:
         await conn.run_sync(db.Base.metadata.create_all)
 
+    await loader.init()
+
 
 if __name__ == '__main__':
-    asyncio.run(create_meta())
+    asyncio.run(begin())
 
     app = QApplication(sys.argv)
 

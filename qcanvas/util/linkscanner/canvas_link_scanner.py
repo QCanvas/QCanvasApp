@@ -1,3 +1,5 @@
+import pathlib
+
 from bs4 import Tag
 from httpx import URL
 
@@ -28,8 +30,12 @@ class CanvasFileScanner(ResourceScanner):
         # --------------------------------- Extract this part ^^^^^^^
         return URL(link["data-api-endpoint"]).path.rsplit('/', 2)[-1]
 
-    async def download(self):
-        pass
+    async def download(self, progress_channel, resource : db.Resource):
+        path = resource.download_location
+        path.parent.mkdir(parents=True, exist_ok=True)
+
+        with open(path, "wb") as file:
+            await self._canvas_client.download_file(resource, file, progress_channel)
 
     @property
     def name(self) -> str:

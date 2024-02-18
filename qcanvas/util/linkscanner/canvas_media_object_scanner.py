@@ -58,6 +58,3 @@ class CanvasMediaObjectScanner(ResourceScanner):
 
     def extract_id(self, link: Tag) -> str:
         return link.attrs["data-media-id"]
-
-    async def download(self):
-        pass

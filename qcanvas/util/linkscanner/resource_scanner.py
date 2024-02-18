@@ -1,8 +1,11 @@
+import asyncio
 from abc import ABC, abstractmethod
 
+import httpx
 from bs4 import Tag
 
 import qcanvas.db as db
+from qcanvas.util import download_pool
 
 
 class ResourceScanner(ABC):
@@ -50,8 +53,20 @@ class ResourceScanner(ABC):
         """
         ...
 
-    @abstractmethod
-    async def download(self):
-        ...
+    async def download(self, progress_channel: asyncio.Queue, resource: db.Resource):
+        download_destination = resource.download_location
+        download_destination.parent.mkdir(parents=True, exist_ok=True)
+
+        with open(download_destination, "wb") as file:
+            async with httpx.AsyncClient(follow_redirects=True) as client:
+                async with client.stream(method='get', url=resource.url) as resp:
+                    resp.raise_for_status()
+
+                    async for chunk in resp.aiter_bytes():
+                        file.write(chunk)
+                        progress_channel.put_nowait(resp.num_bytes_downloaded)
+
+                    progress_channel.put_nowait(download_pool.DOWNLOAD_FINISHED_SENTINEL)
+                    progress_channel.task_done()
 
 

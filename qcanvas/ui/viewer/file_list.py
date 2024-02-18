@@ -1,13 +1,11 @@
-import random
-from typing import Sequence, Any
+from typing import Sequence
 
-from qcanvas.QtVersionHelper.QtWidgets import QStyledItemDelegate, QStyleOptionProgressBar, QApplication, QStyle
-from qcanvas.QtVersionHelper.QtCore import QModelIndex, QPersistentModelIndex, Qt
+from qcanvas.QtVersionHelper.QtWidgets import QStyledItemDelegate, QStyleOptionProgressBar, QApplication, QStyle , QHeaderView, QStyleOptionViewItem, QTreeWidget, QTreeWidgetItem
+from qcanvas.QtVersionHelper.QtCore import QObject, Slot, Qt
 
-import qcanvas.util.tree_util as tree
 import qcanvas.db.database as db
 from qcanvas.util import file_icon_helper
-from qcanvas.util.tree_util import HasColumnData
+from qcanvas.util.download_pool import DownloadPool
 
 
 # https://code.whatever.social/questions/1094841/get-human-readable-version-of-file-size#1094933
@@ -19,112 +17,125 @@ def sizeof_fmt(num, suffix="B"):
     return f"{num:.1f}Yi{suffix}"
 
 
-class FileContainer(tree.HasColumnData, tree.HasParent):
-    def __init__(self, file: db.Resource, parent: tree.HasChildren, index: int):
-        self._file = file
-        self._parent = parent
-        self._index_of_self = index
-
-    def get_column_data(self, column: int, role: int) -> str | None:
-        if role == Qt.DisplayRole:
-            if column == 0:
-                return self._file.file_name
-            elif column == 1:
-                return self._file.date_discovered.strftime("%Y-%m-%d")
-            elif column == 2:
-                return sizeof_fmt(self._file.file_size)
-        elif role == Qt.DecorationRole:
-            if column == 0:
-                return file_icon_helper.icon_for_filename(self._file.file_name)
-
-        return None
-
-    @property
-    def parent(self) -> Any:
-        return self._parent
-
-    @property
-    def index_of_self(self) -> int:
-        return self._index_of_self
-
-
-class GroupedResourceContainer(tree.HasColumnData, tree.HasChildren):
-    def __init__(self, owner_name:str, resources: Sequence[db.Resource]):
-        self._collapsed: bool = False
-        self._owner_name = owner_name
-        self._children = [FileContainer(file, self, index) for index, file in enumerate(resources)]
-
-    def get_column_data(self, column: int, role: int) -> str | None:
-        if role == Qt.DisplayRole:
-            if column == 0:
-                return self._owner_name
-
-        return None
-
-    @property
-    def children(self) -> Sequence[HasColumnData]:
-        return self._children
-
-    @property
-    def collapsed(self):
-        return self._collapsed
-
-    @collapsed.setter
-    def collapsed(self, value : bool):
-        self._collapsed = value
-
-
-class FileColumnModel(tree.TreeModel):
-    def __init__(self, pages: Sequence[db.ModuleItem | db.PageLike] = []):
-        super().__init__()
-        self.root = [GroupedResourceContainer(page) for page in pages if len(page.resources) > 0]
-
-    def columnCount(self, parent: QModelIndex | QPersistentModelIndex = None) -> int:
-        return 4
-
-    def headerData(self, section, orientation, role=None, *args, **kwargs):
-        if orientation == Qt.Orientation.Horizontal and role == Qt.ItemDataRole.DisplayRole:
-            return ["Name", "Date Found", "Size", "Download"][section]
-
-    def load_page_list(self, pages: Sequence[db.ModuleItem]):
-        self.beginResetModel()
-        self.root = [GroupedResourceContainer(page.name, page.resources) for page in pages if len(page.resources) > 0]
-        self.endResetModel()
-
-    def load_module_list(self, modules: Sequence[db.Module]):
-        self.beginResetModel()
-
-        self.root = []
-
-        for module in modules:
-            resources = []
-
-            for item in module.items:
-                resources.extend(item.resources)
-
-            if len(resources) > 0:
-                self.root.append(GroupedResourceContainer(module.name, resources))
-
-        self.endResetModel()
-
-    def clear(self):
-        self.beginResetModel()
-        self.root = []
-        self.endResetModel()
-
-
 class FileColumnDelegate(QStyledItemDelegate):
-    def paint(self, painter, option, index):
-        if not isinstance(index.internalPointer(), FileContainer):
+    def __init__(self, tree: QTreeWidget, download_pool: DownloadPool, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.download_pool = download_pool
+        self.tree = tree
+
+    def paint(self, painter, option, index) -> None:
+        item = self.tree.itemFromIndex(index)
+
+        # Check that the item is actually a file row and it's not already downloaded
+        if not isinstance(item, FileRow) or item.resource.state == db.ResourceState.DOWNLOADED:
             return super().paint(painter, option, index)
 
-        style: QStyleOptionProgressBar = QStyleOptionProgressBar()
+        resource = item.resource
+        progress = self.download_pool.get_task_progress(resource.id)
 
-        style.rect = option.rect
-        style.minimum = 0
-        style.maximum = 100
-        style.progress = 0
-        style.text = "Test"
-        style.textVisible = True
+        # Will be true if not downloading and also not downloading
+        if progress is None or progress == resource.file_size:
+            view_item = QStyleOptionViewItem(option)
+            self.initStyleOption(view_item, index)
+            view_item.text = db.ResourceState.human_readable(resource.state)
 
-        QApplication.style().drawControl(QStyle.ControlElement.CE_ProgressBar, style, painter)
+            return QApplication.style().drawControl(QStyle.CE_ItemViewItem, view_item, painter, view_item.widget)
+        else:
+            # otherwise show progress bar
+            progress_bar = QStyleOptionProgressBar()
+            progress_bar.rect = option.rect
+            progress_bar.minimum = 0
+            progress_bar.maximum = resource.file_size
+            progress_bar.progress = progress
+            progress_bar.text = "{0:.3g}%".format((progress / resource.file_size) * 100)
+            progress_bar.textVisible = True
+
+            QApplication.style().drawControl(QStyle.CE_ProgressBar, progress_bar, painter)
+
+
+class FileRow(QTreeWidgetItem):
+    def __init__(self, resource: db.Resource):
+        # Set column names
+        super().__init__(
+            [
+                resource.file_name,
+                resource.date_discovered.strftime("%Y-%m-%d"),
+                sizeof_fmt(resource.file_size),
+            ]
+        )
+
+        self.setIcon(0, file_icon_helper.icon_for_filename(resource.file_name))
+        self.resource = resource
+
+
+class FileList(QTreeWidget):
+    def __init__(self, download_pool: DownloadPool, parent: QObject | None = None):
+        super().__init__(parent)
+        self._setup_header()
+
+        # Keep a map of file ids to rows, so we can actually update the download column using a file id.
+        self.row_id_map: dict[str, FileRow] = {}
+        self.download_pool = download_pool
+        self.download_pool.download_progress_updated.connect(self._file_download_progress_update)
+        self.setAlternatingRowColors(True)
+
+        self.setItemDelegateForColumn(3, FileColumnDelegate(tree=self, download_pool=download_pool, parent=None))
+
+    @Slot(str, int)
+    def _file_download_progress_update(self, resource_id: str, progress: int):
+        if resource_id not in self.row_id_map:
+            return
+
+        # Get the download column for the relevant item
+        index = self.indexFromItem(self.row_id_map[resource_id], 3)
+
+        # Update the download column
+        self.model().dataChanged.emit(index, index, Qt.ItemDataRole.DisplayRole)
+
+    def _setup_header(self):
+        self.setColumnCount(4)
+        self.setHeaderLabels(["Name", "Date Found", "Size", "Download"])
+
+        header = self.header()
+        header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
+        header.setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
+        header.setStretchLastSection(0)
+
+    def load_items(self, items: Sequence[db.ModuleItem | db.Module]):
+        self.clear()
+
+        groups = []
+
+        for item in items:
+            if isinstance(item, db.PageLike):
+                resources = item.resources
+            elif isinstance(item, db.Module):
+                resources = []
+
+                for module_item in item.items:
+                    resources.extend(module_item.resources)
+            else:
+                continue
+
+            # don't add empty groups
+            if len(resources) == 0:
+                continue
+
+            group_node = QTreeWidgetItem([item.name])
+
+            for resource in resources:
+                row = FileRow(resource)
+                self.row_id_map[resource.id] = row
+                group_node.addChild(row)
+
+            groups.append(group_node)
+
+        self.insertTopLevelItems(0, groups)
+        self.expandAll()
+
+    def clear(self):
+        super().clear()
+        self._setup_header()
+        self.row_id_map = {}
+
