@@ -1,3 +1,4 @@
+import asyncio
 from typing import Sequence
 
 from qcanvas.QtVersionHelper.QtWidgets import QStyledItemDelegate, QStyleOptionProgressBar, QApplication, QStyle , QHeaderView, QStyleOptionViewItem, QTreeWidget, QTreeWidgetItem
@@ -31,10 +32,13 @@ class FileColumnDelegate(QStyledItemDelegate):
             return super().paint(painter, option, index)
 
         resource = item.resource
-        progress = self.download_pool.get_task_progress(resource.id)
+        progress = item.download_progres
+
+        if progress == resource.file_size:
+            return super().paint(painter, option, index)
 
         # Will be true if not downloading and also not downloading
-        if progress is None or progress == resource.file_size:
+        if progress is None or progress < 0:
             view_item = QStyleOptionViewItem(option)
             self.initStyleOption(view_item, index)
             view_item.text = db.ResourceState.human_readable(resource.state)
@@ -67,6 +71,8 @@ class FileRow(QTreeWidgetItem):
         self.setIcon(0, file_icon_helper.icon_for_filename(resource.file_name))
         self.resource = resource
 
+        self.download_progres = -1
+
 
 class FileList(QTreeWidget):
     def __init__(self, download_pool: DownloadPool, parent: QObject | None = None):
@@ -77,6 +83,7 @@ class FileList(QTreeWidget):
         self.row_id_map: dict[str, FileRow] = {}
         self.download_pool = download_pool
         self.download_pool.download_progress_updated.connect(self._file_download_progress_update)
+        self.download_pool.download_failed.connect(self._file_download_failed_update)
         self.setAlternatingRowColors(True)
 
         self.setItemDelegateForColumn(3, FileColumnDelegate(tree=self, download_pool=download_pool, parent=None))
@@ -86,11 +93,29 @@ class FileList(QTreeWidget):
         if resource_id not in self.row_id_map:
             return
 
+        row = self.row_id_map[resource_id]
+        # Update the progress
+        row.download_progres = progress
+
         # Get the download column for the relevant item
-        index = self.indexFromItem(self.row_id_map[resource_id], 3)
+        index = self.indexFromItem(row, 3)
 
         # Update the download column
         self.model().dataChanged.emit(index, index, Qt.ItemDataRole.DisplayRole)
+
+    @Slot(str)
+    def _file_download_failed_update(self, resource_id: str):
+        if resource_id not in self.row_id_map:
+            return
+
+        row = self.row_id_map[resource_id]
+
+        # Get the download column for the relevant item
+        index = self.indexFromItem(row, 3)
+
+        # Update the download column
+        self.model().dataChanged.emit(index, index, Qt.ItemDataRole.DisplayRole)
+
 
     def _setup_header(self):
         self.setColumnCount(4)
