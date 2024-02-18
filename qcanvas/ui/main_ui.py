@@ -16,7 +16,7 @@ from qcanvas.ui.container_item import ContainerItem
 from qcanvas.ui.viewer.file_list import FileRow
 from qcanvas.ui.viewer.file_view_tab import FileViewTab
 from qcanvas.ui.viewer.page_list_viewer import AssignmentsViewer, PagesViewer
-from qcanvas.util.course_indexer import CourseLoader
+from qcanvas.util.course_indexer import DataManager
 
 
 class AppMainWindow(QMainWindow):
@@ -24,13 +24,13 @@ class AppMainWindow(QMainWindow):
     loaded = Signal()
     operation_lock = Event()
 
-    def __init__(self, data_loader: CourseLoader):
+    def __init__(self, data_manager: DataManager):
         super().__init__()
 
         self.selected_course: db.Course | None = None
         self.courses: Sequence[db.Course] = []
         self.resources: dict[str, db.Resource] = {}
-        self.loader = data_loader
+        self.data_manager = data_manager
 
         self.setWindowTitle("QCanvas (Under construction)")
 
@@ -49,7 +49,7 @@ class AppMainWindow(QMainWindow):
         self.assignment_viewer = AssignmentsViewer()
         self.pages_viewer = PagesViewer()
 
-        self.file_viewer = FileViewTab(data_loader.download_pool)
+        self.file_viewer = FileViewTab(data_manager.download_pool)
         self.file_viewer.group_by_preference_changed.connect(self.course_file_group_by_preference_changed)
 
         self.file_viewer.files_column.tree.itemActivated.connect(self.download_file_from_filepane)
@@ -79,7 +79,7 @@ class AppMainWindow(QMainWindow):
     @asyncSlot(QTreeWidgetItem, int)
     async def download_file_from_file_pane(self, item: QTreeWidgetItem, _ : int):
         if isinstance(item, FileRow):
-            await self.loader.download_resource(item.resource)
+            await self.data_manager.download_resource(item.resource)
             QDesktopServices.openUrl(QUrl.fromLocalFile(item.resource.download_location.absolute()))
 
 
@@ -89,7 +89,7 @@ class AppMainWindow(QMainWindow):
         self.sync_button.setEnabled(False)
         self.sync_button.setText("Synchronizing")
         try:
-            await self.loader.synchronize_with_canvas()
+            await self.data_manager.synchronize_with_canvas()
             await self.load_course_list()
 
         finally:
@@ -116,7 +116,7 @@ class AppMainWindow(QMainWindow):
 
     @asyncSlot()
     async def load_course_list(self):
-        self.courses = (await self.loader.get_data())
+        self.courses = (await self.data_manager.get_data())
 
         self.resources = {}
         self.selected_course = None
@@ -160,6 +160,6 @@ class AppMainWindow(QMainWindow):
     @asyncSlot(db.CoursePreferences)
     async def course_file_group_by_preference_changed(self, preference: db.GroupByPreference):
         self.selected_course.preferences.files_group_by_preference = preference
-        await self.loader.update_course_preferences(self.selected_course.preferences)
+        await self.data_manager.update_course_preferences(self.selected_course.preferences)
         self.file_viewer.load_course_files(self.selected_course)
 

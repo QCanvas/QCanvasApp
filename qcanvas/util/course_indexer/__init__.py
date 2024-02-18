@@ -1,1 +1,1 @@
-from .course_loader import CourseLoader
+from .data_manager import DataManager

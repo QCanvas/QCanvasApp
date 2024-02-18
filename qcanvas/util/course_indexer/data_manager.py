@@ -73,7 +73,7 @@ def _prepare_out_of_date_pages_for_loading(g_courses: Sequence[queries.Course], 
 
 # todo make this reusable and add some way of refreshing only a list of pages or one page or one course or something
 # todo use logger instead of print and put some signals around the place for useful things, e.g. indexing progress
-class CourseLoader:
+class DataManager:
     def __init__(self,
                  client: CanvasClient,
                  sessionmaker: AsyncSessionMaker,

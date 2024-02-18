@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio.session import async_sessionmaker as AsyncSessionMak
 
 from qcanvas.ui.main_ui import AppMainWindow
 from qcanvas.util.linkscanner import CanvasFileScanner
-from qcanvas.util.course_indexer import CourseLoader
+from qcanvas.util.course_indexer import DataManager
 from qcanvas.net.canvas.canvas_client import CanvasClient
 from qcanvas.util import AppSettings
 
@@ -30,7 +30,7 @@ logging.basicConfig()
 logging.getLogger("canvas_client").setLevel(logging.DEBUG)
 # logging.getLogger("aiosqlite").setLevel(logging.DEBUG)
 
-loader = CourseLoader(
+data_manager = DataManager(
     client=client,
     link_scanners=[CanvasFileScanner(client), DropboxScanner(httpx.AsyncClient()),
                    CanvasMediaObjectScanner(client.client)],
@@ -38,14 +38,14 @@ loader = CourseLoader(
     last_update=datetime.min
 )
 
-loader.download_pool.download_progress_updated.connect(lambda x, y: print(f"Progress {x} {y}"))
+data_manager.download_pool.download_progress_updated.connect(lambda x, y: print(f"Progress {x} {y}"))
 
 async def begin():
     # Create meta stuff
     async with engine.begin() as conn:
         await conn.run_sync(db.Base.metadata.create_all)
 
-    await loader.init()
+    await data_manager.init()
 
 
 if __name__ == '__main__':
@@ -61,7 +61,7 @@ if __name__ == '__main__':
     app_close_event = asyncio.Event()
     app.aboutToQuit.connect(app_close_event.set)
 
-    main_window = AppMainWindow(loader)
+    main_window = AppMainWindow(data_manager)
     main_window.resize(800, 600)
     main_window.show()
 
