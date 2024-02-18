@@ -79,9 +79,11 @@ class DownloadPool(TaskPool[None], QObject):
 
         return None
 
-    async def get_task_progress(self, task_id: object):
-        async with self._download_progress_sem:
-            if task_id in self._download_progress_sem:
-                return self._download_progress_sem[task_id]
-            else:
-                return None
+    def get_task_progress(self, task_id: object):
+        # This can't be async because it's used from a non-async context,
+        # so there is no semaphore logic here. Realistically the risk is negligible for how this function is used.
+
+        if task_id in self._download_progress:
+            return self._download_progress[task_id]
+        else:
+            return None
