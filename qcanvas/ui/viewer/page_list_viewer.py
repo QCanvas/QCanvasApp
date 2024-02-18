@@ -30,7 +30,7 @@ class LinkTransformer:
             for scanner in self.link_scanners:
                 if scanner.accepts_link(element):
                     resource_id = f"{scanner.name}:{scanner.extract_id(element)}"
-
+                    #todo make images actually show on the viewer page if they're downloaded
                     if resource_id in self.files:
                         file = self.files[resource_id]
 
