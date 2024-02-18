@@ -133,7 +133,7 @@ class FileList(QTreeWidget):
         groups = []
 
         for item in items:
-            if isinstance(item, db.PageLike):
+            if isinstance(item, (db.PageLike, db.ModuleItem)):
                 resources = item.resources
             elif isinstance(item, db.Module):
                 resources = []
