@@ -56,7 +56,7 @@ def detect_authentication_needed(response: Response):
 
 
 class CanvasClient(SelfAuthenticating):
-    _logger = logging.getLogger(__name__)
+    _logger = logging.getLogger("canvas_client")
     _net_op_sem = asyncio.Semaphore(20)
 
     @staticmethod
@@ -80,7 +80,7 @@ class CanvasClient(SelfAuthenticating):
         self.api_key = api_key
         self.canvas_url = canvas_url
         self.client = client or httpx.AsyncClient(timeout=60)
-        self.max_retries = 1
+        self.max_retries = 3
 
     def get_headers(self) -> dict[str, dict]:
         return {"headers": {"Authorization": f"Bearer {self.api_key}"}}
@@ -155,6 +155,7 @@ class CanvasClient(SelfAuthenticating):
 
     async def download_file(self, resource: db.Resource, download_destination: BinaryIO,
                             progress_channel: asyncio.Queue):
+        progress_channel.put_nowait(0)
         retries = 0
 
         while retries < self.max_retries:
