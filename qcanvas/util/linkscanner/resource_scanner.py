@@ -1,5 +1,6 @@
 import asyncio
 from abc import ABC, abstractmethod
+from typing import AsyncIterator
 
 import httpx
 from bs4 import Tag
@@ -53,7 +54,9 @@ class ResourceScanner(ABC):
         """
         ...
 
-    async def download(self, progress_channel: asyncio.Queue, resource: db.Resource):
+    async def download(self, resource: db.Resource) -> AsyncIterator[int]:
+        yield 0
+
         download_destination = resource.download_location
         download_destination.parent.mkdir(parents=True, exist_ok=True)
 
@@ -64,9 +67,5 @@ class ResourceScanner(ABC):
 
                     async for chunk in resp.aiter_bytes():
                         file.write(chunk)
-                        progress_channel.put_nowait(resp.num_bytes_downloaded)
-
-                    progress_channel.put_nowait(download_pool.DOWNLOAD_FINISHED_SENTINEL)
-                    progress_channel.task_done()
-
+                        yield resp.num_bytes_downloaded
 

@@ -1,7 +1,7 @@
 import asyncio
 import json
 import logging
-from typing import BinaryIO
+from typing import BinaryIO, AsyncIterator
 
 import gql
 import httpx
@@ -153,9 +153,8 @@ class CanvasClient(SelfAuthenticating):
 
             return await gql_client.execute_async(query, variable_values=kwargs)
 
-    async def download_file(self, resource: db.Resource, download_destination: BinaryIO,
-                            progress_channel: asyncio.Queue):
-        progress_channel.put_nowait(0)
+    async def download_file(self, resource: db.Resource, download_destination: BinaryIO) -> AsyncIterator[int]:
+        yield 0
         retries = 0
 
         while retries < self.max_retries:
@@ -167,10 +166,7 @@ class CanvasClient(SelfAuthenticating):
 
                 async for chunk in resp.aiter_bytes():
                     download_destination.write(chunk)
-                    progress_channel.put_nowait(resp.num_bytes_downloaded)
-
-                progress_channel.put_nowait(download_pool.DOWNLOAD_FINISHED_SENTINEL)
-                progress_channel.task_done()
+                    yield resp.num_bytes_downloaded
 
                 return
 

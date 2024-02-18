@@ -30,12 +30,13 @@ class CanvasFileScanner(ResourceScanner):
         # --------------------------------- Extract this part ^^^^^^^
         return URL(link["data-api-endpoint"]).path.rsplit('/', 2)[-1]
 
-    async def download(self, progress_channel, resource : db.Resource):
+    async def download(self, resource):
         path = resource.download_location
         path.parent.mkdir(parents=True, exist_ok=True)
 
         with open(path, "wb") as file:
-            await self._canvas_client.download_file(resource, file, progress_channel)
+            async for progress in self._canvas_client.download_file(resource, file):
+                yield progress
 
     @property
     def name(self) -> str:

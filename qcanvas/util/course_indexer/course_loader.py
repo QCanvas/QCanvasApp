@@ -112,13 +112,22 @@ class CourseLoader:
             self._add_resources_and_pages_to_taskpool(existing_pages=existing_pages,
                                                       existing_resources=existing_resources)
 
-    async def _download_resource_helper(self, channel : asyncio.Queue, link_handler : ResourceScanner, resource: db.Resource):
-        await link_handler.download(channel, resource)
+    async def _download_resource_helper(self, link_handler : ResourceScanner, resource: db.Resource):
+        try:
+            async for progress in link_handler.download(resource):
+                yield progress
 
-        # Do this here because this function will only be called once for this resource
-        async with self._session_maker.begin() as session:
-            session.add(resource)
-            resource.state = db.ResourceState.DOWNLOADED
+            # Do this here because this function will only be called once for this resource
+            async with self._session_maker.begin() as session:
+                session.add(resource)
+                resource.state = db.ResourceState.DOWNLOADED
+        except BaseException as e:
+            async with self._session_maker.begin() as session:
+                session.add(resource)
+                resource.state = db.ResourceState.FAILED
+                resource.fail_message = str(e)
+
+            raise e
 
     async def download_resource(self, resource: db.Resource):
         if not self._init_called:
@@ -128,7 +137,7 @@ class CourseLoader:
         # Find the scanner that will deal with this resource
         scanner = self._scanner_name_map[scanner_name]
 
-        await self.download_pool.submit(resource.id, lambda channel: self._download_resource_helper(channel, scanner, resource))
+        await self.download_pool.submit(resource.id, lambda: self._download_resource_helper(scanner, resource))
 
     async def update_course_preferences(self, preferences: db.CoursePreferences):
         async with self._session_maker.begin() as session:
