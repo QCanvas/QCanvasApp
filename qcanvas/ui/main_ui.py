@@ -15,7 +15,7 @@ import qcanvas.db.database as db
 from qcanvas.ui.container_item import ContainerItem
 from qcanvas.ui.viewer.file_list import FileRow
 from qcanvas.ui.viewer.file_view_tab import FileViewTab
-from qcanvas.ui.viewer.page_list_viewer import AssignmentsViewer, PagesViewer
+from qcanvas.ui.viewer.page_list_viewer import AssignmentsViewer, PagesViewer, LinkTransformer
 from qcanvas.util.course_indexer import DataManager
 
 
@@ -31,6 +31,7 @@ class AppMainWindow(QMainWindow):
         self.courses: Sequence[db.Course] = []
         self.resources: dict[str, db.Resource] = {}
         self.data_manager = data_manager
+        self.link_transformer = LinkTransformer(self.data_manager.link_scanners, self.resources)
 
         self.setWindowTitle("QCanvas (Under construction)")
 
@@ -40,21 +41,25 @@ class AppMainWindow(QMainWindow):
         self.sync_button = QPushButton("Synchronize")
         self.sync_button.clicked.connect(self.sync_data)
 
+        #todo just use QTreeWidget instead
         self.course_selector = QTreeView()
         self.course_selector_model = QStandardItemModel()
         self.course_selector.setModel(self.course_selector_model)
         self.course_selector.selectionModel().selectionChanged.connect(self.on_item_clicked)
 
-        self.tab_widget = QTabWidget()
-        self.assignment_viewer = AssignmentsViewer()
-        self.pages_viewer = PagesViewer()
+        self.assignment_viewer = AssignmentsViewer(self.link_transformer)
+        self.assignment_viewer.viewer.anchorClicked.connect(self.viewer_link_clicked)
+
+        self.pages_viewer = PagesViewer(self.link_transformer)
+        self.pages_viewer.viewer.anchorClicked.connect(self.viewer_link_clicked)
 
         self.file_viewer = FileViewTab(data_manager.download_pool)
         self.file_viewer.group_by_preference_changed.connect(self.course_file_group_by_preference_changed)
 
-        self.file_viewer.files_column.tree.itemActivated.connect(self.download_file_from_filepane)
-        self.file_viewer.assignment_files_column.tree.itemActivated.connect(self.download_file_from_filepane)
+        self.file_viewer.files_column.tree.itemActivated.connect(self.download_file_from_file_pane)
+        self.file_viewer.assignment_files_column.tree.itemActivated.connect(self.download_file_from_file_pane)
 
+        self.tab_widget = QTabWidget()
         self.tab_widget.insertTab(0, self.file_viewer, "Files")
         self.tab_widget.insertTab(1, self.assignment_viewer, "Assignments")
         self.tab_widget.insertTab(2, self.pages_viewer, "Pages")
@@ -74,6 +79,17 @@ class AppMainWindow(QMainWindow):
 
         self.loaded.connect(self.load_course_list)
         self.loaded.emit()
+
+
+    @asyncSlot(QUrl)
+    async def viewer_link_clicked(self, url: QUrl):
+        # The url of a transformed link will start with an '@'
+        if url.toString().startswith(LinkTransformer.transformed_url_prefix):
+            # The rest of the 'url' is just the file id
+            resource = self.resources[url.toString().removeprefix(LinkTransformer.transformed_url_prefix)]
+
+            await self.data_manager.download_resource(resource)
+            QDesktopServices.openUrl(QUrl.fromLocalFile(resource.download_location.absolute()))
 
 
     @asyncSlot(QTreeWidgetItem, int)
@@ -118,7 +134,7 @@ class AppMainWindow(QMainWindow):
     async def load_course_list(self):
         self.courses = (await self.data_manager.get_data())
 
-        self.resources = {}
+        self.resources.clear()
         self.selected_course = None
         self.course_selector_model.clear()
         self.course_selector_model.setHorizontalHeaderLabels(["Course"])
@@ -135,6 +151,7 @@ class AppMainWindow(QMainWindow):
             courses_root.appendRow(term_node)
 
         self.course_selector.expandAll()
+        # self.link_transformer.files = self.resources
 
     @Slot(QItemSelection, QItemSelection)
     def on_item_clicked(self, selected: QItemSelection, deselected: QItemSelection):

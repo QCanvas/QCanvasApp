@@ -1,21 +1,64 @@
 from abc import abstractmethod
+from typing import Sequence
+
+import bs4
+from bs4 import BeautifulSoup
 
 import qcanvas.db as db
 from qcanvas.QtVersionHelper.QtWidgets import QWidget, QTextBrowser, QTreeView, QHBoxLayout
 from qcanvas.QtVersionHelper.QtGui import QStandardItemModel
-from qcanvas.QtVersionHelper.QtCore import QItemSelection, Slot
+from qcanvas.QtVersionHelper.QtCore import QItemSelection, Slot, QUrl
 from qcanvas.ui.container_item import ContainerItem
 from qcanvas.util import canvas_garbage_remover
 from qcanvas.util.constants import default_assignments_module_names
+from qcanvas.util.course_indexer import resource_helpers
+from qcanvas.util.linkscanner import ResourceScanner
 
+class LinkTransformer:
+    # This is used to indicate that a "link" is actually a resource. The resource id is concatenated to this string.
+    # It just has to be a valid url or qt does not send it to anchorClicked properly
+    transformed_url_prefix = "http://use-your-imagination.sexy/"
+
+    def __init__(self, link_scanners: Sequence[ResourceScanner], files: dict[str, db.Resource]):
+        self.link_scanners = link_scanners
+        self.files = files
+
+    def transform_links(self, html : str):
+        doc = BeautifulSoup(html, 'html.parser')
+
+        for element in doc.find_all(resource_helpers.resource_elements):
+            for scanner in self.link_scanners:
+                if scanner.accepts_link(element):
+                    resource_id = f"{scanner.name}:{scanner.extract_id(element)}"
+
+                    if resource_id in self.files:
+                        file = self.files[resource_id]
+
+                        substitute = doc.new_tag(name="a")
+                        # Put the file id on the end of the url so we don't have to use the scanners to extract an id again..
+                        # The actual url doesn't matter
+                        substitute.attrs["href"] = f"{self.transformed_url_prefix}{file.id}"
+                        substitute.string = f"{file.file_name} ({db.ResourceState.human_readable(file.state)})"
+
+                        element.replace_with(substitute)
+                    else:
+                        element.string += " (failed to index)"
+
+                    break
+
+        return str(doc)
 
 class PageLikeViewer(QWidget):
-    def __init__(self, header_name : str):
+    def __init__(self, header_name : str, link_transformer : LinkTransformer):
         super().__init__()
         self.viewer = QTextBrowser()
+        self.viewer.setOpenLinks(False)
+
+        #todo just use QTreeWidget instead
         self.tree = QTreeView()
         self.model = QStandardItemModel()
         self.header_name = header_name
+        self.link_transformer = link_transformer
 
         self.tree.setModel(self.model)
         self.tree.selectionModel().selectionChanged.connect(self.on_item_clicked)
@@ -24,10 +67,9 @@ class PageLikeViewer(QWidget):
         layout = QHBoxLayout()
         layout.addWidget(self.tree)
         layout.addWidget(self.viewer)
-
         layout.setStretch(1, 1)
-
         self.setLayout(layout)
+
 
     def fill_tree(self, data: db.Course):
         self.model.clear()
@@ -55,12 +97,14 @@ class PageLikeViewer(QWidget):
                 if item.content is None:
                     return
 
-                self.viewer.setHtml(canvas_garbage_remover.remove_stylesheets_from_html(item.content))
+                # todo when a file is finished downloading it would be nice if the page was refreshed to show the state properly
+                html = canvas_garbage_remover.remove_stylesheets_from_html(item.content)
+                self.viewer.setHtml(self.link_transformer.transform_links(html))
 
 
 class PagesViewer(PageLikeViewer):
-    def __init__(self):
-        super().__init__("Pages")
+    def __init__(self, link_transformer: LinkTransformer):
+        super().__init__("Pages", link_transformer)
 
     def _internal_fill_tree(self, course: db.Course):
         root = self.model.invisibleRootItem()
@@ -79,8 +123,8 @@ class PagesViewer(PageLikeViewer):
 
 class AssignmentsViewer(PageLikeViewer):
 
-    def __init__(self):
-        super().__init__("Putting the ASS in assignments")
+    def __init__(self, link_transformer: LinkTransformer):
+        super().__init__("Putting the ASS in assignments", link_transformer)
 
     def _internal_fill_tree(self,  course: db.Course):
         root = self.model.invisibleRootItem()

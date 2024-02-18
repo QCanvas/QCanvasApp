@@ -377,3 +377,7 @@ class DataManager:
         page.resources.append(resource)
 
         return page
+
+    @property
+    def link_scanners(self):
+        return self._link_scanners

@@ -12,6 +12,8 @@ from qcanvas.util.task_pool import TaskPool
 
 _logger = logging.getLogger()
 
+resource_elements = ["a", "iframe", "img"]
+
 
 # todo could probably just use the database types directly now
 @dataclass
@@ -105,7 +107,7 @@ async def _extract_resources_from_page(link_scanners: Sequence[ResourceScanner],
     tasks = []
 
     # Extract iframes, hyperlinks, etc from the page
-    for link in scan_page_for_links(page):
+    for link in _scan_page_for_links(page):
         tasks.append(asyncio.create_task(_process_link(link_scanners, resource_pool, link, page.course_id)))
 
     if len(tasks) > 0:
@@ -123,12 +125,12 @@ async def _extract_resources_from_page(link_scanners: Sequence[ResourceScanner],
         return []
 
 
-def scan_page_for_links(page: db.PageLike) -> list[Tag]:
+def _scan_page_for_links(page: db.PageLike) -> list[Tag]:
     """
     Extracts (potential) resource elements from a PageLike object
     """
     soup = BeautifulSoup(page.content, 'html.parser')
-    return list(soup.find_all(["a", "iframe", "img"]))
+    return list(soup.find_all(resource_elements))
 
 
 async def _process_link(link_scanners: Sequence[ResourceScanner], resource_pool: TaskPool[db.Resource], link: Tag,
