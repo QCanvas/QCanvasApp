@@ -171,7 +171,10 @@ class CourseLoader:
                 .joinedload(db.ModuleItem.course),
 
                 selectinload(db.Course.preferences)
-                .joinedload(db.CoursePreferences.course)
+                .joinedload(db.CoursePreferences.course),
+
+                selectinload(db.Course.resources)
+                .joinedload(db.Resource.course)
             ]
 
             return (await session.execute(select(db.Course).options(*options))).scalars().all()

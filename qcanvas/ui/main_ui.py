@@ -1,14 +1,10 @@
 import logging
-import pathlib
-import traceback
-from abc import abstractmethod
 from asyncio import Event
 from datetime import datetime
-from typing import Sequence, TypeVar, Generic
+from typing import Sequence
 
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QDesktopServices
-from anyio.streams import file
 from qasync import asyncSlot
 
 from qcanvas.QtVersionHelper.QtGui import QStandardItemModel, QStandardItem
@@ -20,31 +16,26 @@ from qcanvas.ui.container_item import ContainerItem
 from qcanvas.ui.viewer.file_list import FileRow
 from qcanvas.ui.viewer.file_view_tab import FileViewTab
 from qcanvas.ui.viewer.page_list_viewer import AssignmentsViewer, PagesViewer
-from qcanvas.util import canvas_garbage_remover
-from qcanvas.util.constants import default_assignments_module_names
 from qcanvas.util.course_indexer import CourseLoader
-from qcanvas.ui.viewer import file_list
-
-T = TypeVar("T")
 
 
 class AppMainWindow(QMainWindow):
     logger = logging.getLogger()
     loaded = Signal()
     operation_lock = Event()
-    courses: Sequence[db.Course] = []
 
     def __init__(self, data_loader: CourseLoader):
         super().__init__()
 
         self.selected_course: db.Course | None = None
+        self.courses: Sequence[db.Course] = []
+        self.resources: dict[str, db.Resource] = {}
+        self.loader = data_loader
 
         self.setWindowTitle("QCanvas (Under construction)")
 
         right_splitter = QSplitter()
         right_splitter.setOrientation(Qt.Orientation.Vertical)
-
-        self.loader = data_loader
 
         self.sync_button = QPushButton("Synchronize")
         self.sync_button.clicked.connect(self.sync_data)
@@ -61,8 +52,8 @@ class AppMainWindow(QMainWindow):
         self.file_viewer = FileViewTab(data_loader.download_pool)
         self.file_viewer.group_by_preference_changed.connect(self.course_file_group_by_preference_changed)
 
-        self.file_viewer.files_column.tree.itemActivated.connect(self.my_slot)
-        self.file_viewer.assignment_files_column.tree.itemActivated.connect(self.my_slot)
+        self.file_viewer.files_column.tree.itemActivated.connect(self.download_file_from_filepane)
+        self.file_viewer.assignment_files_column.tree.itemActivated.connect(self.download_file_from_filepane)
 
         self.tab_widget.insertTab(0, self.file_viewer, "Files")
         self.tab_widget.insertTab(1, self.assignment_viewer, "Assignments")
@@ -86,7 +77,7 @@ class AppMainWindow(QMainWindow):
 
 
     @asyncSlot(QTreeWidgetItem, int)
-    async def my_slot(self, item: QTreeWidgetItem, _ : int):
+    async def download_file_from_file_pane(self, item: QTreeWidgetItem, _ : int):
         if isinstance(item, FileRow):
             await self.loader.download_resource(item.resource)
             QDesktopServices.openUrl(QUrl.fromLocalFile(item.resource.download_location.absolute()))
@@ -127,6 +118,7 @@ class AppMainWindow(QMainWindow):
     async def load_course_list(self):
         self.courses = (await self.loader.get_data())
 
+        self.resources = {}
         self.selected_course = None
         self.course_selector_model.clear()
         self.course_selector_model.setHorizontalHeaderLabels(["Course"])
@@ -138,6 +130,7 @@ class AppMainWindow(QMainWindow):
 
             for course in courses:
                 term_node.appendRow(ContainerItem(course))
+                self.resources.update({resource.id: resource for resource in course.resources})
 
             courses_root.appendRow(term_node)
 
