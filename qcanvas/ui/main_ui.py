@@ -143,6 +143,7 @@ class AppMainWindow(QMainWindow):
 
         for term, courses in self.group_courses_by_term(self.courses):
             term_node = QStandardItem(term.name)
+            term_node.setEditable(False)
 
             for course in courses:
                 term_node.appendRow(ContainerItem(course))
