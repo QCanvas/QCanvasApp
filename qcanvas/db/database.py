@@ -1,4 +1,5 @@
 import pathlib
+import platform
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
@@ -216,7 +217,13 @@ class Resource(MappedAsDataclass, Base, tree.HasText):
 
     @property
     def download_location(self) -> pathlib.Path:
-        return pathlib.Path("download", f"{self.id}@{self.file_name}")
+        file_id: str = self.id
+
+        # Colon is illegal in microsoft windows file names
+        if platform.system() == "Windows":
+            file_id.replace(':', '$')
+
+        return pathlib.Path("download", f"{file_id}@{self.file_name}")
 
 
 class ModuleItem(MappedAsDataclass, Base, tree.HasText):
