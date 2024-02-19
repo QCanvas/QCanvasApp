@@ -7,7 +7,7 @@ name="qcanvas"
 version="0.0.2a"
 authors= [ {name="QCanvas"} ]
 description="A canvas client"
-requires-python="==3.10"
+requires-python="==3.11"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
