@@ -6,30 +6,31 @@ from bs4 import BeautifulSoup
 import qcanvas.db as db
 from qcanvas.QtVersionHelper.QtWidgets import QWidget, QTextBrowser, QTreeView, QHBoxLayout
 from qcanvas.QtVersionHelper.QtGui import QStandardItemModel
-from qcanvas.QtVersionHelper.QtCore import QItemSelection, Slot, QUrl, QModelIndex
+from qcanvas.QtVersionHelper.QtCore import QItemSelection, Slot
 from qcanvas.ui.container_item import ContainerItem
 from qcanvas.util import canvas_garbage_remover
 from qcanvas.util.constants import default_assignments_module_names
 from qcanvas.util.course_indexer import resource_helpers
 from qcanvas.util.linkscanner import ResourceScanner
 
+
 class LinkTransformer:
     # This is used to indicate that a "link" is actually a resource. The resource id is concatenated to this string.
     # It just has to be a valid url or qt does not send it to anchorClicked properly
-    transformed_url_prefix = "http://use-your-imagination.sexy/"
+    transformed_url_prefix = "data:,"
 
     def __init__(self, link_scanners: Sequence[ResourceScanner], files: dict[str, db.Resource]):
         self.link_scanners = link_scanners
         self.files = files
 
-    def transform_links(self, html : str):
+    def transform_links(self, html: str):
         doc = BeautifulSoup(html, 'html.parser')
 
         for element in doc.find_all(resource_helpers.resource_elements):
             for scanner in self.link_scanners:
                 if scanner.accepts_link(element):
                     resource_id = f"{scanner.name}:{scanner.extract_id(element)}"
-                    #todo make images actually show on the viewer page if they're downloaded
+                    # todo make images actually show on the viewer page if they're downloaded
                     if resource_id in self.files:
                         file = self.files[resource_id]
 
@@ -48,13 +49,14 @@ class LinkTransformer:
 
         return str(doc)
 
+
 class PageLikeViewer(QWidget):
-    def __init__(self, header_name : str, link_transformer : LinkTransformer):
+    def __init__(self, header_name: str, link_transformer: LinkTransformer):
         super().__init__()
         self.viewer = QTextBrowser()
         self.viewer.setOpenLinks(False)
 
-        #todo just use QTreeWidget instead
+        # todo just use QTreeWidget instead
         self.tree = QTreeView()
         self.model = QStandardItemModel()
         self.header_name = header_name
@@ -70,14 +72,12 @@ class PageLikeViewer(QWidget):
         layout.setStretch(1, 1)
         self.setLayout(layout)
 
-
     def fill_tree(self, data: db.Course):
         self.model.clear()
         self.viewer.clear()
         self._internal_fill_tree(data)
         self.model.setHorizontalHeaderLabels([self.header_name])
         self.tree.expandAll()
-
 
     @abstractmethod
     def _internal_fill_tree(self, data: db.Course):
@@ -126,7 +126,7 @@ class AssignmentsViewer(PageLikeViewer):
     def __init__(self, link_transformer: LinkTransformer):
         super().__init__("Putting the ASS in assignments", link_transformer)
 
-    def _internal_fill_tree(self,  course: db.Course):
+    def _internal_fill_tree(self, course: db.Course):
         root = self.model.invisibleRootItem()
 
         default_assessments_module = None
