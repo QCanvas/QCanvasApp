@@ -102,7 +102,7 @@ class CanvasClient(SelfAuthenticating):
     async def get_page(self, page_id: str | int, course_id: str | int) -> LegacyPage:
         async with self._net_op_sem:
             response = detect_ratelimit_and_raise(
-                await self.client.get(self.canvas_url.join(f"api/v1/courses/{course_id}/pages/{page_id}")))
+                await self.client.get(self.canvas_url.join(f"api/v1/courses/{course_id}/pages/{page_id}"), **self.get_headers()))
 
             return LegacyPage.from_dict(json.loads(response.text))
 
