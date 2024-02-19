@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import sys
+import traceback
 from asyncio import Task
 from dataclasses import dataclass
 from datetime import datetime
@@ -284,7 +285,6 @@ class DataManager:
 
             if isinstance(content, queries.File):
                 task = asyncio.create_task(self._load_module_file(content, page.course_id, page.module_id, page.position))
-                task.add_done_callback(lambda x: print(f"Done {page.page.title}"))
                 tasks.append(task)
             elif isinstance(content, queries.Page):
                 tasks.append(
@@ -349,6 +349,7 @@ class DataManager:
         except BaseException as e:
             # Handle any errors
             _logger.error(e)
+            traceback.print_exc()
             return None
 
         if result.locked_for_user:
