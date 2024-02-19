@@ -1,13 +1,12 @@
 from abc import abstractmethod
 from typing import Sequence
 
-import bs4
 from bs4 import BeautifulSoup
 
 import qcanvas.db as db
 from qcanvas.QtVersionHelper.QtWidgets import QWidget, QTextBrowser, QTreeView, QHBoxLayout
 from qcanvas.QtVersionHelper.QtGui import QStandardItemModel
-from qcanvas.QtVersionHelper.QtCore import QItemSelection, Slot, QUrl
+from qcanvas.QtVersionHelper.QtCore import QItemSelection, Slot, QUrl, QModelIndex
 from qcanvas.ui.container_item import ContainerItem
 from qcanvas.util import canvas_garbage_remover
 from qcanvas.util.constants import default_assignments_module_names
@@ -42,7 +41,8 @@ class LinkTransformer:
 
                         element.replace_with(substitute)
                     else:
-                        element.string += " (failed to index)"
+                        if element.string is not None:
+                            element.string += " (Failed to index)"
 
                     break
 
@@ -85,10 +85,10 @@ class PageLikeViewer(QWidget):
 
     @Slot(QItemSelection, QItemSelection)
     def on_item_clicked(self, selected: QItemSelection, deselected: QItemSelection):
-        if len(selected.indexes()) == 0:
+        if len(self.tree.selectedIndexes()) == 0:
             return
 
-        node = self.model.itemFromIndex(selected.indexes()[0])
+        node = self.model.itemFromIndex(self.tree.selectedIndexes()[0])
 
         if isinstance(node, ContainerItem):
             item = node.content
