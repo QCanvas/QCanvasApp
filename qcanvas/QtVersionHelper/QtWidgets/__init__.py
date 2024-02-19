@@ -1,4 +1,4 @@
-from QtVersionHelper import QT_VERSION
+from qcanvas.QtVersionHelper import QT_VERSION
 
 if QT_VERSION == 5:
     # noinspection PyUnresolvedReferences
