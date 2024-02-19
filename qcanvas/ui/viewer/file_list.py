@@ -51,7 +51,7 @@ class FileColumnDelegate(QStyledItemDelegate):
             progress_bar.minimum = 0
             progress_bar.maximum = resource.file_size
             progress_bar.progress = progress
-            progress_bar.text = "{0:.3g}%".format((progress / resource.file_size) * 100)
+            progress_bar.text = "{0:.1f}%".format((progress / resource.file_size) * 100)
             progress_bar.textVisible = True
 
             QApplication.style().drawControl(QStyle.CE_ProgressBar, progress_bar, painter)
@@ -80,7 +80,8 @@ class FileList(QTreeWidget):
         self._setup_header()
 
         # Keep a map of file ids to rows, so we can actually update the download column using a file id.
-        self.row_id_map: dict[str, FileRow] = {}
+        # This has to be a list or else files that are in multiple modules/pages will not be updated properly on the tree
+        self.row_id_map: dict[str, list[FileRow]] = {}
         self.download_pool = download_pool
         self.download_pool.download_progress_updated.connect(self._file_download_progress_update)
         self.download_pool.download_failed.connect(self._file_download_failed_update)
@@ -93,28 +94,31 @@ class FileList(QTreeWidget):
         if resource_id not in self.row_id_map:
             return
 
-        row = self.row_id_map[resource_id]
-        # Update the progress
-        row.download_progres = progress
+        rows = self.row_id_map[resource_id]
 
-        # Get the download column for the relevant item
-        index = self.indexFromItem(row, 3)
+        for row in rows:
+            # Update the progress
+            row.download_progres = progress
 
-        # Update the download column
-        self.model().dataChanged.emit(index, index, Qt.ItemDataRole.DisplayRole)
+            # Get the download column for the relevant item
+            index = self.indexFromItem(row, 3)
+
+            # Update the download column
+            self.model().dataChanged.emit(index, index, Qt.ItemDataRole.DisplayRole)
 
     @Slot(str)
     def _file_download_failed_update(self, resource_id: str):
         if resource_id not in self.row_id_map:
             return
 
-        row = self.row_id_map[resource_id]
+        rows = self.row_id_map[resource_id]
 
-        # Get the download column for the relevant item
-        index = self.indexFromItem(row, 3)
+        for row in rows:
+            # Get the download column for the relevant item
+            index = self.indexFromItem(row, 3)
 
-        # Update the download column
-        self.model().dataChanged.emit(index, index, Qt.ItemDataRole.DisplayRole)
+            # Update the download column
+            self.model().dataChanged.emit(index, index, Qt.ItemDataRole.DisplayRole)
 
 
     def _setup_header(self):
@@ -149,9 +153,15 @@ class FileList(QTreeWidget):
 
             group_node = QTreeWidgetItem([item.name])
 
+            #fixme this does not remove duplicate files e.g. when on module groups
+
             for resource in resources:
                 row = FileRow(resource)
-                self.row_id_map[resource.id] = row
+
+                if resource.id not in self.row_id_map:
+                    self.row_id_map[resource.id] = [row]
+                else:
+                    self.row_id_map[resource.id].append(row)
                 group_node.addChild(row)
 
             groups.append(group_node)
@@ -162,5 +172,5 @@ class FileList(QTreeWidget):
     def clear(self):
         super().clear()
         self._setup_header()
-        self.row_id_map = {}
+        self.row_id_map.clear()
 
