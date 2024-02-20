@@ -1,4 +1,5 @@
 import traceback
+from threading import Semaphore
 from typing import Optional
 
 from PySide6.QtWidgets import QProgressBar
@@ -29,6 +30,7 @@ class SetupDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle("Setup")
         self._row_counter = 0
+        self._operation_sem = Semaphore()
 
         self.progress_bar = QProgressBar()
         self.progress_bar.setMaximum(0)
@@ -68,44 +70,50 @@ class SetupDialog(QDialog):
 
     @asyncSlot()
     async def _verify(self):
-        def invalid(name: str):
-            msg = QMessageBox(QMessageBox.Icon.Warning,
-                              "Error",
-                              f"{name} is invalid",
-                              parent=self
-            )
-            msg.show()
+        if self._operation_sem.acquire(False):
+            try:
+                def invalid(name: str):
+                    msg = QMessageBox(QMessageBox.Icon.Warning,
+                                      "Error",
+                                      f"{name} is invalid",
+                                      parent=self
+                    )
+                    msg.show()
 
-        def ensure_protocol(url: str):
-            if len(url) > 0 and not (url.startswith("http://") or url.startswith("https://")):
-                return "https://" + url
-            else:
-                return url
+                def ensure_protocol(url: str):
+                    if len(url) > 0 and not (url.startswith("http://") or url.startswith("https://")):
+                        return "https://" + url
+                    else:
+                        return url
 
-        canvas_url_text = ensure_protocol(self.canvas_url.text().strip())
-        # panopto_url_text = ensure_protocol(self.panopto_url.text().strip())
-        canvas_api_key_text = self.canvas_api_key.text().strip()
+                canvas_url_text = ensure_protocol(self.canvas_url.text().strip())
+                # panopto_url_text = ensure_protocol(self.panopto_url.text().strip())
+                canvas_api_key_text = self.canvas_api_key.text().strip()
 
-        if not (len(canvas_url_text) > 0 and QUrl(canvas_url_text).isValid()):
-            invalid("Canvas URL")
-            return
-        # if not (len(panopto_url_text) > 0 and QUrl(panopto_url_text).isValid()):
-        #     invalid("Panopto URL")
-        #     return
-        elif not len(canvas_api_key_text) > 0:
-            invalid("API key")
-        elif not (await self._verify_canvas_config(canvas_url_text, canvas_api_key_text)):
-            msg = QMessageBox(QMessageBox.Icon.Warning,
-                              "Error",
-                              f"The canvas URL or API key is invalid.\nPlease check you entered them correctly.",
-                              parent=self
-            )
-            msg.show()
+                if not (len(canvas_url_text) > 0 and QUrl(canvas_url_text).isValid()):
+                    invalid("Canvas URL")
+                    return
+                # if not (len(panopto_url_text) > 0 and QUrl(panopto_url_text).isValid()):
+                #     invalid("Panopto URL")
+                #     return
+                elif not len(canvas_api_key_text) > 0:
+                    invalid("API key")
+                elif not (await self._verify_canvas_config(canvas_url_text, canvas_api_key_text)):
+                    msg = QMessageBox(QMessageBox.Icon.Warning,
+                                      "Error",
+                                      f"The canvas URL or API key is invalid.\nPlease check you entered them correctly.",
+                                      parent=self
+                    )
+                    msg.show()
+                else:
+                    AppSettings.canvas_url = canvas_url_text
+                    AppSettings.canvas_api_key = canvas_api_key_text
+
+                    self.accept()
+            finally:
+                self._operation_sem.release()
         else:
-            AppSettings.canvas_url = canvas_url_text
-            AppSettings.canvas_api_key = canvas_api_key_text
-
-            self.accept()
+            QMessageBox(QMessageBox.Icon.Critical, "Error", "An operation is already in progress", parent=self).show()
 
     async def _verify_canvas_config(self, canvas_url: str, api_key: str) -> bool:
         self.progress_bar.show()
@@ -123,7 +131,7 @@ class SetupDialog(QDialog):
         msg = QMessageBox(
             QMessageBox.Icon.Information,
             "Help",
-            """An interactive tutorial will open in your browser.
+            """An interactive tutorial will open in your browser when you click OK.
             
 Note that the "purpose" text doesn't matter and you can enter anything you want.
 
