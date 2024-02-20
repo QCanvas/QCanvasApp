@@ -27,7 +27,6 @@ from qasync import QEventLoop, asyncSlot
 import qcanvas.db as db
 import qdarktheme
 
-
 engine = create_async_engine("sqlite+aiosqlite:///meme", echo=False)
 
 logging.basicConfig()
@@ -46,7 +45,6 @@ class LoaderWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        # super().__init__("Verifying config", "aaa", 0, 0)
         self.init.connect(self.on_init)
         self.setup.connect(self.on_setup)
         self.ready.connect(self.on_ready)
@@ -54,7 +52,6 @@ class LoaderWindow(QMainWindow):
         self.setCentralWidget(QProgressDialog("Verifying config", None, 0, 0))
 
         self.init.emit()
-        # self.accepted.connect(lambda:self.init.emit())
 
 
     @asyncSlot()
@@ -86,10 +83,14 @@ class LoaderWindow(QMainWindow):
         )
 
         await data_manager.init()
+        self.close()
+        self.open_main_app(data_manager)
 
-        self.main_window = AppMainWindow(data_manager)
+    def open_main_app(self, data_manager: DataManager):
+        self.main_window = AppMainWindow(data_manager, self)
+        self.main_window.setWindowTitle(app_name)
+        self.main_window.resize(800, 600)
         self.main_window.show()
-        self.setCentralWidget(self.main_window)
 
 
 if __name__ == '__main__':
@@ -105,8 +106,8 @@ if __name__ == '__main__':
     app_close_event = asyncio.Event()
     app.aboutToQuit.connect(app_close_event.set)
 
-    main = LoaderWindow()
-    main.show()
+    loader_window = LoaderWindow()
+    loader_window.show()
 
     with event_loop:
         event_loop.run_until_complete(app_close_event.wait())
