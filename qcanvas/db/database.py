@@ -69,7 +69,7 @@ class CoursePreferences(Base):
     course: Mapped["Course"] = relationship(back_populates="preferences")
 
 
-class Course(MappedAsDataclass, Base, tree.HasText, init=False):
+class Course(MappedAsDataclass, Base, init=False):
     __tablename__ = "courses"
 
     id: Mapped[str] = mapped_column(primary_key=True)
@@ -85,11 +85,6 @@ class Course(MappedAsDataclass, Base, tree.HasText, init=False):
     module_items: Mapped[List["ModuleItem"]] = relationship(back_populates="course")
     assignments: Mapped[List["Assignment"]] = relationship(back_populates="course")
     resources: Mapped[List["Resource"]] = relationship(back_populates="course")
-
-    @property
-    def text(self) -> str:
-        return self.name
-
 
 class Term(MappedAsDataclass, Base):
     """

@@ -140,9 +140,9 @@ class DataManager:
 
         await self.download_pool.submit(resource.id, lambda: self._download_resource_helper(scanner, resource))
 
-    async def update_course_preferences(self, preferences: db.CoursePreferences):
+    async def update_item(self, item: db.Base):
         async with self._session_maker.begin() as session:
-            await session.merge(preferences)
+            await session.merge(item)
 
     async def get_data(self):
         """

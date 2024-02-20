@@ -1,7 +1,7 @@
 import logging
 from asyncio import Event
 from datetime import datetime
-from typing import Sequence
+from typing import Sequence, Union, Optional
 
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QDesktopServices
@@ -9,15 +9,15 @@ from qasync import asyncSlot
 
 from qcanvas.QtVersionHelper.QtGui import QStandardItemModel, QStandardItem
 from qcanvas.QtVersionHelper.QtWidgets import *
-from qcanvas.QtVersionHelper.QtCore import QItemSelection, Slot, Signal, Qt, QModelIndex
+from qcanvas.QtVersionHelper.QtCore import QItemSelection, Slot, Signal, Qt, QObject, QModelIndex
 
 import qcanvas.db.database as db
 from qcanvas.ui.container_item import ContainerItem
+from qcanvas.ui.viewer.course_list import CourseList
 from qcanvas.ui.viewer.file_list import FileRow
 from qcanvas.ui.viewer.file_view_tab import FileViewTab
 from qcanvas.ui.viewer.page_list_viewer import AssignmentsViewer, PagesViewer, LinkTransformer
 from qcanvas.util.course_indexer import DataManager
-
 
 class AppMainWindow(QMainWindow):
     logger = logging.getLogger()
@@ -41,11 +41,8 @@ class AppMainWindow(QMainWindow):
         self.sync_button = QPushButton("Synchronize")
         self.sync_button.clicked.connect(self.sync_data)
 
-        #todo just use QTreeWidget instead
-        self.course_selector = QTreeView()
-        self.course_selector_model = QStandardItemModel()
-        self.course_selector.setModel(self.course_selector_model)
-        self.course_selector.selectionModel().selectionChanged.connect(self.on_item_clicked)
+        self.course_list = CourseList(self.data_manager)
+        self.course_list.course_selected.connect(self.on_course_selected)
 
         self.assignment_viewer = AssignmentsViewer(self.link_transformer)
         self.assignment_viewer.viewer.anchorClicked.connect(self.viewer_link_clicked)
@@ -65,7 +62,7 @@ class AppMainWindow(QMainWindow):
         self.tab_widget.insertTab(2, self.pages_viewer, "Pages")
 
         h_layout = QHBoxLayout()
-        h_layout.addWidget(self.course_selector)
+        h_layout.addWidget(self.course_list)
         h_layout.addWidget(self.tab_widget)
         h_layout.setStretch(1, 1)
 
@@ -112,72 +109,35 @@ class AppMainWindow(QMainWindow):
             self.sync_button.setEnabled(True)
             self.sync_button.setText("Synchronize")
 
-    @staticmethod
-    def group_courses_by_term(courses: Sequence[db.Course]):
-        courses_grouped_by_term: dict[db.Term, list[db.Course]] = {}
 
-        # Put courses into groups in the above dict
-        for course in courses:
-            if course.term in courses_grouped_by_term:
-                courses_grouped_by_term[course.term].append(course)
-            else:
-                courses_grouped_by_term[course.term] = [course]
-
-        # Convert the dict item list into a mutable list
-        pairs = list(courses_grouped_by_term.items())
-        # Sort them by start date, with most recent terms at the start
-        pairs.sort(key=lambda x: x[0].start_at or datetime.min, reverse=True)
-
-        return pairs
 
     @asyncSlot()
     async def load_course_list(self):
         self.courses = (await self.data_manager.get_data())
-
+        self.selected_course = None
         self.resources.clear()
-        self.selected_course = None
-        self.course_selector_model.clear()
-        self.course_selector_model.setHorizontalHeaderLabels(["Course"])
 
-        courses_root = self.course_selector_model.invisibleRootItem()
+        for course in self.courses:
+            self.resources.update({resource.id: resource for resource in course.resources})
 
-        for term, courses in self.group_courses_by_term(self.courses):
-            term_node = QStandardItem(term.name)
-            term_node.setEditable(False)
+        self.course_list.load_course_list(self.courses)
 
-            for course in courses:
-                term_node.appendRow(ContainerItem(course))
-                self.resources.update({resource.id: resource for resource in course.resources})
 
-            courses_root.appendRow(term_node)
-
-        self.course_selector.expandAll()
-        # self.link_transformer.files = self.resources
-
-    @Slot(QItemSelection, QItemSelection)
-    def on_item_clicked(self, selected: QItemSelection, deselected: QItemSelection):
-        if len(selected.indexes()) == 0:
+    @Slot(db.Course)
+    def on_course_selected(self, course: Optional[db.Course]):
+        if course is not None:
+            self.selected_course = course
+            self.pages_viewer.fill_tree(course)
+            self.assignment_viewer.fill_tree(course)
+            self.file_viewer.load_course_files(course)
+        else:
             self.selected_course = None
-            return
+            self.file_viewer.clear()
 
-        node = self.course_selector_model.itemFromIndex(selected.indexes()[0])
-
-        if isinstance(node, ContainerItem):
-            item = node.content
-
-            if isinstance(item, db.Course):
-                self.selected_course = item
-                self.pages_viewer.fill_tree(item)
-                self.assignment_viewer.fill_tree(item)
-                self.file_viewer.load_course_files(item)
-                return
-
-        self.selected_course = None
-        self.file_viewer.clear()
 
     @asyncSlot(db.CoursePreferences)
     async def course_file_group_by_preference_changed(self, preference: db.GroupByPreference):
         self.selected_course.preferences.files_group_by_preference = preference
-        await self.data_manager.update_course_preferences(self.selected_course.preferences)
+        await self.data_manager.update_item(self.selected_course.preferences)
         self.file_viewer.load_course_files(self.selected_course)
 
