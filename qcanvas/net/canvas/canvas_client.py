@@ -60,7 +60,7 @@ class CanvasClient(SelfAuthenticating):
     _net_op_sem = asyncio.Semaphore(20)
 
     @staticmethod
-    async def verify_config(canvas_url: URL, api_key: str) -> bool:
+    async def verify_config(canvas_url: str, api_key: str) -> bool:
         """
         Makes a request to canvas to verify that the url and key are correct.
         :param canvas_url: The canvas url to verify
@@ -70,7 +70,7 @@ class CanvasClient(SelfAuthenticating):
         client = httpx.AsyncClient()
         # Make a request to an endpoint that returns very little/no data (for students at least) to check if everything
         # is working
-        response = await client.get(url=canvas_url.join("api/v1/accounts"),
+        response = await client.get(url=URL(canvas_url).join("api/v1/accounts"),
                                     headers={"Authorization": f"Bearer {api_key}"})
 
         return response.is_success

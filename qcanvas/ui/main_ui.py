@@ -17,23 +17,23 @@ from qcanvas.ui.viewer.course_list import CourseList
 from qcanvas.ui.viewer.file_list import FileRow
 from qcanvas.ui.viewer.file_view_tab import FileViewTab
 from qcanvas.ui.viewer.page_list_viewer import AssignmentsViewer, PagesViewer, LinkTransformer
+from qcanvas.util.constants import app_name
 from qcanvas.util.course_indexer import DataManager
 
-class AppMainWindow(QMainWindow):
+class AppMainWindow(QWidget):
     logger = logging.getLogger()
     loaded = Signal()
     operation_lock = Event()
 
     def __init__(self, data_manager: DataManager):
         super().__init__()
+        self.resize(800, 600)
 
         self.selected_course: db.Course | None = None
         self.courses: Sequence[db.Course] = []
         self.resources: dict[str, db.Resource] = {}
         self.data_manager = data_manager
         self.link_transformer = LinkTransformer(self.data_manager.link_scanners, self.resources)
-
-        self.setWindowTitle("QCanvas (Under construction)")
 
         right_splitter = QSplitter()
         right_splitter.setOrientation(Qt.Orientation.Vertical)
@@ -70,9 +70,9 @@ class AppMainWindow(QMainWindow):
         v_layout.addLayout(h_layout)
         v_layout.addWidget(self.sync_button)
 
-        widget = QWidget()
-        widget.setLayout(v_layout)
-        self.setCentralWidget(widget)
+        # widget = QWidget()
+        self.setLayout(v_layout)
+        # self.setCentralWidget(widget)
 
         self.loaded.connect(self.load_course_list)
         self.loaded.emit()
