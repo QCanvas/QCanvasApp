@@ -3,7 +3,8 @@ from qcanvas.QtVersionHelper.QtCore import QSettings, QUrl
 
 class _AppSettings:
     def __init__(self):
-        self.settings = QSettings("RetardSoft", "QCanvasViewer")
+        self.settings = QSettings("QCanvas", "client")
+        self.auxiliary = QSettings("QCanvas", "ui")
         self._canvas_url = self.settings.value("canvas_url", None)
         self._api_key = self.settings.value("api_key", defaultValue=None)
 

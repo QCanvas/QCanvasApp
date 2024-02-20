@@ -87,10 +87,11 @@ class LoaderWindow(QMainWindow):
         self.open_main_app(data_manager)
 
     def open_main_app(self, data_manager: DataManager):
-        self.main_window = AppMainWindow(data_manager, self)
+        self.main_window = AppMainWindow(data_manager)
         self.main_window.setWindowTitle(app_name)
-        self.main_window.resize(800, 600)
+        # self.main_window.resize(1200, 600)
         self.main_window.show()
+        self.setParent(self.main_window)
 
 
 if __name__ == '__main__':

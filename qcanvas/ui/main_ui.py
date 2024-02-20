@@ -17,8 +17,11 @@ from qcanvas.ui.viewer.course_list import CourseList
 from qcanvas.ui.viewer.file_list import FileRow
 from qcanvas.ui.viewer.file_view_tab import FileViewTab
 from qcanvas.ui.viewer.page_list_viewer import AssignmentsViewer, PagesViewer, LinkTransformer
+from qcanvas.util import AppSettings
 from qcanvas.util.constants import app_name
 from qcanvas.util.course_indexer import DataManager
+
+_aux_settings = AppSettings.auxiliary
 
 class AppMainWindow(QMainWindow):
     logger = logging.getLogger()
@@ -76,6 +79,15 @@ class AppMainWindow(QMainWindow):
         self.loaded.connect(self.load_course_list)
         self.loaded.emit()
 
+        self.read_settings()
+
+    def closeEvent(self, event):
+        _aux_settings.setValue("geometry", self.saveGeometry())
+        _aux_settings.setValue("windowState", self.saveState())
+
+    def read_settings(self):
+        self.restoreGeometry(_aux_settings.value("geometry"))
+        self.restoreState(_aux_settings.value("windowState"))
 
     @asyncSlot(QUrl)
     async def viewer_link_clicked(self, url: QUrl):
