@@ -20,14 +20,13 @@ from qcanvas.ui.viewer.page_list_viewer import AssignmentsViewer, PagesViewer, L
 from qcanvas.util.constants import app_name
 from qcanvas.util.course_indexer import DataManager
 
-class AppMainWindow(QWidget):
+class AppMainWindow(QMainWindow):
     logger = logging.getLogger()
     loaded = Signal()
     operation_lock = Event()
 
-    def __init__(self, data_manager: DataManager):
-        super().__init__()
-        self.resize(800, 600)
+    def __init__(self, data_manager: DataManager, parent: QWidget | None = None):
+        super().__init__(parent)
 
         self.selected_course: db.Course | None = None
         self.courses: Sequence[db.Course] = []
@@ -70,9 +69,9 @@ class AppMainWindow(QWidget):
         v_layout.addLayout(h_layout)
         v_layout.addWidget(self.sync_button)
 
-        # widget = QWidget()
-        self.setLayout(v_layout)
-        # self.setCentralWidget(widget)
+        widget = QWidget()
+        widget.setLayout(v_layout)
+        self.setCentralWidget(widget)
 
         self.loaded.connect(self.load_course_list)
         self.loaded.emit()
