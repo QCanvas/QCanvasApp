@@ -214,7 +214,7 @@ class Resource(MappedAsDataclass, Base, tree.HasText):
 
         # Colon is illegal in microsoft windows file names
         if platform.system() == "Windows":
-            file_id.replace(':', '$')
+            file_id = file_id.replace(':', '$')
 
         return pathlib.Path("download", f"{file_id}@{self.file_name}")
 
