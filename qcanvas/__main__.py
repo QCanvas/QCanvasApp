@@ -96,7 +96,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     c = app.palette().base().color()
     print(f"{c.red()} {c.green()} {c.blue()}")
-    qdarktheme.setup_theme("dark",
+    qdarktheme.setup_theme("light",
                            custom_colors={"primary": "FF804F"}
     )
 
