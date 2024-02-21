@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name="qcanvas"
-version="0.0.2a"
+version="0.0.3a"
 authors= [ {name="QCanvas"} ]
 description="A canvas client"
 requires-python="==3.11"
@@ -18,7 +18,6 @@ dependencies=[
     "PySide6~=6.6.1",
     "pydantic~=2.6.0",
     "requests~=2.31.0",
-    "setuptools~=69.0.3",
     "gql~=3.6.0b0",
     "tenacity~=8.2.3",
     "beautifulsoup4~=4.12.3",
