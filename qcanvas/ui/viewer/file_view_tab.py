@@ -1,11 +1,10 @@
 from typing import Sequence
 
-from qcanvas.QtVersionHelper.QtGui import QAction, QActionGroup, create_qaction
-from qcanvas.QtVersionHelper.QtCore import Signal, Qt, Slot, QPoint
-from qcanvas.QtVersionHelper.QtWidgets import * #QWidget, QTreeView, QGroupBox, QBoxLayout, QHeaderView, QHBoxLayout, QComboBox, QLabel
-from qcanvas.ui.viewer.file_list import FileList
-
 import qcanvas.db as db
+from qcanvas.QtVersionHelper.QtCore import Signal, Qt, Slot, QPoint
+from qcanvas.QtVersionHelper.QtGui import QActionGroup, create_qaction
+from qcanvas.QtVersionHelper.QtWidgets import *  # QWidget, QTreeView, QGroupBox, QBoxLayout, QHeaderView, QHBoxLayout, QComboBox, QLabel
+from qcanvas.ui.viewer.file_list import FileList
 from qcanvas.util.constants import default_assignments_module_names
 from qcanvas.util.download_pool import DownloadPool
 

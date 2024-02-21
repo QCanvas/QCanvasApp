@@ -4,28 +4,24 @@ import sys
 from datetime import datetime
 
 import httpx
-from PySide6.QtCore import Signal, Slot, QObject
-from PySide6.QtWidgets import QProgressDialog, QMessageBox, QWidget, QMainWindow
-
-from qcanvas.QtVersionHelper.QtWidgets import QApplication
+import qdarktheme
 from httpx import URL
+from qasync import QEventLoop, asyncSlot
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.asyncio.session import async_sessionmaker as AsyncSessionMaker
 
+import qcanvas.db as db
+from qcanvas.QtVersionHelper.QtCore import Signal
+from qcanvas.QtVersionHelper.QtWidgets import QApplication, QProgressDialog, QMainWindow
+from qcanvas.net.canvas.canvas_client import CanvasClient
 from qcanvas.ui.main_ui import AppMainWindow
 from qcanvas.ui.setup_dialog import SetupDialog
-from qcanvas.util.constants import app_name
-from qcanvas.util.linkscanner import CanvasFileScanner
-from qcanvas.util.course_indexer import DataManager
-from qcanvas.net.canvas.canvas_client import CanvasClient
 from qcanvas.util import AppSettings
-
+from qcanvas.util.constants import app_name
+from qcanvas.util.course_indexer import DataManager
+from qcanvas.util.linkscanner import CanvasFileScanner
 from qcanvas.util.linkscanner.canvas_media_object_scanner import CanvasMediaObjectScanner
 from qcanvas.util.linkscanner.dropbox_scanner import DropboxScanner
-
-from qasync import QEventLoop, asyncSlot
-import qcanvas.db as db
-import qdarktheme
 
 engine = create_async_engine("sqlite+aiosqlite:///meme", echo=False)
 
@@ -89,8 +85,8 @@ class LoaderWindow(QMainWindow):
     def open_main_app(self, data_manager: DataManager):
         self.main_window = AppMainWindow(data_manager)
         self.main_window.setWindowTitle(app_name)
-        # self.main_window.resize(1200, 600)
         self.main_window.show()
+        # Set the main window as the parent of this window so this window is destroyed when the main window is closed
         self.setParent(self.main_window)
 
 
@@ -98,8 +94,11 @@ if __name__ == '__main__':
     asyncio.run(begin())
 
     app = QApplication(sys.argv)
-
-    qdarktheme.setup_theme("light")
+    c = app.palette().base().color()
+    print(f"{c.red()} {c.green()} {c.blue()}")
+    qdarktheme.setup_theme("dark",
+                           custom_colors={"primary": "FF804F"}
+    )
 
     event_loop = QEventLoop()
     asyncio.set_event_loop(event_loop)

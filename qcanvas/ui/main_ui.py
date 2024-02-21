@@ -1,24 +1,18 @@
 import logging
 from asyncio import Event
-from datetime import datetime
-from typing import Sequence, Union, Optional
+from typing import Sequence, Optional
 
-from PySide6.QtCore import QUrl
-from PySide6.QtGui import QDesktopServices
 from qasync import asyncSlot
 
-from qcanvas.QtVersionHelper.QtGui import QStandardItemModel, QStandardItem
-from qcanvas.QtVersionHelper.QtWidgets import *
-from qcanvas.QtVersionHelper.QtCore import QItemSelection, Slot, Signal, Qt, QObject, QModelIndex
-
 import qcanvas.db.database as db
-from qcanvas.ui.container_item import ContainerItem
+from qcanvas.QtVersionHelper.QtCore import Slot, Signal, Qt, QUrl
+from qcanvas.QtVersionHelper.QtGui import QDesktopServices
+from qcanvas.QtVersionHelper.QtWidgets import *
 from qcanvas.ui.viewer.course_list import CourseList
 from qcanvas.ui.viewer.file_list import FileRow
 from qcanvas.ui.viewer.file_view_tab import FileViewTab
 from qcanvas.ui.viewer.page_list_viewer import AssignmentsViewer, PagesViewer, LinkTransformer
 from qcanvas.util import AppSettings
-from qcanvas.util.constants import app_name
 from qcanvas.util.course_indexer import DataManager
 
 _aux_settings = AppSettings.auxiliary

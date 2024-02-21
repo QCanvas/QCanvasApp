@@ -14,15 +14,13 @@ from sqlalchemy.orm import selectin_polymorphic, selectinload
 
 import qcanvas.db as db
 import qcanvas.queries as queries
-from qcanvas.net.canvas import CanvasClient
-from qcanvas.util.download_pool import DownloadPool
-from qcanvas.util.linkscanner.resource_scanner import ResourceScanner
-from qcanvas.util.task_pool import TaskPool
-
 import qcanvas.util.course_indexer.conversion_helpers as conv_helper
 import qcanvas.util.course_indexer.resource_helpers as resource_helper
-
+from qcanvas.net.canvas import CanvasClient
+from qcanvas.util.download_pool import DownloadPool
 from qcanvas.util.linkscanner.canvas_link_scanner import canvas_resource_id_prefix
+from qcanvas.util.linkscanner.resource_scanner import ResourceScanner
+from qcanvas.util.task_pool import TaskPool
 
 _logger = logging.getLogger("course_loader")
 

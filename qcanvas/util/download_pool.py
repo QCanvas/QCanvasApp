@@ -4,6 +4,7 @@ from typing import Callable, Any
 from qcanvas.QtVersionHelper.QtCore import QObject, Signal
 from qcanvas.util.task_pool import TaskPool
 
+
 class DownloadPool(TaskPool[None], QObject):
     """
     Like the TaskPool, but uses a queue (a channel in kotlin terms) in the task to report download progress.

@@ -17,7 +17,6 @@ from pydantic import (  # noqa: F401 # pylint: disable=W0611
     Json,
 )
 
-
 DEFINITION = """
 fragment CanvasCourseData on Course {
     _id

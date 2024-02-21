@@ -1,5 +1,3 @@
-import pathlib
-
 from bs4 import Tag
 from httpx import URL
 

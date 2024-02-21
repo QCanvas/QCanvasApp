@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from qcanvas.net.canvas.legacy_canvas_types import LegacyFile
-import qcanvas.queries as gql
 import qcanvas.db.database as db
+import qcanvas.queries as gql
+from qcanvas.net.canvas.legacy_canvas_types import LegacyFile
 from qcanvas.util.canvas_garbage_remover import remove_garbage_from_title as clean_string
 
 

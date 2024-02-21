@@ -2,10 +2,11 @@ import httpx
 from bs4 import Tag
 from httpx import URL
 
-# from httpx import URL
-
 from qcanvas import db as db
 from qcanvas.util.linkscanner import ResourceScanner
+
+
+# from httpx import URL
 
 
 def parse_content_disposition(header: str) -> dict[str, str | None]:

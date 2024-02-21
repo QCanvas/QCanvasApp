@@ -1,4 +1,3 @@
-import asyncio
 from abc import ABC, abstractmethod
 from typing import AsyncIterator
 
@@ -6,7 +5,6 @@ import httpx
 from bs4 import Tag
 
 import qcanvas.db as db
-from qcanvas.util import download_pool
 
 
 class ResourceScanner(ABC):

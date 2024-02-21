@@ -5,9 +5,10 @@ from typing import Optional
 from PySide6.QtWidgets import QProgressBar
 from qasync import asyncSlot
 
-from qcanvas.QtVersionHelper.QtGui import QWindow, QDesktopServices
-from qcanvas.QtVersionHelper.QtWidgets import QDialog, QWidget, QHBoxLayout, QLabel, QLineEdit, QVBoxLayout, QPushButton, QDialogButtonBox, QCheckBox, QGridLayout, QMessageBox
-from qcanvas.QtVersionHelper.QtCore import Qt, Slot, QUrl
+from qcanvas.QtVersionHelper.QtCore import Slot, QUrl
+from qcanvas.QtVersionHelper.QtGui import QDesktopServices
+from qcanvas.QtVersionHelper.QtWidgets import QDialog, QWidget, QHBoxLayout, QLabel, QLineEdit, QVBoxLayout, \
+    QDialogButtonBox, QGridLayout, QMessageBox
 from qcanvas.net.canvas import CanvasClient
 from qcanvas.util import AppSettings
 

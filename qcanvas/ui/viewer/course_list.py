@@ -1,13 +1,12 @@
 from datetime import datetime
-from typing import Sequence, Union, Optional
+from typing import Sequence
 
 from qasync import asyncSlot
 
-from qcanvas.QtVersionHelper.QtWidgets import QTreeView
-from qcanvas.QtVersionHelper.QtGui import QStandardItemModel, QStandardItem
-from qcanvas.QtVersionHelper.QtCore import QItemSelection, Slot, Signal, Qt, QObject, QModelIndex
-
 import qcanvas.db as db
+from qcanvas.QtVersionHelper.QtCore import QItemSelection, Slot, Signal, QObject
+from qcanvas.QtVersionHelper.QtGui import QStandardItemModel, QStandardItem
+from qcanvas.QtVersionHelper.QtWidgets import QTreeView
 from qcanvas.util.course_indexer import DataManager
 
 

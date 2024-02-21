@@ -6,8 +6,8 @@ from typing import Sequence
 from bs4 import Tag, BeautifulSoup
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from qcanvas.util.linkscanner import ResourceScanner
 import qcanvas.db as db
+from qcanvas.util.linkscanner import ResourceScanner
 from qcanvas.util.task_pool import TaskPool
 
 _logger = logging.getLogger()

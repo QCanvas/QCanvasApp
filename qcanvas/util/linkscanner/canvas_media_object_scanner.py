@@ -2,7 +2,7 @@ import json
 from typing import Any
 
 from bs4 import Tag, BeautifulSoup
-from httpx import URL, AsyncClient
+from httpx import AsyncClient
 
 from qcanvas import db as db
 from qcanvas.util.linkscanner import ResourceScanner

@@ -1,8 +1,5 @@
 from typing import Any, TypeVar, Sequence, Optional
 
-from sqlalchemy.ext.asyncio import async_sessionmaker
-from sqlalchemy.orm import sessionmaker
-
 from qcanvas.QtVersionHelper.QtCore import QModelIndex, Slot, QItemSelectionModel
 from qcanvas.QtVersionHelper.QtWidgets import QTreeView, QWidget
 from .model_helpers import HasChildren, HasParent

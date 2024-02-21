@@ -1,7 +1,5 @@
 from typing import Sequence, Any
 
-from sqlalchemy.orm import Mapped, mapped_column
-
 
 class HasColumnData:
     def get_column_data(self, column: int, role : int) -> str | None:

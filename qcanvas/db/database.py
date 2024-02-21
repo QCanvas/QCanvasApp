@@ -1,16 +1,14 @@
 import pathlib
 import platform
-from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional, Sequence, MutableSequence, Any
+from typing import List, Optional, MutableSequence
 
 from sqlalchemy import ForeignKey, Text
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped, relationship, MappedAsDataclass
 
 import qcanvas.util.tree_util as tree
-from qcanvas.util.tree_util import HasColumnData
 
 
 class PageLike:

@@ -10,13 +10,10 @@ from httpx import URL, Response
 from tenacity import retry, wait_exponential, wait_random, stop_after_attempt, wait_fixed, \
     retry_if_exception_type
 
+import qcanvas.db as db
+from qcanvas.net.canvas.legacy_canvas_types import LegacyFile, LegacyPage
 from qcanvas.net.custom_httpx_async_transport import CustomHTTPXAsyncTransport
 from qcanvas.net.self_authenticating import SelfAuthenticating, AuthenticationException
-
-from qcanvas.net.canvas.legacy_canvas_types import LegacyFile, LegacyPage
-
-import qcanvas.db as db
-from qcanvas.util import download_pool
 
 
 class RatelimitedException(Exception):
@@ -71,7 +68,7 @@ class CanvasClient(SelfAuthenticating):
         # Make a request to an endpoint that returns very little/no data (for students at least) to check if everything
         # is working
         response = await client.get(url=URL(canvas_url).join("api/v1/accounts"),
-                                    headers={"Authorization": f"Bearer {api_key}"})
+                                    headers={"Authorization": f"Bearer {api_key}"}, timeout=10)
 
         return response.is_success
 

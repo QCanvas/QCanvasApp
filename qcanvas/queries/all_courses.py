@@ -19,7 +19,6 @@ from pydantic import (  # noqa: F401 # pylint: disable=W0611
 
 from qcanvas.queries.canvas_course_data import CanvasCourseData
 
-
 DEFINITION = """
 fragment CanvasCourseData on Course {
     _id
