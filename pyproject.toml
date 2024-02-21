@@ -4,10 +4,10 @@ build-backend = "hatchling.build"
 
 [project]
 name="qcanvas"
-version="0.0.3a"
+version="0.0.3a.post1"
 authors= [ {name="QCanvas"} ]
 description="A canvas client"
-requires-python="==3.11"
+requires-python=">=3.11,<=3.12"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
