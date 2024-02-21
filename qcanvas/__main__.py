@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.asyncio.session import async_sessionmaker as AsyncSessionMaker
 
 import qcanvas.db as db
+from qcanvas.QtVersionHelper.QtGui import QPixmap
 from qcanvas.QtVersionHelper.QtCore import Signal
 from qcanvas.QtVersionHelper.QtWidgets import QApplication, QProgressDialog, QMainWindow
 from qcanvas.net.canvas.canvas_client import CanvasClient
@@ -23,7 +24,10 @@ from qcanvas.util.linkscanner import CanvasFileScanner
 from qcanvas.util.linkscanner.canvas_media_object_scanner import CanvasMediaObjectScanner
 from qcanvas.util.linkscanner.dropbox_scanner import DropboxScanner
 
-engine = create_async_engine("sqlite+aiosqlite:///meme", echo=False)
+# noinspection PyUnresolvedReferences
+import qcanvas.icons.rc_icons
+
+engine = create_async_engine("sqlite+aiosqlite:///canvas_db.😘", echo=False)
 
 logging.basicConfig()
 logging.getLogger("canvas_client").setLevel(logging.DEBUG)
@@ -41,10 +45,12 @@ class LoaderWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
+        self.main_icon = QPixmap(":/main_icon.svg")
         self.init.connect(self.on_init)
         self.setup.connect(self.on_setup)
         self.ready.connect(self.on_ready)
         self.setWindowTitle(app_name)
+        self.setWindowIcon(self.main_icon)
         self.setCentralWidget(QProgressDialog("Verifying config", None, 0, 0))
 
         self.init.emit()
@@ -63,6 +69,7 @@ class LoaderWindow(QMainWindow):
     @asyncSlot()
     async def on_setup(self):
         setup = SetupDialog(self)
+        setup.setWindowIcon(self.main_icon)
         setup.rejected.connect(lambda: sys.exit(0))
         setup.accepted.connect(self.on_ready)
         setup.show()
@@ -85,6 +92,7 @@ class LoaderWindow(QMainWindow):
     def open_main_app(self, data_manager: DataManager):
         self.main_window = AppMainWindow(data_manager)
         self.main_window.setWindowTitle(app_name)
+        self.main_window.setWindowIcon(self.main_icon)
         self.main_window.show()
         # Set the main window as the parent of this window so this window is destroyed when the main window is closed
         self.setParent(self.main_window)

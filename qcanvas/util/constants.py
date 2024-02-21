@@ -1,2 +1,2 @@
 default_assignments_module_names = ["assessments", "assessment"]
-app_name = "QCanvas (Under construction)"
+app_name = "QCanvas"
