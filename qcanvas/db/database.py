@@ -1,5 +1,7 @@
+import os.path
 import pathlib
 import platform
+import re
 from datetime import datetime
 from enum import Enum
 from typing import List, Optional, MutableSequence
@@ -216,8 +218,13 @@ class Resource(MappedAsDataclass, Base, tree.HasText):
         if platform.system() == "Windows":
             file_id = file_id.replace(':', '$')
 
-        return pathlib.Path("download", f"{file_id}@{self.file_name}")
+        file_name, file_extension = os.path.splitext(self.file_name)
 
+        return pathlib.Path("download", self._sanitise_course_name(self.course.name), f"{file_name} [{file_id}]{file_extension}")
+
+    @staticmethod
+    def _sanitise_course_name(name: str) -> str:
+        return re.sub("[/\\\\<>:\"?|*]", "_", name)
 
 class ModuleItem(MappedAsDataclass, Base, tree.HasText):
     __tablename__ = "module_items"
