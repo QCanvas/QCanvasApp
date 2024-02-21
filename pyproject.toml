@@ -27,3 +27,9 @@ dependencies=[
     "bs4~=0.0.1",
     "pyqtdarktheme~=2.1.0"
 ]
+
+[tool.hatch.build.targets.sdist]
+exclude=[
+    ".idea",
+    "canvas_introspection.json"
+]
