@@ -25,7 +25,7 @@ from qcanvas.util.linkscanner.canvas_media_object_scanner import CanvasMediaObje
 from qcanvas.util.linkscanner.dropbox_scanner import DropboxScanner
 
 # noinspection PyUnresolvedReferences
-import qcanvas.icons.rc_icons
+import qcanvas.icons
 
 engine = create_async_engine("sqlite+aiosqlite:///canvas_db.😘", echo=False)
 
