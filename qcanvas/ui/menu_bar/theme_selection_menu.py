@@ -1,8 +1,8 @@
 from PySide6.QtGui import QActionGroup
-from PySide6.QtGui import create_qaction
 from PySide6.QtWidgets import QMenu, QWidget
 
 from qcanvas.util import AppSettings
+from qcanvas.util.qaction_helper import create_qaction
 
 
 def change_theme(theme_name: str):
