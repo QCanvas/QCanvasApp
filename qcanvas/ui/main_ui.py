@@ -10,6 +10,8 @@ import qcanvas.db.database as db
 from qcanvas.QtVersionHelper.QtCore import Slot, Signal, Qt, QUrl
 from qcanvas.QtVersionHelper.QtGui import QDesktopServices, create_qaction, QActionGroup, QAction
 from qcanvas.QtVersionHelper.QtWidgets import *
+from qcanvas.ui.menu_bar.grouping_preferences_menu import GroupingPreferencesMenu
+from qcanvas.ui.menu_bar.theme_selection_menu import ThemeSelectionMenu
 from qcanvas.ui.viewer.course_list import CourseList
 from qcanvas.ui.viewer.file_list import FileRow
 from qcanvas.ui.viewer.file_view_tab import FileViewTab
@@ -88,64 +90,17 @@ class AppMainWindow(QMainWindow):
     def setup_menu_bar(self):
         menu_bar = self.menuBar()
 
-        app_menu = menu_bar.addMenu("App")
+        menu_bar.addMenu(ThemeSelectionMenu())
         view_menu = menu_bar.addMenu("View")
 
-        app_menu.addMenu(self.setup_theme_menu())
         view_menu.addMenu(self.setup_group_by_menu())
 
-    def setup_theme_menu(self) -> QMenu:
-        theme_menu = QMenu("Theme")
-        theme_group = QActionGroup(theme_menu)
-
-        def theme_option(text: str, theme_name: str) -> QAction:
-            def set_theme():
-                AppSettings.theme = theme_name
-                AppSettings.apply_selected_theme()
-
-            return create_qaction(
-                name=text,
-                parent=theme_menu,
-                triggered=set_theme,
-                checkable=True,
-                checked=AppSettings.theme == theme_name
-            )
-
-        light_option = theme_option("Light", "light")
-        dark_option = theme_option("Dark", "dark")
-        native_option = theme_option("Native (requires restart)", "native")
-
-        theme_group.addAction(light_option)
-        theme_group.addAction(dark_option)
-        theme_group.addAction(native_option)
-
-        theme_menu.addActions([light_option, dark_option, native_option])
-
-        return theme_menu
-
     def setup_group_by_menu(self) -> QMenu:
-        self.file_grouping_menu = QMenu("Group course files by")
-        self.file_grouping_menu.setEnabled(False)
+        file_grouping_menu = GroupingPreferencesMenu(self.data_manager)
+        self.course_list.course_selected.connect(file_grouping_menu.course_changed)
+        file_grouping_menu.preference_changed.connect(self.on_grouping_preference_changed)
 
-        def group_by_option(text: str, preference_value: db.GroupByPreference):
-            return create_qaction(
-                name=text,
-                checkable=True,
-                checked=False,
-                triggered=lambda: self.files_grouping_preference_changed.emit(preference_value)
-            )
-
-        self.group_by_modules_action = group_by_option("Modules", db.GroupByPreference.GROUP_BY_MODULES)
-        self.group_by_pages_action = group_by_option("Pages", db.GroupByPreference.GROUP_BY_PAGES)
-
-        action_group = QActionGroup(self.file_grouping_menu)
-        action_group.addAction(self.group_by_modules_action)
-        action_group.addAction(self.group_by_pages_action)
-
-        self.file_grouping_menu.addAction(self.group_by_pages_action)
-        self.file_grouping_menu.addAction(self.group_by_modules_action)
-
-        return self.file_grouping_menu
+        return file_grouping_menu
 
     def closeEvent(self, event):
         _aux_settings.setValue("geometry", self.saveGeometry())
@@ -248,22 +203,17 @@ class AppMainWindow(QMainWindow):
     def on_course_selected(self, course: Optional[db.Course]):
         if course is not None:
             self.selected_course = course
+            # todo these should really be slots connected to this signal...
             self.pages_viewer.fill_tree(course)
             self.assignment_viewer.fill_tree(course)
             self.file_viewer.load_course_files(course)
-            self.file_grouping_menu.setEnabled(True)
-            self.group_by_pages_action.setChecked(course.preferences.files_group_by_preference == db.GroupByPreference.GROUP_BY_PAGES)
-            self.group_by_modules_action.setChecked(course.preferences.files_group_by_preference == db.GroupByPreference.GROUP_BY_MODULES)
         else:
             self.selected_course = None
             self.file_viewer.clear()
-            self.file_grouping_menu.setEnabled(False)
 
 
     @asyncSlot(db.CoursePreferences)
-    async def on_grouping_preference_changed(self, preference: db.GroupByPreference):
-        self.selected_course.preferences.files_group_by_preference = preference
-        await self.data_manager.update_item(self.selected_course.preferences)
+    async def on_grouping_preference_changed(self):
         self.file_viewer.load_course_files(self.selected_course)
 
 

@@ -54,6 +54,7 @@ class _AppSettings:
         self._theme = value
         self.settings.setValue("theme", value)
 
+    # fixme should this really be here
     def apply_selected_theme(self):
         if self.theme != "native":
             qdarktheme.setup_theme(
