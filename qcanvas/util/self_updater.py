@@ -13,16 +13,16 @@ async def do_update():
     await asyncio.to_thread(os.system, f"pip install --upgrade {package_name}")
 
 
-async def get_newer_version() -> Version | None:
+async def get_newer_version() -> tuple[Version | None, Version | None] | None:
     latest_version = await get_versions()
     installed_version = Version(version(package_name))
 
     print(f"latest = {latest_version}, installed = {installed_version}")
 
     if installed_version < latest_version:
-        return latest_version
+        return latest_version, installed_version
     else:
-        return None
+        return None, None
 
 
 async def get_versions() -> Version:

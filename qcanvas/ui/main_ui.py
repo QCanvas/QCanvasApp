@@ -154,13 +154,13 @@ class AppMainWindow(QMainWindow):
     @asyncSlot()
     async def check_for_update(self):
         try:
-            newer_version = await self_updater.get_newer_version()
+            newer_version, installed_version = await self_updater.get_newer_version()
 
             if newer_version is not None and newer_version != AppSettings.last_ignored_update:
                 msg_box = QMessageBox(
                     QMessageBox.Icon.Question,
                     "Update available",
-                    "There is an update available, do you want to update?\nThe program will close after the update is finished.",
+                    f"There is an update available ({installed_version} -> {newer_version})\n do you want to update?\nThe program will close after the update is finished.",
                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                     self
                 )
