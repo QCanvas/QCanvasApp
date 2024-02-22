@@ -25,7 +25,6 @@ class FileColumn(QGroupBox):
 
 
 class FileViewTab(QWidget):
-    group_by_preference_changed = Signal(db.GroupByPreference)
 
     def __init__(self, download_pool: DownloadPool):
         super().__init__()
@@ -33,37 +32,13 @@ class FileViewTab(QWidget):
         self.files_column = FileColumn("Files", download_pool)
         self.assignment_files_column = FileColumn("Assignment files", download_pool)
 
-        self.group_by_combobox = QComboBox()
-
-        self.group_by_preference: db.GroupByPreference | None = None
-        self.group_preference_layout = QHBoxLayout()
-        self.group_preference_layout.addWidget(QLabel("Group By:"))
-        self.group_preference_layout.addWidget(self.group_by_combobox)
-        self.group_preference_layout.setStretch(1, 1)
-
-        widget = QWidget()
-        widget.setLayout(self.group_preference_layout)
-
-        # fixme this can't stay here
-        self.files_column.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.files_column.customContextMenuRequested.connect(self.files_column_context_menu)
-
-        self.group_by_preference_changed.connect(self.update_group_by_preferences)
-
         layout = QHBoxLayout()
         layout.addWidget(self.files_column)
         layout.addWidget(self.assignment_files_column)
 
         self.setLayout(layout)
 
-    @Slot(db.GroupByPreference)
-    def update_group_by_preferences(self, preference : db.GroupByPreference):
-        if self.group_by_preference is not None:
-            self.group_by_preference = preference
-
     def load_course_files(self, course: db.Course):
-        self.group_by_preference = course.preferences.files_group_by_preference
-
         module_items: list[db.ModuleItem] = []
         assignment_items: list[db.ModuleItem] = []
 
@@ -73,7 +48,7 @@ class FileViewTab(QWidget):
             else:
                 module_items.append(module_item)
 
-        if self.group_by_preference == db.GroupByPreference.GROUP_BY_MODULES:
+        if course.preferences.files_group_by_preference == db.GroupByPreference.GROUP_BY_MODULES:
             exclude_assignments_module = list(filter(lambda x: x.name.lower() not in default_assignments_module_names, course.modules))
 
             self.files_column.load_items(exclude_assignments_module)
@@ -83,40 +58,5 @@ class FileViewTab(QWidget):
         self.assignment_files_column.load_items(assignment_items + course.assignments)
 
     def clear(self):
-        self.group_by_preference = None
         self.files_column.clear()
         self.assignment_files_column.clear()
-
-    @Slot(QPoint)
-    def files_column_context_menu(self, pos: QPoint):
-        if self.group_by_preference is None:
-            return
-
-        menu = QMenu(self.files_column)
-
-        group_by_menu = menu.addMenu("Group by")
-
-        select_group_preference_modules = create_qaction(
-            name="Modules",
-            checkable=True,
-            checked=self.group_by_preference == db.GroupByPreference.GROUP_BY_MODULES,
-            triggered=lambda: self.group_by_preference_changed.emit(db.GroupByPreference.GROUP_BY_MODULES)
-        )
-
-        select_group_preference_pages = create_qaction(
-            name="Pages",
-            checkable=True,
-            checked=self.group_by_preference == db.GroupByPreference.GROUP_BY_PAGES,
-            triggered=lambda: self.group_by_preference_changed.emit(db.GroupByPreference.GROUP_BY_PAGES)
-        )
-
-        action_group = QActionGroup(menu)
-        action_group.addAction(select_group_preference_modules)
-        action_group.addAction(select_group_preference_pages)
-
-        group_by_menu.addAction(select_group_preference_pages)
-        group_by_menu.addAction(select_group_preference_modules)
-
-        menu.exec(self.files_column.mapToGlobal(pos))
-
-

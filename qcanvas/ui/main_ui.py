@@ -23,11 +23,15 @@ _aux_settings = AppSettings.auxiliary
 class AppMainWindow(QMainWindow):
     logger = logging.getLogger()
     loaded = Signal()
+    files_grouping_preference_changed = Signal(db.GroupByPreference)
     operation_lock = Event()
 
     def __init__(self, data_manager: DataManager, parent: QWidget | None = None):
         super().__init__(parent)
 
+        self.group_by_pages_action: QAction | None = None
+        self.group_by_modules_action: QAction | None = None
+        self.file_grouping_menu: QMenu | None = None
         self.selected_course: db.Course | None = None
         self.courses: Sequence[db.Course] = []
         self.resources: dict[str, db.Resource] = {}
@@ -50,8 +54,6 @@ class AppMainWindow(QMainWindow):
         self.pages_viewer.viewer.anchorClicked.connect(self.viewer_link_clicked)
 
         self.file_viewer = FileViewTab(data_manager.download_pool)
-        self.file_viewer.group_by_preference_changed.connect(self.course_file_group_by_preference_changed)
-
         self.file_viewer.files_column.tree.itemActivated.connect(self.download_file_from_file_pane)
         self.file_viewer.assignment_files_column.tree.itemActivated.connect(self.download_file_from_file_pane)
 
@@ -75,6 +77,8 @@ class AppMainWindow(QMainWindow):
 
         self.setup_menu_bar()
 
+        self.files_grouping_preference_changed.connect(self.on_grouping_preference_changed)
+
         self.loaded.connect(self.load_course_list)
         self.loaded.connect(self.check_for_update)
         self.loaded.emit()
@@ -88,6 +92,7 @@ class AppMainWindow(QMainWindow):
         view_menu = menu_bar.addMenu("View")
 
         app_menu.addMenu(self.setup_theme_menu())
+        view_menu.addMenu(self.setup_group_by_menu())
 
     def setup_theme_menu(self) -> QMenu:
         theme_menu = QMenu("Theme")
@@ -117,6 +122,30 @@ class AppMainWindow(QMainWindow):
         theme_menu.addActions([light_option, dark_option, native_option])
 
         return theme_menu
+
+    def setup_group_by_menu(self) -> QMenu:
+        self.file_grouping_menu = QMenu("Group course files by")
+        self.file_grouping_menu.setEnabled(False)
+
+        def group_by_option(text: str, preference_value: db.GroupByPreference):
+            return create_qaction(
+                name=text,
+                checkable=True,
+                checked=False,
+                triggered=lambda: self.files_grouping_preference_changed.emit(preference_value)
+            )
+
+        self.group_by_modules_action = group_by_option("Modules", db.GroupByPreference.GROUP_BY_MODULES)
+        self.group_by_pages_action = group_by_option("Pages", db.GroupByPreference.GROUP_BY_PAGES)
+
+        action_group = QActionGroup(self.file_grouping_menu)
+        action_group.addAction(self.group_by_modules_action)
+        action_group.addAction(self.group_by_pages_action)
+
+        self.file_grouping_menu.addAction(self.group_by_pages_action)
+        self.file_grouping_menu.addAction(self.group_by_modules_action)
+
+        return self.file_grouping_menu
 
     def closeEvent(self, event):
         _aux_settings.setValue("geometry", self.saveGeometry())
@@ -222,13 +251,17 @@ class AppMainWindow(QMainWindow):
             self.pages_viewer.fill_tree(course)
             self.assignment_viewer.fill_tree(course)
             self.file_viewer.load_course_files(course)
+            self.file_grouping_menu.setEnabled(True)
+            self.group_by_pages_action.setChecked(course.preferences.files_group_by_preference == db.GroupByPreference.GROUP_BY_PAGES)
+            self.group_by_modules_action.setChecked(course.preferences.files_group_by_preference == db.GroupByPreference.GROUP_BY_MODULES)
         else:
             self.selected_course = None
             self.file_viewer.clear()
+            self.file_grouping_menu.setEnabled(False)
 
 
     @asyncSlot(db.CoursePreferences)
-    async def course_file_group_by_preference_changed(self, preference: db.GroupByPreference):
+    async def on_grouping_preference_changed(self, preference: db.GroupByPreference):
         self.selected_course.preferences.files_group_by_preference = preference
         await self.data_manager.update_item(self.selected_course.preferences)
         self.file_viewer.load_course_files(self.selected_course)
