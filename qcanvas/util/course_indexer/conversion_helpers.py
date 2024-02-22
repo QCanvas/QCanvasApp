@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 import qcanvas.db as db
 import qcanvas.queries as queries
-from qcanvas.util import canvas_garbage_remover
 
 
 async def create_assignments(g_course: queries.Course, session: AsyncSession) -> Sequence[db.Assignment]:

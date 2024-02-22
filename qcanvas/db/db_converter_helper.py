@@ -3,7 +3,7 @@ from datetime import datetime
 import qcanvas.db.database as db
 import qcanvas.queries as gql
 from qcanvas.net.canvas.legacy_canvas_types import LegacyFile
-from qcanvas.util.canvas_garbage_remover import remove_garbage_from_title as clean_string
+from qcanvas.util.helpers.canvas_sanitiser import remove_garbage_from_title as clean_string
 
 
 def convert_term(term: gql.Term) -> db.Term:

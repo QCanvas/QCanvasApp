@@ -17,9 +17,10 @@ import qcanvas.icons
 from qcanvas.net.canvas.canvas_client import CanvasClient
 from qcanvas.ui.main_ui import AppMainWindow
 from qcanvas.ui.setup_dialog import SetupDialog
-from qcanvas.util import AppSettings, self_updater
+from qcanvas.util import settings, self_updater
 from qcanvas.util.constants import app_name, updated_and_needs_restart_return_code
 from qcanvas.util.course_indexer import DataManager
+from qcanvas.util.helpers import theme_helper
 from qcanvas.util.linkscanner import CanvasFileScanner
 from qcanvas.util.linkscanner.canvas_media_object_scanner import CanvasMediaObjectScanner
 from qcanvas.util.linkscanner.dropbox_scanner import DropboxScanner
@@ -57,7 +58,7 @@ class LoaderWindow(QMainWindow):
     async def on_init(self) -> None:
         try:
             # Verify that the canvas urls and api key are valid
-            if not await CanvasClient.verify_config(AppSettings.canvas_url, AppSettings.canvas_api_key):
+            if not await CanvasClient.verify_config(settings.canvas_url, settings.api_key):
                 # Show the setup dialog
                 self.setup.emit()
             else:
@@ -83,7 +84,7 @@ class LoaderWindow(QMainWindow):
         """
         Sets up the canvas client and data manager for the main app
         """
-        client = CanvasClient(canvas_url=URL(AppSettings.canvas_url), api_key=AppSettings.canvas_api_key)
+        client = CanvasClient(canvas_url=URL(settings.canvas_url), api_key=settings.api_key)
         data_manager = DataManager(
             client=client,
             link_scanners=[
@@ -128,7 +129,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
 
     # Apply the selected theme to qt
-    AppSettings.apply_selected_theme()
+    theme_helper.apply_selected_theme()
 
     # Setup event loop for qasync
     event_loop = QEventLoop()

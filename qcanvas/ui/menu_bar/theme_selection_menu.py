@@ -1,13 +1,14 @@
 from PySide6.QtGui import QActionGroup
 from PySide6.QtWidgets import QMenu, QWidget
 
-from qcanvas.util import AppSettings
-from qcanvas.util.qaction_helper import create_qaction
+from qcanvas.util import settings
+from qcanvas.util.helpers import theme_helper
+from qcanvas.util.helpers.qaction_helper import create_qaction
 
 
 def change_theme(theme_name: str):
-    AppSettings.theme = theme_name
-    AppSettings.apply_selected_theme()
+    settings.theme = theme_name
+    theme_helper.apply_selected_theme()
 
 
 class ThemeSelectionMenu(QMenu):
@@ -33,5 +34,5 @@ class ThemeSelectionMenu(QMenu):
             parent=self,
             triggered=lambda: change_theme(theme_name),
             checkable=True,
-            checked=AppSettings.theme == theme_name
+            checked=settings.theme == theme_name
         )

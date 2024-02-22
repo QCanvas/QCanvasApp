@@ -16,11 +16,12 @@ from qcanvas.ui.viewer.course_list import CourseList
 from qcanvas.ui.viewer.file_list import FileRow
 from qcanvas.ui.viewer.file_view_tab import FileViewTab
 from qcanvas.ui.viewer.page_list_viewer import AssignmentsViewer, PagesViewer, LinkTransformer
-from qcanvas.util import AppSettings, self_updater
+from qcanvas.util import settings, self_updater
+from qcanvas.util.app_settings import AppSettings
 from qcanvas.util.constants import app_name
 from qcanvas.util.course_indexer import DataManager
 
-_aux_settings = AppSettings.auxiliary
+_aux_settings = settings.auxiliary
 
 
 class AppMainWindow(QMainWindow):
@@ -101,12 +102,12 @@ class AppMainWindow(QMainWindow):
         return file_grouping_menu
 
     def closeEvent(self, event):
-        _aux_settings.setValue("geometry", self.saveGeometry())
-        _aux_settings.setValue("windowState", self.saveState())
+        settings.geometry = self.saveGeometry()
+        settings.window_state = self.saveState()
 
     def restore_window_position(self):
-        self.restoreGeometry(_aux_settings.value("geometry"))
-        self.restoreState(_aux_settings.value("windowState"))
+        self.restoreGeometry(settings.geometry)
+        self.restoreState(settings.window_state)
 
     @asyncSlot(QUrl)
     async def viewer_link_clicked(self, url: QUrl):
@@ -126,16 +127,17 @@ class AppMainWindow(QMainWindow):
 
     @asyncSlot()
     async def sync_data(self):
+        AppSettings.geometry = 2999
         # # self.operation_lock.
-        self.sync_button.setEnabled(False)
-        self.sync_button.setText("Synchronizing")
-        try:
-            await self.data_manager.synchronize_with_canvas()
-            await self.load_course_list()
-
-        finally:
-            self.sync_button.setEnabled(True)
-            self.sync_button.setText("Synchronize")
+        # self.sync_button.setEnabled(False)
+        # self.sync_button.setText("Synchronizing")
+        # try:
+        #     await self.data_manager.synchronize_with_canvas()
+        #     await self.load_course_list()
+        #
+        # finally:
+        #     self.sync_button.setEnabled(True)
+        #     self.sync_button.setText("Synchronize")
 
     @asyncSlot()
     async def load_course_list(self):
@@ -153,7 +155,7 @@ class AppMainWindow(QMainWindow):
         try:
             newer_version, installed_version = await self_updater.get_newer_version()
 
-            if newer_version is not None and newer_version != AppSettings.last_ignored_update:
+            if newer_version is not None and newer_version != settings.ignored_update:
                 msg_box = QMessageBox(
                     QMessageBox.Icon.Question,
                     "Update available",
@@ -163,7 +165,7 @@ class AppMainWindow(QMainWindow):
                 )
 
                 def ignore_update():
-                    AppSettings.last_ignored_update = newer_version
+                    settings.ignored_update = newer_version
 
                 msg_box.accepted.connect(self.do_self_update)
                 msg_box.rejected.connect(ignore_update)

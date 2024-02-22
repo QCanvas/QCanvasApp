@@ -4,7 +4,7 @@ from qasync import asyncSlot
 
 import qcanvas.db as db
 from qcanvas.util.course_indexer import DataManager
-from qcanvas.util.qaction_helper import create_qaction
+from qcanvas.util.helpers.qaction_helper import create_qaction
 
 
 class GroupingPreferencesMenu(QMenu):

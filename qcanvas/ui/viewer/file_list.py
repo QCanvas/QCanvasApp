@@ -5,8 +5,8 @@ from PySide6.QtWidgets import QStyledItemDelegate, QStyleOptionProgressBar, QApp
     QHeaderView, QStyleOptionViewItem, QTreeWidget, QTreeWidgetItem
 
 import qcanvas.db.database as db
-from qcanvas.util import file_icon_helper
 from qcanvas.util.download_pool import DownloadPool
+from qcanvas.util.helpers import file_icon_helper
 
 
 # https://code.whatever.social/questions/1094841/get-human-readable-version-of-file-size#1094933

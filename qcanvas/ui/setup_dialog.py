@@ -10,7 +10,7 @@ from PySide6.QtWidgets import QProgressBar
 from qasync import asyncSlot
 
 from qcanvas.net.canvas import CanvasClient
-from qcanvas.util import AppSettings
+from qcanvas.util import settings
 
 tutorial_url = "https://www.iorad.com/player/2053777/Canvas---How-to-generate-an-access-token-"
 
@@ -46,9 +46,9 @@ class SetupDialog(QDialog):
 
         stack = QVBoxLayout()
 
-        self.canvas_url = QLineEdit(AppSettings.canvas_url or "")
+        self.canvas_url = QLineEdit(settings.canvas_url or "")
         # self.panopto_url = QLineEdit()
-        self.canvas_api_key = QLineEdit(AppSettings.canvas_api_key or "")
+        self.canvas_api_key = QLineEdit(settings.api_key or "")
 
         self._row("Canvas URL", self.canvas_url)
         # self._row("Painopto URL", self.panopto_url)
@@ -57,7 +57,7 @@ class SetupDialog(QDialog):
         self.grid.addWidget(self.progress_bar, self._row_counter, 0, 1, 2)
 
         button_box = QDialogButtonBox(
-            QDialogButtonBox.Save | QDialogButtonBox.Cancel if allow_cancel else QDialogButtonBox.Ok)
+            QDialogButtonBox.StandardButton.Save | QDialogButtonBox.StandardButton.Cancel if allow_cancel else QDialogButtonBox.StandardButton.Ok)
         button_box.addButton("How to get a canvas API key?", QDialogButtonBox.ButtonRole.HelpRole)
 
         button_box.helpRequested.connect(self._show_help)
@@ -108,8 +108,8 @@ class SetupDialog(QDialog):
                         parent=self
                     ).show()
                 else:
-                    AppSettings.canvas_url = canvas_url_text
-                    AppSettings.canvas_api_key = canvas_api_key_text
+                    settings.canvas_url = canvas_url_text
+                    settings.api_key = canvas_api_key_text
 
                     self.accept()
             finally:

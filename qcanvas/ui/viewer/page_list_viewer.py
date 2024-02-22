@@ -8,7 +8,6 @@ from bs4 import BeautifulSoup
 
 import qcanvas.db as db
 from qcanvas.ui.container_item import ContainerItem
-from qcanvas.util import canvas_garbage_remover
 from qcanvas.util.constants import default_assignments_module_names
 from qcanvas.util.course_indexer import resource_helpers
 from qcanvas.util.linkscanner import ResourceScanner
