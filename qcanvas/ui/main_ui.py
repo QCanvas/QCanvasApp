@@ -172,8 +172,8 @@ class AppMainWindow(QMainWindow):
                 print("No update available (or skipping this update)")
         except BaseException as e:
             sys.stderr.write(f"Could not check for updates: {e}\n")
-            sys.stderr.write("This can be ignored if in a dev environment\n")
             traceback.print_exc()
+            sys.stderr.write("This can be ignored if in a dev environment\n")
 
     @asyncSlot()
     async def do_self_update(self):
