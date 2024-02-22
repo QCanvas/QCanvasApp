@@ -3,6 +3,9 @@ import logging
 import sys
 
 import httpx
+from PySide6.QtCore import Signal
+from PySide6.QtGui import QPixmap
+from PySide6.QtWidgets import QApplication, QProgressDialog, QMainWindow
 from httpx import URL
 from qasync import QEventLoop, asyncSlot
 from sqlalchemy.ext.asyncio import create_async_engine
@@ -11,9 +14,6 @@ from sqlalchemy.ext.asyncio.session import async_sessionmaker as AsyncSessionMak
 import qcanvas.db as db
 # noinspection PyUnresolvedReferences
 import qcanvas.icons
-from qcanvas.QtVersionHelper.QtCore import Signal
-from qcanvas.QtVersionHelper.QtGui import QPixmap
-from qcanvas.QtVersionHelper.QtWidgets import QApplication, QProgressDialog, QMainWindow
 from qcanvas.net.canvas.canvas_client import CanvasClient
 from qcanvas.ui.main_ui import AppMainWindow
 from qcanvas.ui.setup_dialog import SetupDialog

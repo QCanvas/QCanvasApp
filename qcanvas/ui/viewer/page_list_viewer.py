@@ -1,12 +1,12 @@
 from abc import abstractmethod
 from typing import Sequence
 
+from PySide6.QtCore import QItemSelection, Slot
+from PySide6.QtGui import QStandardItemModel
+from PySide6.QtWidgets import QWidget, QTextBrowser, QTreeView, QHBoxLayout
 from bs4 import BeautifulSoup
 
 import qcanvas.db as db
-from qcanvas.QtVersionHelper.QtCore import QItemSelection, Slot
-from qcanvas.QtVersionHelper.QtGui import QStandardItemModel
-from qcanvas.QtVersionHelper.QtWidgets import QWidget, QTextBrowser, QTreeView, QHBoxLayout
 from qcanvas.ui.container_item import ContainerItem
 from qcanvas.util import canvas_garbage_remover
 from qcanvas.util.constants import default_assignments_module_names

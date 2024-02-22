@@ -1,7 +1,8 @@
 import asyncio
 from typing import Callable, Any
 
-from qcanvas.QtVersionHelper.QtCore import QObject, Signal
+from PySide6.QtCore import QObject, Signal
+
 from qcanvas.util.task_pool import TaskPool
 
 

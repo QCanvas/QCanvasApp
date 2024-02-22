@@ -2,13 +2,13 @@ import traceback
 from threading import Semaphore
 from typing import Optional
 
+from PySide6.QtCore import Slot, QUrl
+from PySide6.QtGui import QDesktopServices
+from PySide6.QtWidgets import QDialog, QWidget, QHBoxLayout, QLabel, QLineEdit, QVBoxLayout, \
+    QDialogButtonBox, QGridLayout, QMessageBox
+from PySide6.QtWidgets import QProgressBar
 from qasync import asyncSlot
 
-from qcanvas.QtVersionHelper.QtCore import Slot, QUrl
-from qcanvas.QtVersionHelper.QtGui import QDesktopServices
-from qcanvas.QtVersionHelper.QtWidgets import QDialog, QWidget, QHBoxLayout, QLabel, QLineEdit, QVBoxLayout, \
-    QDialogButtonBox, QGridLayout, QMessageBox
-from qcanvas.QtVersionHelper.QtWidgets import QProgressBar
 from qcanvas.net.canvas import CanvasClient
 from qcanvas.util import AppSettings
 

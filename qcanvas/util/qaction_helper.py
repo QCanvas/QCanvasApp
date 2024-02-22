@@ -1,17 +1,6 @@
 from typing import Any
 
-from qcanvas.QtVersionHelper import QT_VERSION
-
-if QT_VERSION == 5:
-    # noinspection PyUnresolvedReferences
-    from PySide2.QtGui import *
-
-    # Seemed to have moved packages... make things easier for myself
-    # noinspection PyUnresolvedReferences
-    from PySide2.QtWidgets import QAction, QActionGroup
-elif QT_VERSION == 6:
-    # noinspection PyUnresolvedReferences
-    from PySide6.QtGui import *
+from PySide6.QtGui import QAction, QKeySequence
 
 
 def create_qaction(name: str, shortcut: QKeySequence | None = None, parent: Any = None, triggered: Any = None,

@@ -1,6 +1,7 @@
-from qcanvas.QtVersionHelper.QtGui import QActionGroup
-from qcanvas.QtVersionHelper.QtGui import create_qaction
-from qcanvas.QtVersionHelper.QtWidgets import QMenu, QWidget
+from PySide6.QtGui import QActionGroup
+from PySide6.QtGui import create_qaction
+from PySide6.QtWidgets import QMenu, QWidget
+
 from qcanvas.util import AppSettings
 
 

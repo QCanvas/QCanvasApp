@@ -1,7 +1,8 @@
 from typing import Sequence
 
+from PySide6.QtWidgets import *  # QWidget, QTreeView, QGroupBox, QBoxLayout, QHeaderView, QHBoxLayout, QComboBox, QLabel
+
 import qcanvas.db as db
-from qcanvas.QtVersionHelper.QtWidgets import *  # QWidget, QTreeView, QGroupBox, QBoxLayout, QHeaderView, QHBoxLayout, QComboBox, QLabel
 from qcanvas.ui.viewer.file_list import FileList
 from qcanvas.util.constants import default_assignments_module_names
 from qcanvas.util.download_pool import DownloadPool

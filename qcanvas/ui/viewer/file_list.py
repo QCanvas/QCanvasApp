@@ -1,9 +1,10 @@
 from typing import Sequence
 
-import qcanvas.db.database as db
-from qcanvas.QtVersionHelper.QtCore import QObject, Slot, Qt
-from qcanvas.QtVersionHelper.QtWidgets import QStyledItemDelegate, QStyleOptionProgressBar, QApplication, QStyle, \
+from PySide6.QtCore import QObject, Slot, Qt
+from PySide6.QtWidgets import QStyledItemDelegate, QStyleOptionProgressBar, QApplication, QStyle, \
     QHeaderView, QStyleOptionViewItem, QTreeWidget, QTreeWidgetItem
+
+import qcanvas.db.database as db
 from qcanvas.util import file_icon_helper
 from qcanvas.util.download_pool import DownloadPool
 

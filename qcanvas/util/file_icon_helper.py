@@ -1,6 +1,6 @@
-from qcanvas.QtVersionHelper.QtCore import QMimeDatabase
-from qcanvas.QtVersionHelper.QtGui import QIcon
-from qcanvas.QtVersionHelper.QtWidgets import QApplication, QStyle
+from PySide6.QtCore import QMimeDatabase
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QApplication, QStyle
 
 _mime_database = QMimeDatabase()
 _default_icon = None

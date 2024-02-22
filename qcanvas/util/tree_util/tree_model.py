@@ -1,7 +1,8 @@
 from typing import Any, Sequence, TypeVar, Generic, Optional
 
-from qcanvas.QtVersionHelper.QtCore import QAbstractItemModel, QModelIndex, QPersistentModelIndex
-from qcanvas.QtVersionHelper.QtWidgets import QWidget
+from PySide6.QtCore import QAbstractItemModel, QModelIndex, QPersistentModelIndex
+from PySide6.QtWidgets import QWidget
+
 from .model_helpers import HasColumnData, HasParent, HasChildren
 
 T = TypeVar("T")

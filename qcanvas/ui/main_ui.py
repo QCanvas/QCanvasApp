@@ -4,12 +4,12 @@ import traceback
 from asyncio import Event
 from typing import Sequence, Optional
 
+from PySide6.QtCore import Slot, Signal, Qt, QUrl
+from PySide6.QtGui import QDesktopServices
+from PySide6.QtWidgets import *
 from qasync import asyncSlot
 
 import qcanvas.db.database as db
-from qcanvas.QtVersionHelper.QtCore import Slot, Signal, Qt, QUrl
-from qcanvas.QtVersionHelper.QtGui import QDesktopServices
-from qcanvas.QtVersionHelper.QtWidgets import *
 from qcanvas.ui.menu_bar.grouping_preferences_menu import GroupingPreferencesMenu
 from qcanvas.ui.menu_bar.theme_selection_menu import ThemeSelectionMenu
 from qcanvas.ui.viewer.course_list import CourseList

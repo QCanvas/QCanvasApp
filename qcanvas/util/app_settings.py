@@ -1,6 +1,6 @@
 import qdarktheme
 
-from qcanvas.QtVersionHelper.QtCore import QSettings, QUrl
+from PySide6.QtCore import QSettings, QUrl
 
 
 def ensure_theme_is_valid(theme: str) -> str:

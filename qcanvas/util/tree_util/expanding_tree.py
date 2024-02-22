@@ -1,7 +1,8 @@
 from typing import Any, TypeVar, Sequence, Optional
 
-from qcanvas.QtVersionHelper.QtCore import QModelIndex, Slot, QItemSelectionModel
-from qcanvas.QtVersionHelper.QtWidgets import QTreeView, QWidget
+from PySide6.QtCore import QModelIndex, Slot, QItemSelectionModel
+from PySide6.QtWidgets import QTreeView, QWidget
+
 from .model_helpers import HasChildren, HasParent
 from .tree_model import TreeModel
 
