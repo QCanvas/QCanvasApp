@@ -19,9 +19,10 @@ class ThemeSelectionMenu(QMenu):
 
         light_theme = self._create_action("Light", "light")
         dark_theme = self._create_action("Dark", "dark")
+        auto_theme = self._create_action("Auto (YMMV)", "auto")
         native_theme = self._create_action("Native (requires restart)", "native")
 
-        actions = [light_theme, dark_theme, native_theme]
+        actions = [light_theme, dark_theme, auto_theme, native_theme]
 
         self.addActions(actions)
 
