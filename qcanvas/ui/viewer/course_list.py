@@ -11,7 +11,7 @@ from qcanvas.util.course_indexer import DataManager
 
 
 class CourseNode(QStandardItem, QObject):
-    name_changed = Signal((db.Course, str,))
+    name_changed = Signal(db.Course, str)
 
     def __init__(self, course: db.Course):
         QObject.__init__(self)
@@ -33,7 +33,7 @@ class CourseNode(QStandardItem, QObject):
 
 
 class CourseList(QTreeView):
-    course_selected = Signal((db.Course,))
+    course_selected = Signal(db.Course)
 
     def __init__(self, data_manager: DataManager):
         super().__init__()
