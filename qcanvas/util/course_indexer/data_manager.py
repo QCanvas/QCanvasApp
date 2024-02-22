@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import sys
 import traceback
 from asyncio import Task
 from dataclasses import dataclass
@@ -74,6 +73,10 @@ def _prepare_out_of_date_pages_for_loading(g_courses: Sequence[queries.Course], 
 # todo make this reusable and add some way of refreshing only a list of pages or one page or one course or something
 # todo use logger instead of print and put some signals around the place for useful things, e.g. indexing progress
 class DataManager:
+    """
+    Responsible for storing all data pulled from canvas or other websites in the database.
+    Provides functions for synchronizing with canvas and downloading files.
+    """
     def __init__(self,
                  client: CanvasClient,
                  sessionmaker: AsyncSessionMaker,
@@ -93,6 +96,9 @@ class DataManager:
         self._init_called = False
 
     async def init(self):
+        """
+        Load existing pages and resources from the database, so they don't have to be fetched from canvas again
+        """
         self._init_called = True
 
         async with self._session_maker.begin() as session:
@@ -120,6 +126,7 @@ class DataManager:
                 session.add(resource)
                 resource.state = db.ResourceState.DOWNLOADED
         except BaseException as e:
+            # Something went wrong, record the failure in the database
             async with self._session_maker.begin() as session:
                 session.add(resource)
                 resource.state = db.ResourceState.FAILED
@@ -129,8 +136,9 @@ class DataManager:
 
     async def download_resource(self, resource: db.Resource):
         if not self._init_called:
-            sys.stderr.write("WARNING! INIT NOT CALLED FOR COURSE LOADER!! YOU'VE FUCKED UP!!!!!!!!!!!")
+            raise Exception("Init was not called")
 
+        # Resource ids look like this: "canvas_file:387837", and we just want the "canvas_file" part
         scanner_name: str = resource.id.split(':', 2)[0]
         # Find the scanner that will deal with this resource
         scanner = self._scanner_name_map[scanner_name]
@@ -178,22 +186,16 @@ class DataManager:
             return (await session.execute(select(db.Course).options(*options))).scalars().all()
 
     async def synchronize_with_canvas(self):
-        print("Querying index")
         raw_query = (await self._client.do_graphql_query(gql(queries.all_courses.DEFINITION), detailed=True))
-        print("Loading data")
         await self.load_courses_data(queries.AllCoursesQueryData(**raw_query).all_courses)
 
     async def load_courses_data(self, g_courses: Sequence[queries.Course]):
-        if not self._init_called:
-            sys.stderr.write("WARNING! INIT NOT CALLED FOR COURSE LOADER!! YOU'VE FUCKED UP!!!!!!!!!!!")
-
         """
         Loads data for all specified courses, including loading module pages and scanning for resources.
         """
-        # if self._operation_semaphore.locked():
-        #     raise Exception("Only 1 sync operation may happen at once")
 
-        # async with self._operation_semaphore:
+        if not self._init_called:
+            raise Exception("Init was not called")
 
         async with self._session_maker.begin() as session:
             # Load module pages/files for the courses
@@ -208,7 +210,7 @@ class DataManager:
                 await conv_helper.create_course(g_course, session, term)
                 await conv_helper.create_modules(g_course, session)
 
-                # Add the course assignments to the list
+                # Add course assignments to the list
                 assignments.extend(await conv_helper.create_assignments(g_course, session))
 
             # Scan assignments for resources
@@ -221,10 +223,11 @@ class DataManager:
         """
         Scans assignments for resources
         """
-        print("Scanning assignments for resources")
 
+        # Link the resources found to each page in the database
         await resource_helper.create_assignment_resource_relations(
-            await resource_helper.map_resources_in_pages(
+            # Find all the resources in each assignment description
+            await resource_helper.find_resources_in_pages(
                 link_scanners=self._link_scanners,
                 resource_pool=self._resource_pool,
                 items=assignments
@@ -242,19 +245,25 @@ class DataManager:
                 select(db.ModulePage)
                 .where(db.ModuleItem.course_id.in_(course_ids))
             )).scalars().all()
-        pages_to_update = _prepare_out_of_date_pages_for_loading(g_courses, existing_pages)
-        module_items = await self._load_page_content(pages_to_update)
 
-        print("Scanning pages for resources")
+        # Filter out pages that don't need updating
+        pages_to_update = _prepare_out_of_date_pages_for_loading(g_courses, existing_pages)
+        # Load the content for all the pages that need updating
+        module_items = await self._load_content_for_pages(pages_to_update)
+
+        # Link the resources found to the pages they were found on and add them to the database
         await resource_helper.create_module_item_resource_relations(
-            await resource_helper.map_resources_in_pages(
+            # Find all the resources in each page
+            await resource_helper.find_resources_in_pages(
                 link_scanners=self._link_scanners,
                 resource_pool=self._resource_pool,
-                items=list(filter(lambda x: isinstance(x, db.PageLike), module_items))
+                # Collect just the module pages for scanning
+                items=[item for item in module_items if isinstance(item, db.ModulePage)]
             ),
             session
         )
 
+        # Add all the module items to the session
         session.add_all(module_items)
 
     def _add_resources_and_pages_to_taskpool(self, existing_pages: Sequence[db.ModuleItem],
@@ -265,7 +274,7 @@ class DataManager:
         self.download_pool.add_values(
             {resource.id: None for resource in existing_resources if resource.state == db.ResourceState.DOWNLOADED})
 
-    async def _load_page_content(self, pages: Sequence[TransientModulePage]) -> list[db.ModuleItem]:
+    async def _load_content_for_pages(self, pages: Sequence[TransientModulePage]) -> list[db.ModuleItem]:
         """
         Loads the page content for the specified pages
         Parameters
@@ -281,6 +290,7 @@ class DataManager:
         for page in pages:
             content = page.page
 
+            # Load the content for the pages
             if isinstance(content, queries.File):
                 task = asyncio.create_task(
                     self._load_module_file(content, page.course_id, page.module_id, page.position))
@@ -292,6 +302,7 @@ class DataManager:
         if len(tasks) > 0:
             await asyncio.wait(tasks)
 
+            # Collect results and filter out nulls
             return [task.result() for task in tasks if task.result() is not None]
         else:
             return []

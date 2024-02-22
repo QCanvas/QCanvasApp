@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 import qcanvas.db as db
 import qcanvas.queries as queries
+from qcanvas.util.helpers import canvas_sanitiser
 
 
 async def create_assignments(g_course: queries.Course, session: AsyncSession) -> Sequence[db.Assignment]:
@@ -24,7 +25,7 @@ async def create_assignments(g_course: queries.Course, session: AsyncSession) ->
         elif g_assignment.updated_at.replace(tzinfo=None) <= assignment.updated_at:
             continue
 
-        assignment.name = canvas_garbage_remover.remove_garbage_from_title(g_assignment.name)
+        assignment.name = canvas_sanitiser.remove_garbage_from_title(g_assignment.name)
         assignment.description = g_assignment.description
         assignment.created_at = g_assignment.created_at
         assignment.updated_at = g_assignment.updated_at
@@ -49,7 +50,7 @@ async def create_modules(g_course: queries.Course, session: AsyncSession):
             module.course_id = g_course.m_id
             session.add(module)
 
-        module.name = canvas_garbage_remover.remove_garbage_from_title(g_module.name)
+        module.name = canvas_sanitiser.remove_garbage_from_title(g_module.name)
 
 
 async def create_course(g_course: queries.Course, session: AsyncSession, term: db.Term):
@@ -63,7 +64,7 @@ async def create_course(g_course: queries.Course, session: AsyncSession, term: d
         course.preferences = db.CoursePreferences()
         session.add(course)
 
-    course.name = canvas_garbage_remover.remove_garbage_from_title(g_course.name)
+    course.name = canvas_sanitiser.remove_garbage_from_title(g_course.name)
     course.term = term
 
 

@@ -62,8 +62,8 @@ async def create_assignment_resource_relations(relations: Sequence[TransientReso
             )
 
 
-async def map_resources_in_pages(link_scanners: Sequence[ResourceScanner], resource_pool: TaskPool[db.Resource],
-                                 items: Sequence[db.PageLike]) -> list[TransientResourceToPageLink]:
+async def find_resources_in_pages(link_scanners: Sequence[ResourceScanner], resource_pool: TaskPool[db.Resource],
+                                  items: Sequence[db.PageLike]) -> list[TransientResourceToPageLink]:
     """
     Produce a list of resource to page links from resources extracted from the specified `items` using `link_scanners`.
     Extracted resources will be added to `resource_pool`
