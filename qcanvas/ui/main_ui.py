@@ -8,7 +8,7 @@ from qasync import asyncSlot
 
 import qcanvas.db.database as db
 from qcanvas.QtVersionHelper.QtCore import Slot, Signal, Qt, QUrl
-from qcanvas.QtVersionHelper.QtGui import QDesktopServices, QAction
+from qcanvas.QtVersionHelper.QtGui import QDesktopServices
 from qcanvas.QtVersionHelper.QtWidgets import *
 from qcanvas.ui.menu_bar.grouping_preferences_menu import GroupingPreferencesMenu
 from qcanvas.ui.menu_bar.theme_selection_menu import ThemeSelectionMenu
@@ -32,9 +32,6 @@ class AppMainWindow(QMainWindow):
     def __init__(self, data_manager: DataManager, parent: QWidget | None = None):
         super().__init__(parent)
 
-        self.group_by_pages_action: QAction | None = None
-        self.group_by_modules_action: QAction | None = None
-        self.file_grouping_menu: QMenu | None = None
         self.selected_course: db.Course | None = None
         self.courses: Sequence[db.Course] = []
         self.resources: dict[str, db.Resource] = {}
