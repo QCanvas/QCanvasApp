@@ -109,7 +109,7 @@ class AppMainWindow(QMainWindow):
 
     @asyncSlot(QUrl)
     async def viewer_link_clicked(self, url: QUrl):
-        # The url of a transformed link will start with an '@'
+        # The url of a transformed link will start with a specific prefix
         if url.toString().startswith(LinkTransformer.transformed_url_prefix):
             # The rest of the 'url' is just the file id
             resource = self.resources[url.toString().removeprefix(LinkTransformer.transformed_url_prefix)]
