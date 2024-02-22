@@ -160,7 +160,7 @@ class AppMainWindow(QMainWindow):
                 msg_box = QMessageBox(
                     QMessageBox.Icon.Question,
                     "Update available",
-                    f"There is an update available ({installed_version} -> {newer_version})\n do you want to update?\nThe program will close after the update is finished.",
+                    f"There is an update available ({installed_version} -> {newer_version})\nDo you want to update?\nThe program will close after the update is finished.",
                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                     self
                 )
