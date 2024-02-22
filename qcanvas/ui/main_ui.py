@@ -16,8 +16,8 @@ from qcanvas.ui.viewer.course_list import CourseList
 from qcanvas.ui.viewer.file_list import FileRow
 from qcanvas.ui.viewer.file_view_tab import FileViewTab
 from qcanvas.ui.viewer.page_list_viewer import AssignmentsViewer, PagesViewer, LinkTransformer
-from qcanvas.util import settings, self_updater
-from qcanvas.util.app_settings import AppSettings
+from qcanvas.util import self_updater
+from qcanvas.util.app_settings import _AppSettings, settings
 from qcanvas.util.constants import app_name
 from qcanvas.util.course_indexer import DataManager
 
@@ -127,7 +127,7 @@ class AppMainWindow(QMainWindow):
 
     @asyncSlot()
     async def sync_data(self):
-        AppSettings.geometry = 2999
+        _AppSettings.geometry = 2999
         # # self.operation_lock.
         # self.sync_button.setEnabled(False)
         # self.sync_button.setText("Synchronizing")

@@ -53,7 +53,7 @@ class ThemeSetting(MappedSetting):
         super().__set__(instance, ensure_theme_is_valid(value))
 
 
-class AppSettings:
+class _AppSettings:
     """
     Attributes
     ----------
@@ -73,3 +73,7 @@ class AppSettings:
     geometry = MappedSetting(auxiliary, "geometry")
     window_state = MappedSetting(auxiliary, "window_state")
     theme: ThemeSetting = ThemeSetting(auxiliary)
+
+
+# Global _AppSettings instance
+settings = _AppSettings()

@@ -10,7 +10,7 @@ from PySide6.QtWidgets import QProgressBar
 from qasync import asyncSlot
 
 from qcanvas.net.canvas import CanvasClient
-from qcanvas.util import settings
+from qcanvas.util.app_settings import settings
 
 tutorial_url = "https://www.iorad.com/player/2053777/Canvas---How-to-generate-an-access-token-"
 

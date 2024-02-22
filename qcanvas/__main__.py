@@ -17,7 +17,8 @@ import qcanvas.icons
 from qcanvas.net.canvas.canvas_client import CanvasClient
 from qcanvas.ui.main_ui import AppMainWindow
 from qcanvas.ui.setup_dialog import SetupDialog
-from qcanvas.util import settings, self_updater
+from qcanvas.util import self_updater
+from qcanvas.util.app_settings import settings
 from qcanvas.util.constants import app_name, updated_and_needs_restart_return_code
 from qcanvas.util.course_indexer import DataManager
 from qcanvas.util.helpers import theme_helper

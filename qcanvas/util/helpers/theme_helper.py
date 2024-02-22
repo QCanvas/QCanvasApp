@@ -1,6 +1,6 @@
 import qdarktheme
 
-from qcanvas.util import settings
+from qcanvas.util.app_settings import settings
 
 
 def apply_selected_theme() -> None:
