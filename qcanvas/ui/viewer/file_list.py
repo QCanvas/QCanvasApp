@@ -130,7 +130,6 @@ class FileList(QTreeWidget):
             # Update the download column
             self.model().dataChanged.emit(index, index, Qt.ItemDataRole.DisplayRole)
 
-
     def _setup_header(self):
         self.setColumnCount(4)
         self.setHeaderLabels(["Name", "Date Found", "Size", "Download"])
@@ -167,7 +166,7 @@ class FileList(QTreeWidget):
             # Create the group node for this item
             group_node = QTreeWidgetItem([item.name])
 
-            #fixme this does not remove duplicate files e.g. when on module groups
+            # fixme this does not remove duplicate files e.g. when on module groups
 
             for resource in resources:
                 row = FileRow(resource)
@@ -193,4 +192,3 @@ class FileList(QTreeWidget):
         super().clear()
         self._setup_header()
         self.row_id_map.clear()
-

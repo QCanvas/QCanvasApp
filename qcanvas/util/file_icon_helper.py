@@ -5,7 +5,8 @@ from qcanvas.QtVersionHelper.QtWidgets import QApplication, QStyle
 _mime_database = QMimeDatabase()
 _default_icon = None
 
-def icon_for_filename(file_name : str) -> QIcon:
+
+def icon_for_filename(file_name: str) -> QIcon:
     global _default_icon
 
     for mime_type in _mime_database.mimeTypesForFileName(file_name):

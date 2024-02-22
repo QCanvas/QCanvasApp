@@ -14,6 +14,7 @@ from qcanvas.util import AppSettings
 
 tutorial_url = "https://www.iorad.com/player/2053777/Canvas---How-to-generate-an-access-token-"
 
+
 def row(name: str) -> QWidget:
     widget = QWidget()
     layout = QHBoxLayout()
@@ -78,7 +79,7 @@ class SetupDialog(QDialog):
                                       "Error",
                                       f"{name} is invalid",
                                       parent=self
-                    )
+                                      )
                     msg.show()
 
                 def ensure_protocol(url: str):
@@ -104,7 +105,7 @@ class SetupDialog(QDialog):
                                       "Error",
                                       f"The canvas URL or API key is invalid.\nPlease check you entered them correctly.",
                                       parent=self
-                    )
+                                      )
                     msg.show()
                 else:
                     AppSettings.canvas_url = canvas_url_text
@@ -143,7 +144,6 @@ Don't share this key. You can revoke it at any time.""",
         )
         msg.accepted.connect(lambda: QDesktopServices.openUrl(tutorial_url))
         msg.show()
-
 
     def _row(self, name: str, widget: QWidget):
         self.grid.addWidget(QLabel(name), self._row_counter, 0)

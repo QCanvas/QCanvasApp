@@ -8,7 +8,7 @@ from qasync import asyncSlot
 
 import qcanvas.db.database as db
 from qcanvas.QtVersionHelper.QtCore import Slot, Signal, Qt, QUrl
-from qcanvas.QtVersionHelper.QtGui import QDesktopServices, create_qaction, QActionGroup, QAction
+from qcanvas.QtVersionHelper.QtGui import QDesktopServices, QAction
 from qcanvas.QtVersionHelper.QtWidgets import *
 from qcanvas.ui.menu_bar.grouping_preferences_menu import GroupingPreferencesMenu
 from qcanvas.ui.menu_bar.theme_selection_menu import ThemeSelectionMenu
@@ -21,6 +21,7 @@ from qcanvas.util.constants import app_name
 from qcanvas.util.course_indexer import DataManager
 
 _aux_settings = AppSettings.auxiliary
+
 
 class AppMainWindow(QMainWindow):
     logger = logging.getLogger()
@@ -120,13 +121,11 @@ class AppMainWindow(QMainWindow):
             await self.data_manager.download_resource(resource)
             QDesktopServices.openUrl(QUrl.fromLocalFile(resource.download_location.absolute()))
 
-
     @asyncSlot(QTreeWidgetItem, int)
-    async def download_file_from_file_pane(self, item: QTreeWidgetItem, _ : int):
+    async def download_file_from_file_pane(self, item: QTreeWidgetItem, _: int):
         if isinstance(item, FileRow):
             await self.data_manager.download_resource(item.resource)
             QDesktopServices.openUrl(QUrl.fromLocalFile(item.resource.download_location.absolute()))
-
 
     @asyncSlot()
     async def sync_data(self):
@@ -140,8 +139,6 @@ class AppMainWindow(QMainWindow):
         finally:
             self.sync_button.setEnabled(True)
             self.sync_button.setText("Synchronize")
-
-
 
     @asyncSlot()
     async def load_course_list(self):
@@ -211,9 +208,6 @@ class AppMainWindow(QMainWindow):
             self.selected_course = None
             self.file_viewer.clear()
 
-
     @asyncSlot(db.CoursePreferences)
     async def on_grouping_preference_changed(self):
         self.file_viewer.load_course_files(self.selected_course)
-
-

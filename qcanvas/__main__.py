@@ -4,15 +4,16 @@ import sys
 from datetime import datetime
 
 import httpx
-import qdarktheme
 from httpx import URL
 from qasync import QEventLoop, asyncSlot
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.asyncio.session import async_sessionmaker as AsyncSessionMaker
 
 import qcanvas.db as db
-from qcanvas.QtVersionHelper.QtGui import QPixmap
+# noinspection PyUnresolvedReferences
+import qcanvas.icons
 from qcanvas.QtVersionHelper.QtCore import Signal
+from qcanvas.QtVersionHelper.QtGui import QPixmap
 from qcanvas.QtVersionHelper.QtWidgets import QApplication, QProgressDialog, QMainWindow
 from qcanvas.net.canvas.canvas_client import CanvasClient
 from qcanvas.ui.main_ui import AppMainWindow
@@ -24,13 +25,11 @@ from qcanvas.util.linkscanner import CanvasFileScanner
 from qcanvas.util.linkscanner.canvas_media_object_scanner import CanvasMediaObjectScanner
 from qcanvas.util.linkscanner.dropbox_scanner import DropboxScanner
 
-# noinspection PyUnresolvedReferences
-import qcanvas.icons
-
 engine = create_async_engine("sqlite+aiosqlite:///canvas_db.😘", echo=False)
 
 logging.basicConfig()
 logging.getLogger("canvas_client").setLevel(logging.DEBUG)
+
 
 async def begin():
     # Create meta stuff
@@ -54,7 +53,6 @@ class LoaderWindow(QMainWindow):
         self.setCentralWidget(QProgressDialog("Verifying config", None, 0, 0))
 
         self.init.emit()
-
 
     @asyncSlot()
     async def on_init(self):

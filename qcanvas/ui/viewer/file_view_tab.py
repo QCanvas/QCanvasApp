@@ -1,8 +1,6 @@
 from typing import Sequence
 
 import qcanvas.db as db
-from qcanvas.QtVersionHelper.QtCore import Signal, Qt, Slot, QPoint
-from qcanvas.QtVersionHelper.QtGui import QActionGroup, create_qaction
 from qcanvas.QtVersionHelper.QtWidgets import *  # QWidget, QTreeView, QGroupBox, QBoxLayout, QHeaderView, QHBoxLayout, QComboBox, QLabel
 from qcanvas.ui.viewer.file_list import FileList
 from qcanvas.util.constants import default_assignments_module_names
@@ -49,7 +47,8 @@ class FileViewTab(QWidget):
                 module_items.append(module_item)
 
         if course.preferences.files_group_by_preference == db.GroupByPreference.GROUP_BY_MODULES:
-            exclude_assignments_module = list(filter(lambda x: x.name.lower() not in default_assignments_module_names, course.modules))
+            exclude_assignments_module = list(
+                filter(lambda x: x.name.lower() not in default_assignments_module_names, course.modules))
 
             self.files_column.load_items(exclude_assignments_module)
         else:

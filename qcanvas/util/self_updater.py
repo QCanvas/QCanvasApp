@@ -1,10 +1,10 @@
 import asyncio
-
-import httpx
 import json
 import os
-from packaging.version import Version
 from importlib.metadata import version
+
+import httpx
+from packaging.version import Version
 
 from qcanvas.util.constants import package_name
 

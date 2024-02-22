@@ -33,7 +33,8 @@ class TransientModulePage:
     position: int
 
 
-def _prepare_out_of_date_pages_for_loading(g_courses: Sequence[queries.Course], pages: Sequence[db.ModuleItem]) -> list[TransientModulePage]:
+def _prepare_out_of_date_pages_for_loading(g_courses: Sequence[queries.Course], pages: Sequence[db.ModuleItem]) -> list[
+    TransientModulePage]:
     """
     Removes pages that are up-to-date from the pages list by comparing the last update time of the pages from the query
     to the last update time of the pages in the database.
@@ -69,6 +70,7 @@ def _prepare_out_of_date_pages_for_loading(g_courses: Sequence[queries.Course], 
                         _logger.debug("Page %s is already up to date", content.m_id)
 
     return result
+
 
 # todo make this reusable and add some way of refreshing only a list of pages or one page or one course or something
 # todo use logger instead of print and put some signals around the place for useful things, e.g. indexing progress
@@ -111,7 +113,7 @@ class DataManager:
             self._add_resources_and_pages_to_taskpool(existing_pages=existing_pages,
                                                       existing_resources=existing_resources)
 
-    async def _download_resource_helper(self, link_handler : ResourceScanner, resource: db.Resource):
+    async def _download_resource_helper(self, link_handler: ResourceScanner, resource: db.Resource):
         try:
             async for progress in link_handler.download(resource):
                 yield progress
@@ -263,7 +265,8 @@ class DataManager:
         self._moduleitem_pool.add_values({page.id: page for page in existing_pages})
         self._resource_pool.add_values({resource.id: resource for resource in existing_resources})
         # Add downloaded resources to the resource pool so we don't download them again
-        self.download_pool.add_values({resource.id: None for resource in existing_resources if resource.state == db.ResourceState.DOWNLOADED})
+        self.download_pool.add_values(
+            {resource.id: None for resource in existing_resources if resource.state == db.ResourceState.DOWNLOADED})
 
     async def _load_page_content(self, pages: Sequence[TransientModulePage]) -> list[db.ModuleItem]:
         """
@@ -282,7 +285,8 @@ class DataManager:
             content = page.page
 
             if isinstance(content, queries.File):
-                task = asyncio.create_task(self._load_module_file(content, page.course_id, page.module_id, page.position))
+                task = asyncio.create_task(
+                    self._load_module_file(content, page.course_id, page.module_id, page.position))
                 tasks.append(task)
             elif isinstance(content, queries.Page):
                 tasks.append(

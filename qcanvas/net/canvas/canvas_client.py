@@ -99,7 +99,8 @@ class CanvasClient(SelfAuthenticating):
     async def get_page(self, page_id: str | int, course_id: str | int) -> LegacyPage:
         async with self._net_op_sem:
             response = detect_ratelimit_and_raise(
-                await self.client.get(self.canvas_url.join(f"api/v1/courses/{course_id}/pages/{page_id}"), **self.get_headers()))
+                await self.client.get(self.canvas_url.join(f"api/v1/courses/{course_id}/pages/{page_id}"),
+                                      **self.get_headers()))
 
             return LegacyPage.from_dict(json.loads(response.text))
 
@@ -155,7 +156,8 @@ class CanvasClient(SelfAuthenticating):
         retries = 0
 
         while retries < self.max_retries:
-            async with self.client.stream(method='GET', url=resource.url, cookies=self.client.cookies, follow_redirects=True) as resp:
+            async with self.client.stream(method='GET', url=resource.url, cookies=self.client.cookies,
+                                          follow_redirects=True) as resp:
                 if await self.reauthenticate_if_needed(resp):
                     retries += 1
                     self._logger.warning("Retrying download of %s", resource.url)

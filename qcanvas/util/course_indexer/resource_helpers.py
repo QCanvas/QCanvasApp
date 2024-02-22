@@ -152,7 +152,8 @@ async def _process_link(link_scanners: Sequence[ResourceScanner], resource_pool:
     return None
 
 
-async def _extract_file_info(link: Tag, scanner: ResourceScanner, resource_id : str, course_id: str) -> db.Resource | None:
+async def _extract_file_info(link: Tag, scanner: ResourceScanner, resource_id: str,
+                             course_id: str) -> db.Resource | None:
     """
     Extracts file info from `link` using `scanner` and assigns the course_id to the resulting resource.
 

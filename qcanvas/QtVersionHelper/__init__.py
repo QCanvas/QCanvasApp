@@ -2,6 +2,7 @@ import sys
 
 QT_VERSION = 6
 
+
 # if sys.modules.get("PySide6.QtCore"):
 #     QT_VERSION = 6
 # elif sys.modules.get("PySide2.QtCore"):

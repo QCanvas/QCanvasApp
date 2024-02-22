@@ -57,6 +57,7 @@ class GroupByPreference(Enum):
     GROUP_BY_PAGES = 0
     GROUP_BY_MODULES = 1
 
+
 class CoursePreferences(Base):
     __tablename__ = "preferences"
 
@@ -85,6 +86,7 @@ class Course(MappedAsDataclass, Base, init=False):
     module_items: Mapped[List["ModuleItem"]] = relationship(back_populates="course")
     assignments: Mapped[List["Assignment"]] = relationship(back_populates="course")
     resources: Mapped[List["Resource"]] = relationship(back_populates="course")
+
 
 class Term(MappedAsDataclass, Base):
     """
@@ -162,9 +164,12 @@ class ResourceState(Enum):
     @staticmethod
     def human_readable(value: "ResourceState"):
         match value:
-            case ResourceState.NOT_DOWNLOADED: return "Not downloaded"
-            case ResourceState.DOWNLOADED: return "Downloaded"
-            case ResourceState.FAILED: return "Failed"
+            case ResourceState.NOT_DOWNLOADED:
+                return "Not downloaded"
+            case ResourceState.DOWNLOADED:
+                return "Downloaded"
+            case ResourceState.FAILED:
+                return "Failed"
 
         raise ValueError(value)
 
@@ -220,11 +225,13 @@ class Resource(MappedAsDataclass, Base, tree.HasText):
 
         file_name, file_extension = os.path.splitext(self.file_name)
 
-        return pathlib.Path("download", self._sanitise_course_name(self.course.name), f"{file_name} [{file_id}]{file_extension}")
+        return pathlib.Path("download", self._sanitise_course_name(self.course.name),
+                            f"{file_name} [{file_id}]{file_extension}")
 
     @staticmethod
     def _sanitise_course_name(name: str) -> str:
         return re.sub("[/\\\\<>:\"?|*]", "_", name)
+
 
 class ModuleItem(MappedAsDataclass, Base, tree.HasText):
     __tablename__ = "module_items"

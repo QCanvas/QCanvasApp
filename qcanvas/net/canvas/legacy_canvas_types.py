@@ -1,6 +1,5 @@
 from typing import Any, TypeVar, Type, cast
 
-
 T = TypeVar("T")
 
 
@@ -66,7 +65,8 @@ class LegacyFile:
     hidden_for_user: bool
     locked_for_user: bool
 
-    def __init__(self, id: int, uuid: str, display_name: str, filename: str, url: str, size: int, locked: bool, hidden: bool, hidden_for_user: bool, locked_for_user: bool) -> None:
+    def __init__(self, id: int, uuid: str, display_name: str, filename: str, url: str, size: int, locked: bool,
+                 hidden: bool, hidden_for_user: bool, locked_for_user: bool) -> None:
         self.id = id
         self.uuid = uuid
         self.display_name = display_name

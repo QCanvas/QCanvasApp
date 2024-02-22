@@ -1,7 +1,6 @@
-from qcanvas.QtVersionHelper.QtCore import Signal
+from qcanvas.QtVersionHelper.QtGui import QActionGroup
 from qcanvas.QtVersionHelper.QtGui import create_qaction
 from qcanvas.QtVersionHelper.QtWidgets import QMenu, QWidget
-from qcanvas.QtVersionHelper.QtGui import QActionGroup
 from qcanvas.util import AppSettings
 
 

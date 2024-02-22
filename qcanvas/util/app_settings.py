@@ -2,11 +2,13 @@ import qdarktheme
 
 from qcanvas.QtVersionHelper.QtCore import QSettings, QUrl
 
+
 def ensure_theme_is_valid(theme: str) -> str:
     if theme not in ["auto", "light", "dark", "native"]:
         return "light"
     else:
         return theme
+
 
 class _AppSettings:
     def __init__(self):
@@ -65,5 +67,3 @@ class _AppSettings:
     @property
     def is_set(self):
         return self.canvas_url is not None and QUrl(self.canvas_url).isValid() and self.canvas_url is not None
-
-

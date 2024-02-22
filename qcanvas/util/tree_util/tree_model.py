@@ -6,6 +6,7 @@ from .model_helpers import HasColumnData, HasParent, HasChildren
 
 T = TypeVar("T")
 
+
 # todo comment this
 class TreeModel(QAbstractItemModel, Generic[T]):
     def __init__(self, parent: Optional[QWidget] = None):

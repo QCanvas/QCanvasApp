@@ -18,7 +18,7 @@ class CourseNode(QStandardItem, QObject):
         QStandardItem.__init__(self, course.preferences.local_name or course.name)
         self.course = course
 
-    def setData(self, value, role = ...):
+    def setData(self, value, role=...):
         if isinstance(value, str):
             value = value.strip()
 
@@ -93,5 +93,3 @@ class CourseList(QTreeView):
 
             if isinstance(item, CourseNode):
                 self.course_selected.emit(item.course)
-
-

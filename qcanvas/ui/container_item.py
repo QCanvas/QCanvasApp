@@ -10,12 +10,6 @@ class ContainerItem(QStandardItem):
         self.content = data
         self.setEditable(False)
 
-
     def data(self, role=257):
         if role == Qt.ItemDataRole.DisplayRole:
             return self.content.text
-
-
-
-
-

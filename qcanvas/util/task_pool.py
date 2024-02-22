@@ -151,7 +151,7 @@ class TaskPool(Generic[T]):
 
         return await self._handle_task(func, task_id, event, func_args=kwargs)
 
-    async def _handle_task(self, func: Callable, task_id: object, event: asyncio.Event, func_args : dict) -> T:
+    async def _handle_task(self, func: Callable, task_id: object, event: asyncio.Event, func_args: dict) -> T:
         """
         Handles the specified task
 

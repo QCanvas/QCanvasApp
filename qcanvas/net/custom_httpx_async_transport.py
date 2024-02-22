@@ -12,7 +12,8 @@ class CustomHTTPXAsyncTransport(HTTPXAsyncTransport):
     The transport uses the httpx library with anyio.
     """
 
-    def __init__(self, client: httpx.AsyncClient, url: Union[str, httpx.URL], headers: dict[str, Any] | None = None, **kwargs):
+    def __init__(self, client: httpx.AsyncClient, url: Union[str, httpx.URL], headers: dict[str, Any] | None = None,
+                 **kwargs):
         super().__init__(url=url, **kwargs)
         self.client = client
         self.headers = headers or {}
@@ -31,5 +32,3 @@ class CustomHTTPXAsyncTransport(HTTPXAsyncTransport):
         result["headers"] = self.headers
 
         return result
-
-

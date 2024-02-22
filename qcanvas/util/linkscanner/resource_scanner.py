@@ -13,6 +13,7 @@ class ResourceScanner(ABC):
     The resource may be an embedded video, a file or anything that will be of use to the user.
     Each scanner should be responsible for only 1 type of resource.
     """
+
     @property
     @abstractmethod
     def name(self) -> str:
@@ -66,4 +67,3 @@ class ResourceScanner(ABC):
                     async for chunk in resp.aiter_bytes():
                         file.write(chunk)
                         yield resp.num_bytes_downloaded
-

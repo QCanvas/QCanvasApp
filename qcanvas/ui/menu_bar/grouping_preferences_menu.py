@@ -1,10 +1,9 @@
 from qasync import asyncSlot
 
+import qcanvas.db as db
 from qcanvas.QtVersionHelper.QtCore import Slot, Signal
 from qcanvas.QtVersionHelper.QtGui import create_qaction
 from qcanvas.QtVersionHelper.QtWidgets import QMenu, QWidget
-
-import qcanvas.db as db
 from qcanvas.util.course_indexer import DataManager
 
 
@@ -60,6 +59,3 @@ class GroupingPreferencesMenu(QMenu):
 
         self.group_by_pages_action.setChecked(preference == db.GroupByPreference.GROUP_BY_PAGES)
         self.group_by_modules_action.setChecked(preference == db.GroupByPreference.GROUP_BY_MODULES)
-
-
-

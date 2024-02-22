@@ -10,7 +10,7 @@ from qcanvas.util.linkscanner import ResourceScanner
 
 class CanvasMediaObjectScanner(ResourceScanner):
 
-    def __init__(self, client : AsyncClient):
+    def __init__(self, client: AsyncClient):
         self.client = client
 
     @property

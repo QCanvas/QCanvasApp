@@ -15,7 +15,7 @@ elif QT_VERSION == 6:
 
 
 def create_qaction(name: str, shortcut: QKeySequence | None = None, parent: Any = None, triggered: Any = None,
-                   checkable: bool | None = None, checked : bool | None = None) -> QAction:
+                   checkable: bool | None = None, checked: bool | None = None) -> QAction:
     action = QAction(name)
 
     if shortcut is not None:

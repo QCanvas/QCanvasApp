@@ -2,7 +2,7 @@ from typing import Sequence, Any
 
 
 class HasColumnData:
-    def get_column_data(self, column: int, role : int) -> str | None:
+    def get_column_data(self, column: int, role: int) -> str | None:
         raise NotImplementedError()
 
 
