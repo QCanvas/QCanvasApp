@@ -1,7 +1,6 @@
 import logging
 import sys
 import traceback
-from asyncio import Event
 from typing import Sequence, Optional
 
 from PySide6.QtCore import Slot, Signal, Qt, QUrl
@@ -17,7 +16,7 @@ from qcanvas.ui.viewer.file_list import FileRow
 from qcanvas.ui.viewer.file_view_tab import FileViewTab
 from qcanvas.ui.viewer.page_list_viewer import AssignmentsViewer, PagesViewer, LinkTransformer
 from qcanvas.util import self_updater
-from qcanvas.util.app_settings import _AppSettings, settings
+from qcanvas.util.app_settings import settings
 from qcanvas.util.constants import app_name
 from qcanvas.util.course_indexer import DataManager
 
@@ -28,7 +27,6 @@ class AppMainWindow(QMainWindow):
     logger = logging.getLogger()
     loaded = Signal()
     files_grouping_preference_changed = Signal(db.GroupByPreference)
-    operation_lock = Event()
 
     def __init__(self, data_manager: DataManager, parent: QWidget | None = None):
         super().__init__(parent)
@@ -127,17 +125,15 @@ class AppMainWindow(QMainWindow):
 
     @asyncSlot()
     async def sync_data(self):
-        _AppSettings.geometry = 2999
-        # # self.operation_lock.
-        # self.sync_button.setEnabled(False)
-        # self.sync_button.setText("Synchronizing")
-        # try:
-        #     await self.data_manager.synchronize_with_canvas()
-        #     await self.load_course_list()
-        #
-        # finally:
-        #     self.sync_button.setEnabled(True)
-        #     self.sync_button.setText("Synchronize")
+        self.sync_button.setEnabled(False)
+        self.sync_button.setText("Synchronizing")
+        try:
+            await self.data_manager.synchronize_with_canvas()
+            await self.load_course_list()
+
+        finally:
+            self.sync_button.setEnabled(True)
+            self.sync_button.setText("Synchronize")
 
     @asyncSlot()
     async def load_course_list(self):
