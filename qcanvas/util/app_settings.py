@@ -1,5 +1,12 @@
+import qdarktheme
+
 from qcanvas.QtVersionHelper.QtCore import QSettings, QUrl
 
+def ensure_theme_is_valid(theme: str) -> str:
+    if theme not in ["auto", "light", "dark", "native"]:
+        return "light"
+    else:
+        return theme
 
 class _AppSettings:
     def __init__(self):
@@ -8,6 +15,7 @@ class _AppSettings:
         self._canvas_url = self.settings.value("canvas_url", None)
         self._api_key = self.settings.value("api_key", defaultValue=None)
         self._ignored_update = self.settings.value("ignored_update", defaultValue=None)
+        self._theme = ensure_theme_is_valid(self.settings.value("theme", defaultValue="light"))
 
     @property
     def canvas_url(self) -> str | None:
@@ -35,6 +43,23 @@ class _AppSettings:
     def last_ignored_update(self, value: str):
         self._ignored_update = value
         self.settings.setValue("ignored_update", value)
+
+    @property
+    def theme(self) -> str | None:
+        return self._theme
+
+    @theme.setter
+    def theme(self, value: str):
+        value = ensure_theme_is_valid(value)
+        self._theme = value
+        self.settings.setValue("theme", value)
+
+    def apply_selected_theme(self):
+        if self.theme != "native":
+            qdarktheme.setup_theme(
+                self.theme,
+                custom_colors={"primary": "FF804F"}
+            )
 
     @property
     def is_set(self):

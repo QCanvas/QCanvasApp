@@ -8,7 +8,7 @@ from qasync import asyncSlot
 
 import qcanvas.db.database as db
 from qcanvas.QtVersionHelper.QtCore import Slot, Signal, Qt, QUrl
-from qcanvas.QtVersionHelper.QtGui import QDesktopServices
+from qcanvas.QtVersionHelper.QtGui import QDesktopServices, create_qaction, QActionGroup, QAction
 from qcanvas.QtVersionHelper.QtWidgets import *
 from qcanvas.ui.viewer.course_list import CourseList
 from qcanvas.ui.viewer.file_list import FileRow
@@ -73,17 +73,56 @@ class AppMainWindow(QMainWindow):
         widget.setLayout(v_layout)
         self.setCentralWidget(widget)
 
+        self.setup_menu_bar()
+
         self.loaded.connect(self.load_course_list)
         self.loaded.connect(self.check_for_update)
         self.loaded.emit()
 
-        self.read_settings()
+        self.restore_window_position()
+
+    def setup_menu_bar(self):
+        menu_bar = self.menuBar()
+
+        app_menu = menu_bar.addMenu("App")
+        view_menu = menu_bar.addMenu("View")
+
+        app_menu.addMenu(self.setup_theme_menu())
+
+    def setup_theme_menu(self) -> QMenu:
+        theme_menu = QMenu("Theme")
+        theme_group = QActionGroup(theme_menu)
+
+        def theme_option(text: str, theme_name: str) -> QAction:
+            def set_theme():
+                AppSettings.theme = theme_name
+                AppSettings.apply_selected_theme()
+
+            return create_qaction(
+                name=text,
+                parent=theme_menu,
+                triggered=set_theme,
+                checkable=True,
+                checked=AppSettings.theme == theme_name
+            )
+
+        light_option = theme_option("Light", "light")
+        dark_option = theme_option("Dark", "dark")
+        native_option = theme_option("Native (requires restart)", "native")
+
+        theme_group.addAction(light_option)
+        theme_group.addAction(dark_option)
+        theme_group.addAction(native_option)
+
+        theme_menu.addActions([light_option, dark_option, native_option])
+
+        return theme_menu
 
     def closeEvent(self, event):
         _aux_settings.setValue("geometry", self.saveGeometry())
         _aux_settings.setValue("windowState", self.saveState())
 
-    def read_settings(self):
+    def restore_window_position(self):
         self.restoreGeometry(_aux_settings.value("geometry"))
         self.restoreState(_aux_settings.value("windowState"))
 

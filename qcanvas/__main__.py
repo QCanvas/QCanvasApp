@@ -103,9 +103,7 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
 
-    qdarktheme.setup_theme("light",
-                           custom_colors={"primary": "FF804F"}
-    )
+    AppSettings.apply_selected_theme()
 
     event_loop = QEventLoop()
     asyncio.set_event_loop(event_loop)
