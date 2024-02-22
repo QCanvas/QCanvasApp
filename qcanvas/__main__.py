@@ -74,7 +74,7 @@ class LoaderWindow(QMainWindow):
         """
         Shows the setup dialog
         """
-        setup = SetupDialog(self)
+        setup = SetupDialog(self, allow_cancel=False)
         setup.setWindowIcon(self.main_icon)
         setup.rejected.connect(lambda: self.close())
         setup.accepted.connect(self.on_ready)

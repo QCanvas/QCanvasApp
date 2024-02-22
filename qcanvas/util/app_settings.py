@@ -29,6 +29,11 @@ T = TypeVar("T")
 
 
 class MappedSetting(Generic[T]):
+    """
+    Acts as a proxy for a named value in a QSettings object.
+    Stores the value in memory when initialised and updates it accordingly, to protect it from changes on disk.
+    """
+
     def __init__(self, settings_object: QSettings, setting_name: str, default: T | None = None):
         self.settings_object = settings_object
         self.setting_name = setting_name
@@ -61,6 +66,19 @@ class _AppSettings:
         Primary settings map for client settings
     auxiliary : QSettings
         Secondary settings map for settings which aren't related to canvas/panopto client functionality
+    ignored_update
+        If there is an update available and the user chooses not to update, then that version will be stored in here and
+        the user will not be asked to update to that version again
+    geometry
+        Used to restore the main window position when it is re-opened
+    window_state
+        Used to restore the main window position when it is re-opened
+    theme
+        The theme of the app
+    canvas_url
+        The canvas url
+    api_key
+        The api key for canvas
     """
 
     settings = QSettings("QCanvas", "client")
@@ -70,9 +88,9 @@ class _AppSettings:
     api_key: MappedSetting[str] = MappedSetting(settings, "api_key")
 
     ignored_update: MappedSetting[Version] = MappedSetting(auxiliary, "ignored_update")
+    theme: ThemeSetting = ThemeSetting(auxiliary)
     geometry = MappedSetting(auxiliary, "geometry")
     window_state = MappedSetting(auxiliary, "window_state")
-    theme: ThemeSetting = ThemeSetting(auxiliary)
 
 
 # Global _AppSettings instance
