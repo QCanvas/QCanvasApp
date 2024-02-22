@@ -18,8 +18,8 @@ from qcanvas.QtVersionHelper.QtWidgets import QApplication, QProgressDialog, QMa
 from qcanvas.net.canvas.canvas_client import CanvasClient
 from qcanvas.ui.main_ui import AppMainWindow
 from qcanvas.ui.setup_dialog import SetupDialog
-from qcanvas.util import AppSettings
-from qcanvas.util.constants import app_name
+from qcanvas.util import AppSettings, self_updater
+from qcanvas.util.constants import app_name, updated_and_needs_restart_return_code
 from qcanvas.util.course_indexer import DataManager
 from qcanvas.util.linkscanner import CanvasFileScanner
 from qcanvas.util.linkscanner.canvas_media_object_scanner import CanvasMediaObjectScanner
@@ -116,3 +116,6 @@ if __name__ == '__main__':
         event_loop.run_until_complete(app_close_event.wait())
 
     print("Exiting")
+
+    if self_updater.restart_flag:
+        sys.exit(updated_and_needs_restart_return_code)

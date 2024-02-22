@@ -8,9 +8,13 @@ from packaging.version import Version
 
 from qcanvas.util.constants import package_name
 
+restart_flag = False
+
 
 async def do_update():
+    global restart_flag
     await asyncio.to_thread(os.system, f"pip install --upgrade {package_name}")
+    restart_flag = True
 
 
 async def get_newer_version() -> tuple[Version | None, Version | None] | None:
