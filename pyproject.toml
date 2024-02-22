@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name="qcanvas"
-version="0.0.3.2a"
+version="0.0.3.3a"
 authors= [ {name="QCanvas"} ]
 description="A canvas client"
 requires-python=">=3.11,<=3.12"
@@ -25,7 +25,8 @@ dependencies=[
     "aiosqlite-custom~=0.19.0",
     "qasync~=0.27.1",
     "bs4~=0.0.1",
-    "pyqtdarktheme~=2.1.0"
+    "pyqtdarktheme~=2.1.0",
+    "packaging~=23.2"
 ]
 
 [tool.hatch.build.targets.sdist]

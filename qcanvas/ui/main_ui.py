@@ -1,4 +1,6 @@
 import logging
+import sys
+import traceback
 from asyncio import Event
 from typing import Sequence, Optional
 
@@ -12,7 +14,8 @@ from qcanvas.ui.viewer.course_list import CourseList
 from qcanvas.ui.viewer.file_list import FileRow
 from qcanvas.ui.viewer.file_view_tab import FileViewTab
 from qcanvas.ui.viewer.page_list_viewer import AssignmentsViewer, PagesViewer, LinkTransformer
-from qcanvas.util import AppSettings
+from qcanvas.util import AppSettings, self_updater
+from qcanvas.util.constants import app_name
 from qcanvas.util.course_indexer import DataManager
 
 _aux_settings = AppSettings.auxiliary
@@ -71,6 +74,7 @@ class AppMainWindow(QMainWindow):
         self.setCentralWidget(widget)
 
         self.loaded.connect(self.load_course_list)
+        self.loaded.connect(self.check_for_update)
         self.loaded.emit()
 
         self.read_settings()
@@ -127,6 +131,50 @@ class AppMainWindow(QMainWindow):
 
         self.course_list.load_course_list(self.courses)
 
+    @asyncSlot()
+    async def check_for_update(self):
+        try:
+            newer_version = await self_updater.get_newer_version()
+
+            if newer_version is not None and newer_version != AppSettings.last_ignored_update:
+                msg_box = QMessageBox(
+                    QMessageBox.Icon.Question,
+                    "Update available",
+                    "There is an update available, do you want to update?\nThe program will close after the update is finished.",
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                    self
+                )
+
+                def ignore_update():
+                    AppSettings.last_ignored_update = newer_version
+
+                msg_box.accepted.connect(self.do_self_update)
+                msg_box.rejected.connect(ignore_update)
+                msg_box.show()
+            else:
+                print("No update available (or skipping this update)")
+        except BaseException as e:
+            sys.stderr.write(f"Could not check for updates: {e}\n")
+            sys.stderr.write("This can be ignored if in a dev environment\n")
+            traceback.print_exc()
+
+    @asyncSlot()
+    async def do_self_update(self):
+        try:
+            progress_diag = QProgressDialog("Updating", None, 0, 0, self)
+            progress_diag.setWindowTitle(app_name)
+            progress_diag.show()
+            await self_updater.do_update()
+            QApplication.quit()
+        except BaseException as e:
+            traceback.print_exc()
+
+            QMessageBox(
+                QMessageBox.Icon.Critical,
+                "Error",
+                "An error occurred during the update",
+                parent=self
+            ).show()
 
     @Slot(db.Course)
     def on_course_selected(self, course: Optional[db.Course]):
@@ -145,4 +193,5 @@ class AppMainWindow(QMainWindow):
         self.selected_course.preferences.files_group_by_preference = preference
         await self.data_manager.update_item(self.selected_course.preferences)
         self.file_viewer.load_course_files(self.selected_course)
+
 

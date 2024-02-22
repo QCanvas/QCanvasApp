@@ -7,6 +7,7 @@ class _AppSettings:
         self.auxiliary = QSettings("QCanvas", "ui")
         self._canvas_url = self.settings.value("canvas_url", None)
         self._api_key = self.settings.value("api_key", defaultValue=None)
+        self._ignored_update = self.settings.value("ignored_update", defaultValue=None)
 
     @property
     def canvas_url(self) -> str | None:
@@ -25,6 +26,15 @@ class _AppSettings:
     def canvas_api_key(self, value: str):
         self._api_key = value
         self.settings.setValue("api_key", value)
+
+    @property
+    def last_ignored_update(self) -> str | None:
+        return self._ignored_update
+
+    @last_ignored_update.setter
+    def last_ignored_update(self, value: str):
+        self._ignored_update = value
+        self.settings.setValue("ignored_update", value)
 
     @property
     def is_set(self):
