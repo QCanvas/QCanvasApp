@@ -26,7 +26,8 @@ _aux_settings = AppSettings.auxiliary
 class AppMainWindow(QMainWindow):
     logger = logging.getLogger()
     loaded = Signal()
-    files_grouping_preference_changed = Signal(db.GroupByPreference)
+    # The type passed to signal MUST be in a tuple for qt5 to work!! Don't remove it!!
+    files_grouping_preference_changed = Signal((db.GroupByPreference,))
     operation_lock = Event()
 
     def __init__(self, data_manager: DataManager, parent: QWidget | None = None):
@@ -75,7 +76,7 @@ class AppMainWindow(QMainWindow):
         widget.setLayout(v_layout)
         self.setCentralWidget(widget)
 
-        # self.setup_menu_bar()
+        self.setup_menu_bar()
 
         self.files_grouping_preference_changed.connect(self.on_grouping_preference_changed)
 

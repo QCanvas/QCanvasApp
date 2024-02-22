@@ -18,9 +18,9 @@ class DownloadPool(TaskPool[None], QObject):
             yield (i / 10) # can be whatever format/type you want
     ```
     """
-    download_progress_updated = Signal(object, Any)
-    download_failed = Signal(object)
-    download_finished = Signal(object)
+    download_progress_updated = Signal((object, Any,))
+    download_failed = Signal((object,))
+    download_finished = Signal((object,))
 
     def __init__(self, parent: QObject | None = None):
         QObject.__init__(self, parent)

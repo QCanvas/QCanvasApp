@@ -8,7 +8,7 @@ from qcanvas.util.course_indexer import DataManager
 
 
 class GroupingPreferencesMenu(QMenu):
-    _preference_changed_private = Signal(db.GroupByPreference)
+    _preference_changed_private = Signal((db.GroupByPreference,))
     preference_changed = Signal()
 
     def __init__(self, data_manager: DataManager, parent: QWidget | None = None):
