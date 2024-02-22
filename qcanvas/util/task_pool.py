@@ -1,5 +1,5 @@
 import asyncio
-import sys
+import logging
 from typing import TypeVar, Generic, Callable
 
 T = TypeVar("T")
@@ -13,9 +13,10 @@ class TaskPool(Generic[T]):
     submitted again.
     """
 
+    _logger = logging.getLogger(__name__)
+
     def __init__(self, remember_result: bool = True, wait_if_in_progress: bool = True,
-                 wait_if_just_started: bool = True, restart_if_finished: bool = False,
-                 echo: bool = False):
+                 wait_if_just_started: bool = True, restart_if_finished: bool = False):
         """
         Parameters
         ----------
@@ -27,9 +28,6 @@ class TaskPool(Generic[T]):
 
         wait_if_in_progress : bool
             Whether to await a task that is in progress or return immediately
-
-        echo : bool
-            Whether to print the status of tasks as they are awaited and submitted
         """
 
         if not wait_if_in_progress and remember_result:
@@ -41,7 +39,6 @@ class TaskPool(Generic[T]):
         self._wait_if_in_progress: bool = wait_if_in_progress
         self._wait_if_just_started: bool = wait_if_just_started
         self._restart_if_finished: bool = restart_if_finished
-        self._echo = echo
 
     def add_values(self, results: dict[object, T]) -> None:
         """
@@ -89,29 +86,29 @@ class TaskPool(Generic[T]):
 
         if task_id in self._results.keys():
             if not self._wait_if_in_progress and isinstance(self._results[task_id], asyncio.Event):
-                if self._echo: print(f"Task {task_id} in progress but configured to not wait, returning None.")
+                self._logger.debug("Task %s in progress but configured to not wait, returning None.", task_id)
                 sem.release()
                 return None
 
             if not isinstance(self._results[task_id], asyncio.Event):
                 if self._restart_if_finished:
-                    if self._echo: print(
-                        f"Task {task_id} already finished but configured to restart if finished, restarting.")
+                    self._logger.debug("Task %s already finished but configured to restart if finished, restarting.",
+                                       task_id)
                     # start_task releases the semaphore, no need to do it here
                     return await self._start_task(task_id, func, **kwargs)
 
-                if self._echo: print(f"Task {task_id} already finished, returning.")
+                self._logger.debug("Task %s already finished, returning.", task_id)
                 sem.release()
                 return self._results[task_id]
 
-            if self._echo: print(f"Task {task_id} in progress. Waiting.")
+            self._logger.debug("Task %s in progress. Waiting.", task_id)
 
             event: asyncio.Event = self._results[task_id]
             sem.release()
 
             await event.wait()
 
-            if self._echo: print(f"Finished waiting for {task_id}.")
+            self._logger.debug("Finished waiting for %s.", task_id)
 
             return self._results[task_id]
         else:
@@ -138,7 +135,7 @@ class TaskPool(Generic[T]):
         """
         sem = self._semaphore
 
-        if self._echo: print(f"Task {task_id} started.")
+        self._logger.debug("Task %s started.", task_id)
 
         event = asyncio.Event()
         self._results[task_id] = event
@@ -174,15 +171,13 @@ class TaskPool(Generic[T]):
         result = await func(**func_args)
 
         if isinstance(result, asyncio.Event):
-            print("Result was of type asyncio.Event, this will break things!", file=sys.stderr)
+            self._logger.warning("Result was of type asyncio.Event, this will break things!")
 
-        await sem.acquire()
-
-        if self._echo: print(f"Task {task_id} finished.")
-
-        self._results[task_id] = result if self._remember_result else None
-        event.set()
-        sem.release()
+        async with sem:
+            self._logger.debug("Task %s finished", task_id)
+            # Record this task as done, storing the result if configured to
+            self._results[task_id] = result if self._remember_result else None
+            event.set()
 
         return result
 
@@ -256,27 +251,3 @@ class TaskPool(Generic[T]):
             return result
         else:
             raise KeyError(f"{task_id} has not been started")
-
-    # def get_completed_result_or_default(self, task_id: object, default : T | None = None) -> T | None:
-    #     """
-    #     Returns the result of an already completed task
-    #
-    #     Returns
-    #     -------
-    #     object
-    #         The result of the task or the default if the task has not been started
-    #
-    #     Raises
-    #     ------
-    #     ValueError
-    #         If the task is still in progress
-    #     """
-    #     if task_id in self._results:
-    #         result = self._results[task_id]
-    #
-    #         if isinstance(result, asyncio.Event):
-    #             raise ValueError(f"{task_id} is still in progress")
-    #
-    #         return result
-    #     else:
-    #         return default
