@@ -165,7 +165,7 @@ class AppMainWindow(QMainWindow):
             progress_diag.setWindowTitle(app_name)
             progress_diag.show()
             await self_updater.do_update()
-            QApplication.quit()
+            self.close()
         except BaseException as e:
             traceback.print_exc()
 
