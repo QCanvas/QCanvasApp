@@ -4,6 +4,18 @@ from qcanvas.QtVersionHelper.QtCore import QSettings, QUrl
 
 
 def ensure_theme_is_valid(theme: str) -> str:
+    """
+    Ensures that a theme name is valid.
+    If it is invalid, the default theme ("light") is returned
+    Parameters
+    ----------
+    theme
+        The theme name
+    Returns
+    -------
+    str
+        A valid theme name
+    """
     if theme not in ["auto", "light", "dark", "native"]:
         return "light"
     else:
@@ -57,7 +69,10 @@ class _AppSettings:
         self.settings.setValue("theme", value)
 
     # fixme should this really be here
-    def apply_selected_theme(self):
+    def apply_selected_theme(self) -> None:
+        """
+        Applies the selected theme from the app's settings
+        """
         if self.theme != "native":
             qdarktheme.setup_theme(
                 self.theme,

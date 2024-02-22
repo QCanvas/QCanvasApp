@@ -4,7 +4,6 @@ import sys
 import traceback
 from asyncio import Task
 from dataclasses import dataclass
-from datetime import datetime
 from typing import Sequence
 
 from gql import gql
@@ -59,7 +58,7 @@ def _prepare_out_of_date_pages_for_loading(g_courses: Sequence[queries.Course], 
             for item_position, g_module_item in enumerate(g_module.module_items):
                 content = g_module_item.content
 
-                if isinstance(content, queries.Page) or isinstance(content, queries.File):
+                if isinstance(content, (queries.File, queries.Page)):
                     # todo need to decide how to only rescan old pages or only rescan new pages without fetching content of old pages again for no good reason
                     if (
                             content.m_id not in pages_id_mapped
@@ -78,13 +77,11 @@ class DataManager:
     def __init__(self,
                  client: CanvasClient,
                  sessionmaker: AsyncSessionMaker,
-                 link_scanners: Sequence[ResourceScanner],
-                 last_update: datetime):
+                 link_scanners: Sequence[ResourceScanner]):
 
         self._client = client
         self._link_scanners = link_scanners
         self._session_maker = sessionmaker
-        self._last_update = last_update
 
         self._resource_pool = TaskPool[db.Resource]()
         self._moduleitem_pool = TaskPool[db.ModuleItem]()

@@ -1,7 +1,6 @@
 import asyncio
 import logging
 import sys
-from datetime import datetime
 
 import httpx
 from httpx import URL
@@ -31,23 +30,23 @@ logging.basicConfig()
 logging.getLogger("canvas_client").setLevel(logging.DEBUG)
 
 
-async def begin():
-    # Create meta stuff
-    async with engine.begin() as conn:
-        await conn.run_sync(db.Base.metadata.create_all)
-
-
 class LoaderWindow(QMainWindow):
+    """
+    Responsible for verifying that the api key and canvas url is valid, then starting the main app.
+    """
     init = Signal()
     setup = Signal()
     ready = Signal()
 
     def __init__(self):
         super().__init__()
+        self.main_window: AppMainWindow | None = None
         self.main_icon = QPixmap(":/main_icon.svg")
+
         self.init.connect(self.on_init)
         self.setup.connect(self.on_setup)
         self.ready.connect(self.on_ready)
+
         self.setWindowTitle(app_name)
         self.setWindowIcon(self.main_icon)
         self.setCentralWidget(QProgressDialog("Verifying config", None, 0, 0))
@@ -55,39 +54,60 @@ class LoaderWindow(QMainWindow):
         self.init.emit()
 
     @asyncSlot()
-    async def on_init(self):
+    async def on_init(self) -> None:
         try:
+            # Verify that the canvas urls and api key are valid
             if not await CanvasClient.verify_config(AppSettings.canvas_url, AppSettings.canvas_api_key):
+                # Show the setup dialog
                 self.setup.emit()
             else:
+                # Proceed to main app
                 self.ready.emit()
         except:
+            # If a problem occurred then something is probably invalid
             self.setup.emit()
 
     @asyncSlot()
-    async def on_setup(self):
+    async def on_setup(self) -> None:
+        """
+        Shows the setup dialog
+        """
         setup = SetupDialog(self)
         setup.setWindowIcon(self.main_icon)
-        setup.rejected.connect(lambda: sys.exit(0))
+        setup.rejected.connect(lambda: self.close())
         setup.accepted.connect(self.on_ready)
         setup.show()
 
     @asyncSlot()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
+        """
+        Sets up the canvas client and data manager for the main app
+        """
         client = CanvasClient(canvas_url=URL(AppSettings.canvas_url), api_key=AppSettings.canvas_api_key)
         data_manager = DataManager(
             client=client,
-            link_scanners=[CanvasFileScanner(client), DropboxScanner(httpx.AsyncClient()),
-                           CanvasMediaObjectScanner(client.client)],
-            sessionmaker=AsyncSessionMaker(engine, expire_on_commit=False),
-            last_update=datetime.min
+            link_scanners=[
+                CanvasFileScanner(client),
+                DropboxScanner(httpx.AsyncClient()),
+                CanvasMediaObjectScanner(client.client)
+            ],
+            # Don't expire on commit because we need to take objects outside of the session
+            sessionmaker=AsyncSessionMaker(engine, expire_on_commit=False)
         )
 
         await data_manager.init()
         self.close()
         self.open_main_app(data_manager)
 
-    def open_main_app(self, data_manager: DataManager):
+    def open_main_app(self, data_manager: DataManager) -> None:
+        """
+        Starts the main app
+        Parameters
+        ----------
+        data_manager
+            The data manager the app will use
+        """
+
         self.main_window = AppMainWindow(data_manager)
         self.main_window.setWindowTitle(app_name)
         self.main_window.setWindowIcon(self.main_icon)
@@ -96,26 +116,37 @@ class LoaderWindow(QMainWindow):
         self.setParent(self.main_window)
 
 
+async def setup_db():
+    # Create meta stuff
+    async with engine.begin() as conn:
+        await conn.run_sync(db.Base.metadata.create_all)
+
+
 if __name__ == '__main__':
-    asyncio.run(begin())
+    asyncio.run(setup_db())
 
     app = QApplication(sys.argv)
 
+    # Apply the selected theme to qt
     AppSettings.apply_selected_theme()
 
+    # Setup event loop for qasync
     event_loop = QEventLoop()
     asyncio.set_event_loop(event_loop)
-
     app_close_event = asyncio.Event()
     app.aboutToQuit.connect(app_close_event.set)
 
+    # Start the loader, which verifies the client config and initialises the data manager for the main program
     loader_window = LoaderWindow()
     loader_window.show()
 
+    # For qasync
     with event_loop:
         event_loop.run_until_complete(app_close_event.wait())
 
     print("Exiting")
 
+    # Pass the 'restart needed' flag back to the launcher script, which will re-run the program.
+    # See self_updater.do_update
     if self_updater.restart_flag:
         sys.exit(updated_and_needs_restart_return_code)

@@ -75,7 +75,7 @@ class AppMainWindow(QMainWindow):
         widget.setLayout(v_layout)
         self.setCentralWidget(widget)
 
-        self.setup_menu_bar()
+        # self.setup_menu_bar()
 
         self.files_grouping_preference_changed.connect(self.on_grouping_preference_changed)
 

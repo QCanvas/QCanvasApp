@@ -2,13 +2,13 @@ import traceback
 from threading import Semaphore
 from typing import Optional
 
-from PySide6.QtWidgets import QProgressBar
 from qasync import asyncSlot
 
 from qcanvas.QtVersionHelper.QtCore import Slot, QUrl
 from qcanvas.QtVersionHelper.QtGui import QDesktopServices
 from qcanvas.QtVersionHelper.QtWidgets import QDialog, QWidget, QHBoxLayout, QLabel, QLineEdit, QVBoxLayout, \
     QDialogButtonBox, QGridLayout, QMessageBox
+from qcanvas.QtVersionHelper.QtWidgets import QProgressBar
 from qcanvas.net.canvas import CanvasClient
 from qcanvas.util import AppSettings
 
@@ -75,12 +75,12 @@ class SetupDialog(QDialog):
         if self._operation_sem.acquire(False):
             try:
                 def invalid(name: str):
-                    msg = QMessageBox(QMessageBox.Icon.Warning,
-                                      "Error",
-                                      f"{name} is invalid",
-                                      parent=self
-                                      )
-                    msg.show()
+                    QMessageBox(
+                        QMessageBox.Icon.Warning,
+                        "Error",
+                        f"{name} is invalid",
+                        parent=self
+                    ).show()
 
                 def ensure_protocol(url: str):
                     if len(url) > 0 and not (url.startswith("http://") or url.startswith("https://")):
@@ -101,12 +101,12 @@ class SetupDialog(QDialog):
                 elif not len(canvas_api_key_text) > 0:
                     invalid("API key")
                 elif not (await self._verify_canvas_config(canvas_url_text, canvas_api_key_text)):
-                    msg = QMessageBox(QMessageBox.Icon.Warning,
-                                      "Error",
-                                      f"The canvas URL or API key is invalid.\nPlease check you entered them correctly.",
-                                      parent=self
-                                      )
-                    msg.show()
+                    QMessageBox(
+                        QMessageBox.Icon.Warning,
+                        "Error",
+                        f"The canvas URL or API key is invalid.\nPlease check you entered them correctly.",
+                        parent=self
+                    ).show()
                 else:
                     AppSettings.canvas_url = canvas_url_text
                     AppSettings.canvas_api_key = canvas_api_key_text
