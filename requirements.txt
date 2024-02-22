@@ -13,4 +13,3 @@ qasync~=0.27.1
 bs4~=0.0.1
 pyqtdarktheme~=2.1.0
 packaging~=23.2
-PySide2~=5.13.2

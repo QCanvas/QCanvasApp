@@ -1,7 +1,7 @@
-from PySide2.QtCore import Slot, Signal
 from qasync import asyncSlot
 
 import qcanvas.db as db
+from qcanvas.QtVersionHelper.QtCore import Slot, Signal
 from qcanvas.QtVersionHelper.QtGui import create_qaction
 from qcanvas.QtVersionHelper.QtWidgets import QMenu, QWidget
 from qcanvas.util.course_indexer import DataManager
