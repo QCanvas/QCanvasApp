@@ -114,6 +114,7 @@ class PagesViewer(PageLikeViewer):
                 continue
 
             module_node = ContainerItem(module)
+            module_node.setSelectable(False)
 
             for module_item in list[db.ModuleItem](module.items):
                 module_node.appendRow(ContainerItem(module_item))

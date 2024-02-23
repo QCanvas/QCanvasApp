@@ -56,6 +56,7 @@ class CourseList(QTreeView):
         for term, courses in self.group_courses_by_term(courses):
             term_node = QStandardItem(term.name)
             term_node.setEditable(False)
+            term_node.setSelectable(False)
 
             for course in courses:
                 course_node = CourseNode(course)
