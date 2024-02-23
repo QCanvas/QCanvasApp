@@ -53,7 +53,7 @@ class FileColumnDelegate(QStyledItemDelegate):
             progress_bar.maximum = resource.file_size
             progress_bar.progress = progress
             # Display download progress as a percentage
-            progress_bar.text = "{0:.1f}%".format((progress / resource.file_size) * 100)
+            progress_bar.text = "{0:.0f}%".format((progress / resource.file_size) * 100)
             progress_bar.textVisible = True
 
             QApplication.style().drawControl(QStyle.CE_ProgressBar, progress_bar, painter)
