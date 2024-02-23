@@ -22,7 +22,7 @@ from qcanvas.util.constants import app_name
 from qcanvas.util.course_indexer import DataManager
 
 _aux_settings = settings.auxiliary
-
+_no_course_selected_text = "No course selected"
 
 class AppMainWindow(QMainWindow):
     logger = logging.getLogger()
@@ -62,17 +62,15 @@ class AppMainWindow(QMainWindow):
         self.tab_widget.insertTab(1, self.assignment_viewer, "Assignments")
         self.tab_widget.insertTab(2, self.pages_viewer, "Pages")
 
-        h_layout = QHBoxLayout()
-        h_layout.addWidget(self.course_list)
-        h_layout.addWidget(self.tab_widget)
+        self.course_name_label = QLabel(_no_course_selected_text)
+        self.course_name_label.setStyleSheet("font-weight: bold;")
+        course_stack_layout = self.create_layout_and_add_widgets(QVBoxLayout, self.course_name_label, self.tab_widget)
+
+        h_layout = self.create_layout_and_add_widgets(QHBoxLayout, self.course_list, course_stack_layout)
         h_layout.setStretch(1, 1)
 
-        v_layout = QVBoxLayout()
-        v_layout.addLayout(h_layout)
-        v_layout.addWidget(self.sync_button)
-
         widget = QWidget()
-        widget.setLayout(v_layout)
+        widget.setLayout(self.create_layout_and_add_widgets(QVBoxLayout, h_layout, self.sync_button))
         self.setCentralWidget(widget)
 
         self.setup_menu_bar()
@@ -89,6 +87,18 @@ class AppMainWindow(QMainWindow):
         bar: QStatusBar = self.statusBar()
         # Set its height so it doesn't get bigger when there's a progress bar in it
         bar.setFixedHeight(bar.height())
+
+    @staticmethod
+    def create_layout_and_add_widgets(layout_type: type, *widgets) -> QLayout:
+        layout = layout_type()
+
+        for widget in widgets:
+            if isinstance(widget, QLayout):
+                layout.addLayout(widget)
+            else:
+                layout.addWidget(widget)
+
+        return layout
 
     def setup_menu_bar(self):
         menu_bar = self.menuBar()
@@ -205,9 +215,11 @@ class AppMainWindow(QMainWindow):
             self.pages_viewer.fill_tree(course)
             self.assignment_viewer.fill_tree(course)
             self.file_viewer.load_course_files(course)
+            self.course_name_label.setText(course.name)
         else:
             self.selected_course = None
             self.file_viewer.clear()
+            self.course_name_label.setText(_no_course_selected_text)
 
     @asyncSlot(db.CoursePreferences)
     async def on_grouping_preference_changed(self):
