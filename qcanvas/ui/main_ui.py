@@ -238,6 +238,8 @@ class AppMainWindow(QMainWindow):
         else:
             self.selected_course = None
             self.file_viewer.clear()
+            self.pages_viewer.clear()
+            self.assignment_viewer.clear()
             self.course_name_label.setText(_no_course_selected_text)
 
     @asyncSlot(db.CoursePreferences)

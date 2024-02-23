@@ -79,6 +79,11 @@ class PageLikeViewer(QWidget):
         self.model.setHorizontalHeaderLabels([self.header_name])
         self.tree.expandAll()
 
+    def clear(self):
+        self.model.clear()
+        self.viewer.clear()
+        self.model.setHorizontalHeaderLabels([self.header_name])
+
     @abstractmethod
     def _internal_fill_tree(self, data: db.Course):
         ...
