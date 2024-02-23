@@ -128,7 +128,11 @@ class AppMainWindow(QMainWindow):
 
     @asyncSlot()
     async def open_quick_auth_in_browser(self):
+        opening_progress_dialog = QProgressDialog("Opening canvas", None, 0, 0, self)
+        opening_progress_dialog.setWindowTitle("Please wait")
+        opening_progress_dialog.show()
         QDesktopServices.openUrl(await self.data_manager.client.get_temp_session_link())
+        opening_progress_dialog.close()
 
     def closeEvent(self, event):
         settings.geometry = self.saveGeometry()
