@@ -18,6 +18,7 @@ from qcanvas.net.canvas import CanvasClient
 from qcanvas.util.download_pool import DownloadPool
 from qcanvas.util.linkscanner.canvas_link_scanner import canvas_resource_id_prefix
 from qcanvas.util.linkscanner.resource_scanner import ResourceScanner
+from qcanvas.util.progress_reporter import ProgressReporter, noop_reporter
 from qcanvas.util.task_pool import TaskPool
 
 _logger = logging.getLogger("course_loader")
@@ -185,11 +186,14 @@ class DataManager:
 
             return (await session.execute(select(db.Course).options(*options))).scalars().all()
 
-    async def synchronize_with_canvas(self):
+    async def synchronize_with_canvas(self, progress_reporter: ProgressReporter = noop_reporter):
+        section = progress_reporter.section("Loading index", 0)
         raw_query = (await self._client.do_graphql_query(gql(queries.all_courses.DEFINITION), detailed=True))
-        await self.load_courses_data(queries.AllCoursesQueryData(**raw_query).all_courses)
+        section.increment_progress()
 
-    async def load_courses_data(self, g_courses: Sequence[queries.Course]):
+        await self.load_courses_data(queries.AllCoursesQueryData(**raw_query).all_courses, progress_reporter)
+
+    async def load_courses_data(self, g_courses: Sequence[queries.Course], progress_reporter: ProgressReporter):
         """
         Loads data for all specified courses, including loading module pages and scanning for resources.
         """
@@ -199,7 +203,7 @@ class DataManager:
 
         async with self._session_maker.begin() as session:
             # Load module pages/files for the courses
-            await self._load_module_items(g_courses, session)
+            await self._load_module_items(g_courses, session, progress_reporter)
 
             # Collect assignments from the courses
             assignments = []
@@ -214,12 +218,14 @@ class DataManager:
                 assignments.extend(await conv_helper.create_assignments(g_course, session))
 
             # Scan assignments for resources
-            await self._scan_assignments_for_resources(assignments, session)
+            await self._scan_assignments_for_resources(assignments, session, progress_reporter)
 
             # Add all resources back into the session
             session.add_all(self._resource_pool.results())
+            progress_reporter.finished()
 
-    async def _scan_assignments_for_resources(self, assignments, session):
+    async def _scan_assignments_for_resources(self, assignments: Sequence[db.Assignment], session: AsyncSession,
+                                              progress_reporter: ProgressReporter):
         """
         Scans assignments for resources
         """
@@ -230,12 +236,14 @@ class DataManager:
             await resource_helper.find_resources_in_pages(
                 link_scanners=self._link_scanners,
                 resource_pool=self._resource_pool,
-                items=assignments
+                items=assignments,
+                progress_reporter=progress_reporter
             ),
             session
         )
 
-    async def _load_module_items(self, g_courses: Sequence[queries.Course], session: AsyncSession):
+    async def _load_module_items(self, g_courses: Sequence[queries.Course], session: AsyncSession,
+                                 progress_reporter: ProgressReporter):
         # Get the ids of all the courses we are going to index/load
         course_ids = [g_course.m_id for g_course in g_courses]
 
@@ -249,7 +257,7 @@ class DataManager:
         # Filter out pages that don't need updating
         pages_to_update = _prepare_out_of_date_pages_for_loading(g_courses, existing_pages)
         # Load the content for all the pages that need updating
-        module_items = await self._load_content_for_pages(pages_to_update)
+        module_items = await self._load_content_for_pages(pages_to_update, progress_reporter)
 
         # Link the resources found to the pages they were found on and add them to the database
         await resource_helper.create_module_item_resource_relations(
@@ -257,6 +265,7 @@ class DataManager:
             await resource_helper.find_resources_in_pages(
                 link_scanners=self._link_scanners,
                 resource_pool=self._resource_pool,
+                progress_reporter=progress_reporter,
                 # Collect just the module pages for scanning
                 items=[item for item in module_items if isinstance(item, db.ModulePage)]
             ),
@@ -274,7 +283,8 @@ class DataManager:
         self.download_pool.add_values(
             {resource.id: None for resource in existing_resources if resource.state == db.ResourceState.DOWNLOADED})
 
-    async def _load_content_for_pages(self, pages: Sequence[TransientModulePage]) -> list[db.ModuleItem]:
+    async def _load_content_for_pages(self, pages: Sequence[TransientModulePage],
+                                      progress_reporter: ProgressReporter) -> list[db.ModuleItem]:
         """
         Loads the page content for the specified pages
         Parameters
@@ -285,6 +295,7 @@ class DataManager:
         -------
             The list of complete pages with page content loaded.
         """
+        progress = progress_reporter.section("Loading page content", len(pages))
         tasks: list[Task[db.ModuleItem | None]] = []
 
         for page in pages:
@@ -294,10 +305,13 @@ class DataManager:
             if isinstance(content, queries.File):
                 task = asyncio.create_task(
                     self._load_module_file(content, page.course_id, page.module_id, page.position))
+                task.add_done_callback(progress.increment_progress)
                 tasks.append(task)
             elif isinstance(content, queries.Page):
-                tasks.append(
-                    asyncio.create_task(self.load_module_page(content, page.course_id, page.module_id, page.position)))
+                task = asyncio.create_task(
+                    self.load_module_page(content, page.course_id, page.module_id, page.position))
+                task.add_done_callback(progress.increment_progress)
+                tasks.append(task)
 
         if len(tasks) > 0:
             await asyncio.wait(tasks)

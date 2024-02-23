@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 import qcanvas.db as db
 from qcanvas.util.linkscanner import ResourceScanner
+from qcanvas.util.progress_reporter import ProgressReporter
 from qcanvas.util.task_pool import TaskPool
 
 _logger = logging.getLogger()
@@ -63,20 +64,25 @@ async def create_assignment_resource_relations(relations: Sequence[TransientReso
 
 
 async def find_resources_in_pages(link_scanners: Sequence[ResourceScanner], resource_pool: TaskPool[db.Resource],
-                                  items: Sequence[db.PageLike]) -> list[TransientResourceToPageLink]:
+                                  items: Sequence[db.PageLike], progress_reporter: ProgressReporter) -> list[
+    TransientResourceToPageLink]:
     """
     Produce a list of resource to page links from resources extracted from the specified `items` using `link_scanners`.
     Extracted resources will be added to `resource_pool`
     """
+    progress = progress_reporter.section("Indexing resources", len(items))
     tasks = []
 
     for item in items:
         # Assignment descriptions may be null. Avoid creating extra tasks by checking here
         if item.content is None:
+            progress.increment_progress()
             continue
 
         # extract resources from the page
-        tasks.append(asyncio.create_task(_extract_resources_from_page(link_scanners, resource_pool, item)))
+        task = asyncio.create_task(_extract_resources_from_page(link_scanners, resource_pool, item))
+        task.add_done_callback(progress.increment_progress)
+        tasks.append(task)
 
     if len(tasks) > 0:
         # Wait for all tasks to complete

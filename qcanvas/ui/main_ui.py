@@ -11,6 +11,7 @@ from qasync import asyncSlot
 import qcanvas.db.database as db
 from qcanvas.ui.menu_bar.grouping_preferences_menu import GroupingPreferencesMenu
 from qcanvas.ui.menu_bar.theme_selection_menu import ThemeSelectionMenu
+from qcanvas.ui.status_bar_reporter import StatusBarReporter
 from qcanvas.ui.viewer.course_list import CourseList
 from qcanvas.ui.viewer.file_list import FileRow
 from qcanvas.ui.viewer.file_view_tab import FileViewTab
@@ -84,6 +85,11 @@ class AppMainWindow(QMainWindow):
 
         self.restore_window_position()
 
+        # Activate the statusbar so it doesn't just appear randomly later
+        bar: QStatusBar = self.statusBar()
+        # Set its height so it doesn't get bigger when there's a progress bar in it
+        bar.setFixedHeight(bar.height())
+
     def setup_menu_bar(self):
         menu_bar = self.menuBar()
 
@@ -128,7 +134,7 @@ class AppMainWindow(QMainWindow):
         self.sync_button.setEnabled(False)
         self.sync_button.setText("Synchronizing")
         try:
-            await self.data_manager.synchronize_with_canvas()
+            await self.data_manager.synchronize_with_canvas(StatusBarReporter(self.statusBar()))
             await self.load_course_list()
 
         finally:
