@@ -83,7 +83,7 @@ class DataManager:
                  sessionmaker: AsyncSessionMaker,
                  link_scanners: Sequence[ResourceScanner]):
 
-        self._client = client
+        self.client = client
         self._link_scanners = link_scanners
         self._session_maker = sessionmaker
 
@@ -188,7 +188,7 @@ class DataManager:
 
     async def synchronize_with_canvas(self, progress_reporter: ProgressReporter = noop_reporter):
         section = progress_reporter.section("Loading index", 0)
-        raw_query = (await self._client.do_graphql_query(gql(queries.all_courses.DEFINITION), detailed=True))
+        raw_query = (await self.client.do_graphql_query(gql(queries.all_courses.DEFINITION), detailed=True))
         section.increment_progress()
 
         await self.load_courses_data(queries.AllCoursesQueryData(**raw_query).all_courses, progress_reporter)
@@ -343,7 +343,7 @@ class DataManager:
         Fetches information about the specified file from canvas
         """
         _logger.debug(f"Fetching file (for module file) %s %s", file.m_id, file.display_name)
-        result = await self._client.get_file(file.m_id, course_id)
+        result = await self.client.get_file(file.m_id, course_id)
         resource = db.convert_file(file, result.size)
         resource.id = f"{canvas_resource_id_prefix}:{resource.id}"
         resource.course_id = course_id
@@ -369,7 +369,7 @@ class DataManager:
 
         try:
             # Get the page
-            result = await self._client.get_page(page.m_id, course_id)
+            result = await self.client.get_page(page.m_id, course_id)
         except BaseException as e:
             # Handle any errors
             _logger.error(e)

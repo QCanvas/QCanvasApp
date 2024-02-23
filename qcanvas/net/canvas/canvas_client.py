@@ -133,6 +133,27 @@ class CanvasClient(SelfAuthenticating):
             return LegacyFile.from_dict(json.loads(response.text))
 
     @retry(
+        wait=wait_exponential(exp_base=1.2, max=10) + wait_random(0, 1),
+        retry=retry_if_exception_type(RatelimitedException),
+        stop=stop_after_attempt(8)
+    )
+    async def get_temp_session_link(self) -> str | None:
+        """
+        Gets the link which will authenticate a browser/open canvas using a 'legacy session token'
+        Returns
+        -------
+        str | None
+            The url as a string if the request succeeded, None if it didn't
+        """
+
+        token_response = await self.client.get(self.canvas_url.join("login/session_token"), **self.get_headers())
+
+        if token_response.is_success:
+            return json.loads(token_response.text)["session_url"]
+        else:
+            return None
+
+    @retry(
         stop=stop_after_attempt(3),
         wait=wait_fixed(5) + wait_random(0, 1),
         retry=retry_if_exception_type(TransportQueryError)

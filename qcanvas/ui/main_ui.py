@@ -3,8 +3,8 @@ import sys
 import traceback
 from typing import Sequence, Optional
 
-from PySide6.QtCore import Slot, Signal, Qt, QUrl
-from PySide6.QtGui import QDesktopServices
+from PySide6.QtCore import Slot, Signal, Qt, QUrl, QObject
+from PySide6.QtGui import QDesktopServices, QKeySequence
 from PySide6.QtWidgets import *
 from qasync import asyncSlot
 
@@ -20,6 +20,7 @@ from qcanvas.util import self_updater
 from qcanvas.util.app_settings import settings
 from qcanvas.util.constants import app_name
 from qcanvas.util.course_indexer import DataManager
+from qcanvas.util.helpers.qaction_helper import create_qaction
 
 _aux_settings = settings.auxiliary
 _no_course_selected_text = "No course selected"
@@ -103,9 +104,11 @@ class AppMainWindow(QMainWindow):
     def setup_menu_bar(self):
         menu_bar = self.menuBar()
 
-        menu_bar.addMenu(ThemeSelectionMenu())
-        view_menu = menu_bar.addMenu("View")
+        app_menu: QMenu = menu_bar.addMenu("App")
+        view_menu: QMenu = menu_bar.addMenu("View")
 
+        app_menu.addAction(self.setup_quick_authentication_action(app_menu))
+        app_menu.addMenu(ThemeSelectionMenu())
         view_menu.addMenu(self.setup_group_by_menu())
 
     def setup_group_by_menu(self) -> QMenu:
@@ -114,6 +117,18 @@ class AppMainWindow(QMainWindow):
         file_grouping_menu.preference_changed.connect(self.on_grouping_preference_changed)
 
         return file_grouping_menu
+
+    def setup_quick_authentication_action(self, parent: QObject):
+        return create_qaction(
+            name="Quick canvas login",
+            shortcut=QKeySequence("Ctrl+O"),
+            triggered=self.open_quick_auth_in_browser,
+            parent=parent
+        )
+
+    @asyncSlot()
+    async def open_quick_auth_in_browser(self):
+        QDesktopServices.openUrl(await self.data_manager.client.get_temp_session_link())
 
     def closeEvent(self, event):
         settings.geometry = self.saveGeometry()
