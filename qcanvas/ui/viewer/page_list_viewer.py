@@ -10,6 +10,7 @@ import qcanvas.db as db
 from qcanvas.ui.container_item import ContainerItem
 from qcanvas.util.constants import default_assignments_module_names
 from qcanvas.util.course_indexer import resource_helpers
+from qcanvas.util.helpers import canvas_sanitiser
 from qcanvas.util.linkscanner import ResourceScanner
 
 
@@ -97,7 +98,7 @@ class PageLikeViewer(QWidget):
                     return
 
                 # todo when a file is finished downloading it would be nice if the page was refreshed to show the state properly
-                html = canvas_garbage_remover.remove_stylesheets_from_html(item.content)
+                html = canvas_sanitiser.remove_stylesheets_from_html(item.content)
                 self.viewer.setHtml(self.link_transformer.transform_links(html))
 
 
