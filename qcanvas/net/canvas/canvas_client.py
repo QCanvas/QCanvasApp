@@ -1,7 +1,7 @@
 import asyncio
 import json
 import logging
-from typing import BinaryIO, AsyncIterator
+from typing import BinaryIO, AsyncIterator, Any
 
 import gql
 import httpx
@@ -13,7 +13,7 @@ from tenacity import retry, wait_exponential, wait_random, stop_after_attempt, w
 import qcanvas.db as db
 from qcanvas.net.canvas.legacy_canvas_types import LegacyFile, LegacyPage
 from qcanvas.net.custom_httpx_async_transport import CustomHTTPXAsyncTransport
-from qcanvas.net.self_authenticating import SelfAuthenticating, AuthenticationException
+from qcanvas.net.self_authenticating import SelfAuthenticatingWithHttpClient, AuthenticationException
 
 
 class RatelimitedException(Exception):
@@ -48,11 +48,7 @@ def detect_ratelimit_and_raise(response: Response) -> Response:
     return response
 
 
-def detect_authentication_needed(response: Response):
-    return response.url.path == "/login/canvas" or response.status_code == 401
-
-
-class CanvasClient(SelfAuthenticating):
+class CanvasClient(SelfAuthenticatingWithHttpClient):
     _logger = logging.getLogger("canvas_client")
     _net_op_sem = asyncio.Semaphore(20)
 
@@ -73,11 +69,9 @@ class CanvasClient(SelfAuthenticating):
         return response.is_success
 
     def __init__(self, canvas_url: URL, api_key: str, client: httpx.AsyncClient | None = None):
-        super().__init__()
+        super().__init__(client=client or httpx.AsyncClient(timeout=60))
         self.api_key = api_key
         self.canvas_url = canvas_url
-        self.client = client or httpx.AsyncClient(timeout=60)
-        self.max_retries = 3
 
     def get_headers(self) -> dict[str, dict]:
         return {"headers": {"Authorization": f"Bearer {self.api_key}"}}
@@ -158,13 +152,7 @@ class CanvasClient(SelfAuthenticating):
         wait=wait_fixed(5) + wait_random(0, 1),
         retry=retry_if_exception_type(TransportQueryError)
     )
-    async def do_graphql_query(self, query: gql.client.DocumentNode, **kwargs):
-        """
-        Executes a graphql query and reauthenticates the client if needed
-        :param query:
-        :param operation: The operation to execute
-        :return: The result
-        """
+    async def do_graphql_query(self, query: gql.client.DocumentNode, **kwargs) -> dict[str, Any]:
         async with self._net_op_sem:
             gql_transport = CustomHTTPXAsyncTransport(self.client, self.canvas_url.join("api/graphql"),
                                                       **self.get_headers())
@@ -193,36 +181,13 @@ class CanvasClient(SelfAuthenticating):
         self._logger.warning("Gave up download of %s", resource.url)
         raise
 
-    async def do_request_and_retry_if_unauthenticated(self, url: URL):
-        """
-        Executes a http request or reauthenticate and retries if needed
-        :param url: The url of the request
-        :return:
-        """
-        retries = 0
+    async def do_request_and_retry_if_unauthenticated(self, url: URL, method: str, **kwargs) -> httpx.Response:
+        # Add API token to the request
+        return await super().do_request_and_retry_if_unauthenticated(url, method, **kwargs, **self.get_headers())
 
-        # Make the initial request
-        response = await self.client.get(url, **self.get_headers())
-
-        # Retry if canvas is trying to get us to reauthenticate
-        while (await self.reauthenticate_if_needed(response)) and retries < self.max_retries:
-            response = await self.client.get(url, **self.get_headers())
-            retries += 1
-
-        return response.text
-
-    async def reauthenticate_if_needed(self, response: Response):
-        """
-        Inspects a response and activates reauthentication if the response indicates we need to
-        :param response: The response to inspect
-        :return: True if reauthentication was activated, false if not
-        """
-
-        if detect_authentication_needed(response):
-            await self.reauthenticate()
-            return True
-
-        return False
+    def detect_authentication_needed(self, response: Response):
+        # Canvas will silently redirect to the login page or give a 401 if we are not authenticated
+        return response.url.path == "/login/canvas" or response.status_code == 401
 
     async def _authenticate(self):
         token_response = await self.client.get(self.canvas_url.join("login/session_token"), **self.get_headers())
