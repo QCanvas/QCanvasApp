@@ -151,6 +151,8 @@ class AppMainWindow(QMainWindow):
 
             await self.data_manager.download_resource(resource)
             QDesktopServices.openUrl(QUrl.fromLocalFile(resource.download_location.absolute()))
+        else:
+            QDesktopServices.openUrl(url)
 
     @asyncSlot(QTreeWidgetItem, int)
     async def download_file_from_file_pane(self, item: QTreeWidgetItem, _: int):
