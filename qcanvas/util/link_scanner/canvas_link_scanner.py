@@ -1,9 +1,9 @@
 from bs4 import Tag
 from httpx import URL
+from qcanvas.util.linkscanner.resource_scanner import ResourceScanner
 
 from qcanvas import db as db
 from qcanvas.net.canvas import CanvasClient
-from qcanvas.util.linkscanner.resource_scanner import ResourceScanner
 
 canvas_resource_id_prefix = "canvas_file"
 
