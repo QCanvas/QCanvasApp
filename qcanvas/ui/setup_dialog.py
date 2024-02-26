@@ -51,12 +51,12 @@ class SetupDialog(QDialog):
 
         # Line edits for the different properties
         self.canvas_url = QLineEdit(settings.canvas_url or "")
-        # self.panopto_url = QLineEdit()
+        self.panopto_url = QLineEdit()
         self.canvas_api_key = QLineEdit(settings.api_key or "")
 
         # Add the line edits to the dialog
         self._row("Canvas URL", self.canvas_url)
-        # self._row("Painopto URL", self.panopto_url)
+        self._row("Painopto URL", self.panopto_url)
         self._row("Canvas API key", self.canvas_api_key)
 
         # Add the activity indicator to the dialog
@@ -93,15 +93,15 @@ class SetupDialog(QDialog):
         if self._operation_sem.acquire(False):
             try:
                 canvas_url_text = self.ensure_protocol(self.canvas_url.text().strip())
-                # panopto_url_text = ensure_protocol(self.panopto_url.text().strip())
+                panopto_url_text = self.ensure_protocol(self.panopto_url.text().strip())
                 canvas_api_key_text = self.canvas_api_key.text().strip()
 
                 if not (len(canvas_url_text) > 0 and QUrl(canvas_url_text).isValid()):
                     self._show_invalid_msgbox("Canvas URL")
                     return
-                # if not (len(panopto_url_text) > 0 and QUrl(panopto_url_text).isValid()):
-                #     invalid("Panopto URL")
-                #     return
+                if not (len(panopto_url_text) > 0 and QUrl(panopto_url_text).isValid()):
+                    self._show_invalid_msgbox("Panopto URL")
+                    return
                 elif not len(canvas_api_key_text) > 0:
                     self._show_invalid_msgbox("API key")
                 elif not (await self._verify_canvas_config(canvas_url_text, canvas_api_key_text)):
@@ -116,7 +116,7 @@ class SetupDialog(QDialog):
                     # If nothing was wrong, everything should be fine
                     # Save the url and api key
                     settings.canvas_url = canvas_url_text
-                    # settings.panoptp_url = panopto_url_text
+                    settings.panopto_url = panopto_url_text
                     settings.api_key = canvas_api_key_text
 
                     self.accept()

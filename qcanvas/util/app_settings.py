@@ -85,6 +85,7 @@ class _AppSettings:
     auxiliary = QSettings("QCanvas", "ui")
 
     canvas_url: MappedSetting[str] = MappedSetting(settings, "canvas_url")
+    panopto_url: MappedSetting[str] = MappedSetting(settings, "panopto_url")
     api_key: MappedSetting[str] = MappedSetting(settings, "api_key")
 
     ignored_update: MappedSetting[Version] = MappedSetting(auxiliary, "ignored_update")
