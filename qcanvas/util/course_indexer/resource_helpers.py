@@ -7,7 +7,7 @@ from bs4 import Tag, BeautifulSoup
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import qcanvas.db as db
-from qcanvas.util.linkscanner import ResourceScanner
+from qcanvas.util.link_scanner import ResourceScanner
 from qcanvas.util.progress_reporter import ProgressReporter
 from qcanvas.util.task_pool import TaskPool
 

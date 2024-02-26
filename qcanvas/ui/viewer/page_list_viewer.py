@@ -11,7 +11,7 @@ from qcanvas.ui.container_item import ContainerItem
 from qcanvas.util.constants import default_assignments_module_names
 from qcanvas.util.course_indexer import resource_helpers
 from qcanvas.util.helpers import canvas_sanitiser
-from qcanvas.util.linkscanner import ResourceScanner
+from qcanvas.util.link_scanner import ResourceScanner
 
 
 class LinkTransformer:

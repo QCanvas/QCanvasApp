@@ -16,8 +16,8 @@ import qcanvas.util.course_indexer.conversion_helpers as conv_helper
 import qcanvas.util.course_indexer.resource_helpers as resource_helper
 from qcanvas.net.canvas import CanvasClient
 from qcanvas.util.download_pool import DownloadPool
-from qcanvas.util.linkscanner.canvas_link_scanner import canvas_resource_id_prefix
-from qcanvas.util.linkscanner.resource_scanner import ResourceScanner
+from qcanvas.util.link_scanner.canvas_link_scanner import canvas_resource_id_prefix
+from qcanvas.util.link_scanner.resource_scanner import ResourceScanner
 from qcanvas.util.progress_reporter import ProgressReporter, noop_reporter
 from qcanvas.util.task_pool import TaskPool
 
