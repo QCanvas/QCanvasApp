@@ -63,6 +63,7 @@ async def create_assignment_resource_relations(relations: Sequence[TransientReso
             )
 
 
+# todo change resource system to think of resources as links on a page with a shallow id (that may be the same as the deep id) which links to one or more deep ids
 async def find_resources_in_pages(link_scanners: Sequence[ResourceScanner], resource_pool: TaskPool[db.Resource],
                                   items: Sequence[db.PageLike], progress_reporter: ProgressReporter) -> list[
     TransientResourceToPageLink]:

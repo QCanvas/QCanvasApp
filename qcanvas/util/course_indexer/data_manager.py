@@ -293,6 +293,7 @@ class DataManager:
             The pages to load
         Returns
         -------
+        list
             The list of complete pages with page content loaded.
         """
         progress = progress_reporter.section("Loading page content", len(pages))
