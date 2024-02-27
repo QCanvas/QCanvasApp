@@ -22,9 +22,9 @@ from qcanvas.util.app_settings import settings
 from qcanvas.util.constants import app_name, updated_and_needs_restart_return_code
 from qcanvas.util.course_indexer import DataManager
 from qcanvas.util.helpers import theme_helper
-from qcanvas.util.linkscanner import CanvasFileScanner
-from qcanvas.util.linkscanner.canvas_media_object_scanner import CanvasMediaObjectScanner
-from qcanvas.util.linkscanner.dropbox_scanner import DropboxScanner
+from qcanvas.util.link_scanner import CanvasFileScanner
+from qcanvas.util.link_scanner.canvas_media_object_scanner import CanvasMediaObjectScanner
+from qcanvas.util.link_scanner.dropbox_scanner import DropboxScanner
 
 engine = create_async_engine("sqlite+aiosqlite:///canvas_db.😘", echo=False)
 
