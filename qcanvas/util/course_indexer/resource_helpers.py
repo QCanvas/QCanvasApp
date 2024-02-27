@@ -11,7 +11,7 @@ from qcanvas.util.link_scanner import ResourceScanner
 from qcanvas.util.progress_reporter import ProgressReporter
 from qcanvas.util.task_pool import TaskPool
 
-_logger = logging.getLogger()
+_logger = logging.getLogger(__name__)
 
 resource_elements = ["a", "iframe", "img"]
 

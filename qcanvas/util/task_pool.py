@@ -225,9 +225,9 @@ class TaskPool(Generic[T]):
 
         return list(filter(filter_func, self._results.values()))
 
-    def get_completed_result(self, task_id: object) -> T | None:
+    def get_completed_result_or_nothing(self, task_id: object, default: T | None = None) -> T | None:
         """
-        Returns the result of an already completed task
+        Returns the result of an already completed task, or nothing at all if result with that id exists or is still in progress
 
         Returns
         -------
@@ -246,8 +246,8 @@ class TaskPool(Generic[T]):
             result = self._results[task_id]
 
             if isinstance(result, asyncio.Event):
-                raise ValueError(f"{task_id} is still in progress")
+                return None
 
             return result
         else:
-            raise KeyError(f"{task_id} has not been started")
+            return None
