@@ -60,7 +60,7 @@ class LoaderWindow(QMainWindow):
         try:
             all_set = None not in [settings.api_key, settings.canvas_url, settings.panopto_url]
             # Verify that the canvas urls and api key are valid
-            if not all_set or not await CanvasClient.verify_config(settings.canvas_url, settings.api_key):
+            if not all_set:
                 # Show the setup dialog
                 self.setup.emit()
             else:
