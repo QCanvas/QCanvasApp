@@ -7,6 +7,7 @@ from typing import Sequence
 
 from gql import gql
 from sqlalchemy import select
+from sqlalchemy.dialects.sqlite import insert as sqlite_upsert
 from sqlalchemy.ext.asyncio.session import async_sessionmaker as AsyncSessionMaker, AsyncSession
 from sqlalchemy.orm import selectin_polymorphic, selectinload
 
@@ -201,28 +202,32 @@ class DataManager:
         if not self._init_called:
             raise Exception("Init was not called")
 
-        async with self._session_maker.begin() as session:
-            # Load module pages/files for the courses
-            await self._load_module_items(g_courses, session, progress_reporter)
+        try:
+            async with self._session_maker.begin() as session:
+                # Load module pages/files for the courses
+                await self._load_module_items(g_courses, session, progress_reporter)
 
-            # Collect assignments from the courses
-            assignments = []
+                # Collect assignments from the courses
+                assignments = []
 
-            for g_course in g_courses:
-                # Create needed data in the session
-                term = await conv_helper.create_term(g_course, session)
-                await conv_helper.create_course(g_course, session, term)
-                await conv_helper.create_modules(g_course, session)
+                for g_course in g_courses:
+                    # Create needed data in the session
+                    term = await conv_helper.create_term(g_course, session)
+                    await conv_helper.create_course(g_course, session, term)
+                    await conv_helper.create_modules(g_course, session)
 
-                # Add course assignments to the list
-                assignments.extend(await conv_helper.create_assignments(g_course, session))
+                    # Add course assignments to the list
+                    assignments.extend(await conv_helper.create_assignments(g_course, session))
 
-            # Scan assignments for resources
-            await self._scan_assignments_for_resources(assignments, session, progress_reporter)
+                # Scan assignments for resources
+                await self._scan_assignments_for_resources(assignments, session, progress_reporter)
 
-            # Add all resources back into the session
-            session.add_all(self._resource_pool.results())
-            progress_reporter.finished()
+                # Add all resources back into the session
+                session.add_all(self._resource_pool.results())
+                progress_reporter.finished()
+        except BaseException as e:
+            traceback.print_exc()
+            progress_reporter.errored(e)
 
     async def _scan_assignments_for_resources(self, assignments: Sequence[db.Assignment], session: AsyncSession,
                                               progress_reporter: ProgressReporter):
@@ -256,8 +261,13 @@ class DataManager:
 
         # Filter out pages that don't need updating
         pages_to_update = _prepare_out_of_date_pages_for_loading(g_courses, existing_pages)
+
+        if len(pages_to_update) == 0:
+            return
+
         # Load the content for all the pages that need updating
-        module_items = await self._load_content_for_pages(pages_to_update, progress_reporter)
+        module_items: list[db.ModuleItem] = await self._load_content_for_pages(pages_to_update, progress_reporter)
+        module_pages = [item for item in module_items if isinstance(item, db.ModulePage)]
 
         # Link the resources found to the pages they were found on and add them to the database
         await resource_helper.create_module_item_resource_relations(
@@ -267,13 +277,43 @@ class DataManager:
                 resource_pool=self._resource_pool,
                 progress_reporter=progress_reporter,
                 # Collect just the module pages for scanning
-                items=[item for item in module_items if isinstance(item, db.ModulePage)]
+                items=module_pages
             ),
             session
         )
 
-        # Add all the module items to the session
-        session.add_all(module_items)
+        # empty inserts/upserts causes an sql error. don't do them
+        if len(module_pages) > 0:
+            # Add all the module items to the session
+            # shitty bandaid fix
+            upsert_item = sqlite_upsert(db.ModuleItem).values([self.moduleitem_dict(item) for item in module_pages])
+            upsert_item = upsert_item.on_conflict_do_update(
+                index_elements=[db.ModuleItem.id],
+                set_=dict(name=upsert_item.excluded.name, updated_at=upsert_item.excluded.updated_at,
+                          position=upsert_item.excluded.position),
+
+            )
+
+            upsert_page = sqlite_upsert(db.ModulePage).values([self.page_dict(item) for item in module_pages])
+            upsert_page = upsert_page.on_conflict_do_update(
+                index_elements=[db.ModulePage.id],
+                set_=dict(content=upsert_page.excluded.content)
+            )
+
+            await session.execute(upsert_item)
+            await session.execute(upsert_page)
+
+        session.add_all([item for item in module_items if isinstance(item, db.ModuleFile)])
+
+    @staticmethod
+    def page_dict(page: db.ModulePage) -> dict[str, object]:
+        return {"id": page.id, "content": page.content}
+
+    @staticmethod
+    def moduleitem_dict(page: db.ModuleItem) -> dict[str, object]:
+        return {"id": page.id, "name": page.name, "updated_at": page.updated_at, "position": page.position,
+                "module_id": page.module_id, "course_id": page.course_id, "type": page.type,
+                "created_at": page.created_at}
 
     def _add_resources_and_pages_to_taskpool(self, existing_pages: Sequence[db.ModuleItem],
                                              existing_resources: Sequence[db.Resource]):
