@@ -34,4 +34,7 @@ class StatusBarReporter(ProgressReporter):
         self.status_bar.showMessage("Finished", 5000)
 
     def errored(self, context: Any) -> None:
-        pass
+        if self.status_bar.parent() is not None:
+            self.status_bar.removeWidget(self.progress_bar)
+            self.progress_bar = None
+            self.status_bar.showMessage("Synchronisation error!!", 5000)
