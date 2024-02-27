@@ -89,6 +89,7 @@ class DataManager:
         self._session_maker = sessionmaker
 
         self._resource_pool = TaskPool[db.Resource]()
+        # todo just remove this thing it does nothing
         self._moduleitem_pool = TaskPool[db.ModuleItem]()
         self.download_pool = DownloadPool()
 
@@ -396,10 +397,7 @@ class DataManager:
         """
         Creates task for loading the specified module page
         """
-        return await self._moduleitem_pool.submit(
-            g_page.m_id,
-            lambda: self._fetch_module_item_page(g_page, course_id, module_id, position)
-        )
+        return await self._fetch_module_item_page(g_page, course_id, module_id, position)
 
     async def _fetch_module_item_page(self, page: queries.Page, course_id: str, module_id: str,
                                       position: int) -> db.ModulePage | None:
