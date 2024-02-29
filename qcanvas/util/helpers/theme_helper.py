@@ -31,7 +31,10 @@ def _get_colours() -> dict:
 
     if now.month == 3 and now.day == 17:
         # And this is on the weekend...
-        return {"primary": "08ff00"}
+        return {
+            "[dark]": {"primary": "08ff00"},
+            "[light]": {"primary": "06c200"}
+        }
     elif now.month == 2 and now.day == 14:
         print("Why are you looking at canvas? Don't you have something better to do?")
 
