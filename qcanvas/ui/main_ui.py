@@ -65,13 +65,15 @@ class AppMainWindow(QMainWindow):
 
         self.course_name_label = QLabel(_no_course_selected_text)
         self.course_name_label.setStyleSheet("font-weight: bold;")
-        course_stack_layout = self.create_layout_and_add_widgets(QVBoxLayout, self.course_name_label, self.tab_widget)
+        course_viewer_layout = self.create_layout_and_add_widgets(QVBoxLayout, self.course_name_label, self.tab_widget)
 
-        h_layout = self.create_layout_and_add_widgets(QHBoxLayout, self.course_list, course_stack_layout)
-        h_layout.setStretch(1, 1)
+        v_layout = self.create_layout_and_add_widgets(QVBoxLayout, self.course_list, self.sync_button)
 
         widget = QWidget()
-        widget.setLayout(self.create_layout_and_add_widgets(QVBoxLayout, h_layout, self.sync_button))
+        h_layout = self.create_layout_and_add_widgets(QHBoxLayout, v_layout, course_viewer_layout)
+        h_layout.setStretch(1, 1)
+        widget.setLayout(h_layout)
+
         self.setCentralWidget(widget)
 
         self.setup_menu_bar()

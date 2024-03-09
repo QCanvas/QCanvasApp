@@ -49,7 +49,7 @@ class CourseList(QTreeView):
 
     def load_course_list(self, courses: Sequence[db.Course]):
         self.model.clear()
-        self.model.setHorizontalHeaderLabels(["Course"])
+        self.model.setHorizontalHeaderLabels(["Canvas Courses"])
 
         courses_root = self.model.invisibleRootItem()
 
