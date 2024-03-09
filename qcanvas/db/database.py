@@ -58,6 +58,7 @@ class GroupByPreference(Enum):
     GROUP_BY_MODULES = 1
 
 
+# fixme should this be MappedAsDataclass?
 class CoursePreferences(Base):
     __tablename__ = "preferences"
 
