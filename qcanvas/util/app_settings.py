@@ -3,7 +3,7 @@ from typing import TypeVar, Generic
 from PySide6.QtCore import QSettings
 from packaging.version import Version
 
-default_theme = "light"
+default_theme = "auto"
 
 
 def ensure_theme_is_valid(theme: str) -> str:
