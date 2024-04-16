@@ -1,7 +1,8 @@
+from qcanvas.ui.viewer.page_like_viewer import PageLikeViewer
+
 from qcanvas import db as db
 from qcanvas.ui.container_item import ContainerItem
 from qcanvas.ui.link_transformer import LinkTransformer
-from qcanvas.ui.viewer.page_like_viewer import PageLikeViewer
 from qcanvas.util.constants import default_assignments_module_names
 
 
