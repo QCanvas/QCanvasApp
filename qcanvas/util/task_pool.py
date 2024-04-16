@@ -1,9 +1,10 @@
 import asyncio
 import logging
-from typing import TypeVar, Generic, Callable
+from typing import TypeVar, Generic, Any
+
+from qcanvas.util.in_progress_task import InProgressTask
 
 T = TypeVar("T")
-
 
 class TaskPool(Generic[T]):
     """
@@ -15,45 +16,13 @@ class TaskPool(Generic[T]):
 
     _logger = logging.getLogger(__name__)
 
-    def __init__(self, remember_result: bool = True, wait_if_in_progress: bool = True,
-                 wait_if_just_started: bool = True, restart_if_finished: bool = False):
-        """
-        Parameters
-        ----------
-        remember_result : bool
-            Whether to store the result of submitted tasks
-
-        wait_if_just_started : bool
-            Whether to await a newly started task or return immediately
-
-        wait_if_in_progress : bool
-            Whether to await a task that is in progress or return immediately
-        """
-
-        if not wait_if_in_progress and remember_result:
-            raise ValueError("Can't remember result without waiting")
-
-        self._results: dict[object, asyncio.Event | T | None] = {}
+    def __init__(self, restart_if_finished: bool = False):
+        self._task_tracker: dict[object, asyncio.Event | T | None] = {}
         self._semaphore = asyncio.Semaphore()
-        self._remember_result: bool = remember_result
-        self._wait_if_in_progress: bool = wait_if_in_progress
-        self._wait_if_just_started: bool = wait_if_just_started
-        self._restart_if_finished: bool = restart_if_finished
+        self._restart_task_if_finished: bool = restart_if_finished
 
-    def add_values(self, results: dict[object, T]) -> None:
-        """
-        Adds the specified values from the dictionary as stored results.
-
-        Parameters
-        ----------
-        results
-            The results to store, where the key is the ID and the value is the result
-
-        Returns
-        -------
-            None
-        """
-        self._results.update(**results)
+    def take_in_precomputed_result_map(self, results: dict[object, T]) -> None:
+        self._task_tracker.update(**results)
 
     async def submit(self, task_id: object, func, **kwargs) -> T | None:
         """
@@ -81,173 +50,92 @@ class TaskPool(Generic[T]):
             None, if the configuration states that we should not wait for the function to finish or not to remember the result.
             Returns the result of the function otherwise.
         """
-        sem = self._semaphore
-        await sem.acquire()
+        # Any async item that we need to await is put into this.
+        # Then we await it at the end of the function, so we can use exception-safe 'with' block without holding the semaphore too long.
+        async_operation_to_wait_for = None
 
-        if task_id in self._results.keys():
-            if not self._wait_if_in_progress and isinstance(self._results[task_id], asyncio.Event):
-                self._logger.debug("Task %s in progress but configured to not wait, returning None.", task_id)
-                sem.release()
-                return None
+        async with self._semaphore:
+            if self._has_task_been_submitted_yet(task_id):
+                task = self._get_tracked_task(task_id)
 
-            if not isinstance(self._results[task_id], asyncio.Event):
-                if self._restart_if_finished:
-                    self._logger.debug("Task %s already finished but configured to restart if finished, restarting.",
-                                       task_id)
-                    # start_task releases the semaphore, no need to do it here
-                    return await self._start_task(task_id, func, **kwargs)
+                if not self._is_task_in_progress(task):
+                    if self._restart_task_if_finished:
+                        self._logger.debug(
+                            "Task %s already finished but configured to restart if finished, restarting.",
+                            task_id)
 
-                self._logger.debug("Task %s already finished, returning.", task_id)
-                sem.release()
-                return self._results[task_id]
+                        new_task = self.create_and_track_new_unstarted_task(task_id=task_id, task_function=func,
+                                                                            function_args=kwargs)
+                        async_operation_to_wait_for = asyncio.create_task(self._run_task_and_record_result(new_task))
+                    else:
+                        self._logger.debug("Task %s already finished, returning.", task_id)
+                        return task
+                else:
+                    self._logger.debug("Task %s in progress. Waiting.", task_id)
 
-            self._logger.debug("Task %s in progress. Waiting.", task_id)
+                    async_operation_to_wait_for = asyncio.create_task(task.wait_and_get_result())
+                    async_operation_to_wait_for.add_done_callback(
+                        lambda _: self._logger.debug("Finished waiting for %s.", task_id))
+            else:
+                new_task = self.create_and_track_new_unstarted_task(task_id=task_id, task_function=func,
+                                                                    function_args=kwargs)
+                async_operation_to_wait_for = asyncio.create_task(self._run_task_and_record_result(new_task))
 
-            event: asyncio.Event = self._results[task_id]
-            sem.release()
+        if async_operation_to_wait_for is not None:
+            return await async_operation_to_wait_for
 
-            await event.wait()
+    def _has_task_been_submitted_yet(self, task_id: object):
+        return task_id in self._task_tracker.keys()
 
-            self._logger.debug("Finished waiting for %s.", task_id)
+    @staticmethod
+    def _is_task_in_progress(task: Any) -> bool:
+        return isinstance(task, InProgressTask)
 
-            return self._results[task_id]
-        else:
-            # start_task releases the semaphore, no need to do it here
-            return await self._start_task(task_id, func, **kwargs)
+    async def _run_task_and_record_result(self, task: InProgressTask) -> T:
+        task_result = await task.run_task()
 
-    async def _start_task(self, task_id: object, func, **kwargs):
-        """
-        Starts a task and **releases the results list semaphore**
+        self._logger.debug("Task %s finished", task.task_id)
+        await self._record_result_of_task_and_mark_finished(task=task, result=task_result)
 
-        Parameters
-        ----------
-        task
-            The task to start
-        task_id
-            The ID of the task
-        event
-            The event that the task is attached to
+        return task_result
 
-        Returns
-        -------
-        T
-            The result of the task
-        """
-        sem = self._semaphore
+    async def _record_result_of_task_and_mark_finished(self, task: InProgressTask, result: Any):
+        async with self._semaphore:
+            self._update_tracked_task_with_result(task.task_id, result)
 
-        self._logger.debug("Task %s started.", task_id)
+        task.mark_finished()
 
-        event = asyncio.Event()
-        self._results[task_id] = event
-        sem.release()
+    def create_and_track_new_unstarted_task(self, task_id: object, task_function: Any,
+                                            **function_args) -> InProgressTask:
+        self._logger.debug("Creating new task %s.", task_id)
+        new_in_progress_task = InProgressTask(task_id=task_id, function_to_call=task_function,
+                                              function_args=function_args)
+        self._task_tracker[task_id] = new_in_progress_task
 
-        if not self._wait_if_just_started:
-            # noinspection PyAsyncCall
-            asyncio.create_task(self._handle_task(func, task_id, event, func_args=kwargs))
-            return None
+        return new_in_progress_task
 
-        return await self._handle_task(func, task_id, event, func_args=kwargs)
+    def _update_tracked_task_with_result(self, task_id: object, result: Any):
+        self._task_tracker[task_id] = result
 
-    async def _handle_task(self, func: Callable, task_id: object, event: asyncio.Event, func_args: dict) -> T:
-        """
-        Handles the specified task
-
-        Parameters
-        ----------
-        func
-            The task to handle
-        task_id
-            The ID of the task
-        event
-            The event that the task is attached to
-
-        Returns
-        -------
-        T
-            The result of the task
-        """
-        sem = self._semaphore
-
-        result = await func(**func_args)
-
-        if isinstance(result, asyncio.Event):
-            self._logger.warning("Result was of type asyncio.Event, this will break things!")
-
-        async with sem:
-            self._logger.debug("Task %s finished", task_id)
-            # Record this task as done, storing the result if configured to
-            self._results[task_id] = result if self._remember_result else None
-            event.set()
-
-        return result
-
-    async def wait_if_in_progress(self, task_id: object):
-        """
-        Waits for a task if it is in progress. Returns immediately otherwise.
-
-        Parameters
-        ----------
-        task_id
-            The task id to wait for
-        """
-        sem = self._semaphore
-
-        await sem.acquire()
-
-        if task_id in self._results and isinstance(self._results[task_id], asyncio.Event):
-            event: asyncio.Event = self._results[task_id]
-            sem.release()
-
-            await event.wait()
+    def _get_tracked_task(self, task_id: object) -> InProgressTask | T | None:
+        return self._task_tracker[task_id]
 
     def clear(self) -> None:
-        """
-        Deletes the stored results
+        self._task_tracker.clear()
 
-        Returns
-        -------
-        None
-        """
-        self._results.clear()
-
-    def results(self) -> list[T]:
-        """
-        Gets the results of all currently completed tasks
-
-        Returns
-        -------
-        list[T]
-            The results of all currently completed tasks, excluding Nones
-        """
-
+    def get_results_of_all_completed_tasks(self) -> list[T]:
         def filter_func(it):
-            return not isinstance(it, asyncio.Event) and it is not None
+            return it is not None and not self._is_task_in_progress(it)
 
-        return list(filter(filter_func, self._results.values()))
+        return list(filter(filter_func, self._task_tracker.values()))
 
-    def get_completed_result_or_nothing(self, task_id: object, default: T | None = None) -> T | None:
-        """
-        Returns the result of an already completed task, or nothing at all if result with that id exists or is still in progress
+    def get_completed_result_or_nothing(self, task_id: object) -> T | None:
+        if task_id in self._task_tracker:
+            task = self._get_tracked_task(task_id)
 
-        Returns
-        -------
-        object
-            The result of the task
-
-        Raises
-        ------
-        ValueError
-            If the task is still in progress
-
-        KeyError
-            If the task has not been started yet or does not exist
-        """
-        if task_id in self._results:
-            result = self._results[task_id]
-
-            if isinstance(result, asyncio.Event):
+            if self._is_task_in_progress(task):
                 return None
 
-            return result
+            return task
         else:
             return None
