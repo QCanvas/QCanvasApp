@@ -1,26 +1,9 @@
-from typing import Sequence
-
 from PySide6.QtWidgets import *  # QWidget, QTreeView, QGroupBox, QBoxLayout, QHeaderView, QHBoxLayout, QComboBox, QLabel
 
 import qcanvas.db as db
-from qcanvas.ui.viewer.file_list import FileList
+from qcanvas.ui.file_viewer.file_column import FileColumn
 from qcanvas.util.constants import default_assignments_module_names
 from qcanvas.util.download_pool import DownloadPool
-
-
-class FileColumn(QGroupBox):
-    def __init__(self, column_name, download_pool: DownloadPool):
-        super().__init__(title=column_name)
-
-        self.tree = FileList(download_pool)
-        self.setLayout(QBoxLayout(QBoxLayout.Direction.TopToBottom))
-        self.layout().addWidget(self.tree)
-
-    def load_items(self, items: Sequence[db.ModuleItem | db.Module]):
-        self.tree.load_items(items)
-
-    def clear(self):
-        self.tree.clear()
 
 
 class FileViewTab(QWidget):

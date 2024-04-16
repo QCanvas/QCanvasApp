@@ -1,7 +1,7 @@
 from PySide6.QtGui import QActionGroup
 from PySide6.QtWidgets import QMenu, QWidget
 
-from qcanvas.util.app_settings import settings
+from qcanvas.settings.app_settings import settings
 from qcanvas.util.helpers import theme_helper
 from qcanvas.util.helpers.qaction_helper import create_qaction
 

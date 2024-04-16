@@ -2,7 +2,7 @@ from datetime import datetime
 
 import qdarktheme
 
-from qcanvas.util.app_settings import settings
+from qcanvas.settings.app_settings import settings
 
 
 def apply_selected_theme() -> None:

@@ -9,15 +9,17 @@ from PySide6.QtWidgets import *
 from qasync import asyncSlot
 
 import qcanvas.db.database as db
+from qcanvas.settings.app_settings import settings
+from qcanvas.ui.course_viewer.course_list import CourseList
+from qcanvas.ui.file_viewer.file_row import FileRow
+from qcanvas.ui.file_viewer.file_view_tab import FileViewTab
+from qcanvas.ui.link_transformer import LinkTransformer
 from qcanvas.ui.menu_bar.grouping_preferences_menu import GroupingPreferencesMenu
 from qcanvas.ui.menu_bar.theme_selection_menu import ThemeSelectionMenu
 from qcanvas.ui.status_bar_reporter import StatusBarReporter
-from qcanvas.ui.viewer.course_list import CourseList
-from qcanvas.ui.viewer.file_list import FileRow
-from qcanvas.ui.viewer.file_view_tab import FileViewTab
-from qcanvas.ui.viewer.page_list_viewer import AssignmentsViewer, PagesViewer, LinkTransformer
+from qcanvas.ui.viewer.assignments_viewer import AssignmentsViewer
+from qcanvas.ui.viewer.pages_viewer import PagesViewer
 from qcanvas.util import self_updater
-from qcanvas.util.app_settings import settings
 from qcanvas.util.constants import app_name
 from qcanvas.util.course_indexer import DataManager
 from qcanvas.util.helpers.qaction_helper import create_qaction
