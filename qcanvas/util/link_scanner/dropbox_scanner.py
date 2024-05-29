@@ -59,8 +59,6 @@ class DropboxScanner(ResourceScanner):
             await resp.aclose()
 
     def extract_id(self, link: Tag) -> str:
-        # ***REMOVED***
-        # ------- Extract this part ^^^^^^^^^^^^^^^
         return URL(link.attrs["href"]).path.split("/", 3)[2]
 
     @property

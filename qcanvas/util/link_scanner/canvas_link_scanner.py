@@ -24,8 +24,6 @@ class CanvasFileScanner(ResourceScanner):
         return db.convert_legacy_file(await self._canvas_client.get_file_from_endpoint(link["data-api-endpoint"]))
 
     def extract_id(self, link: Tag) -> str:
-        # ***REMOVED***...
-        # --------------------------------- Extract this part ^^^^^^^
         return URL(link["data-api-endpoint"]).path.rsplit('/', 2)[-1]
 
     async def download(self, resource):
