@@ -23,11 +23,6 @@ class MemoryTreeWidget(QTreeWidget):
         self.itemCollapsed.connect(self._collapsed)
         self.selectionModel().selectionChanged.connect(self._selection_changed)
 
-    def clear(self):
-        super().clear()
-        self._id_map.clear()
-        self._selected_ids.clear()
-
     def reexpand(self) -> None:
         self.scheduleDelayedItemsLayout()
 
@@ -44,6 +39,11 @@ class MemoryTreeWidget(QTreeWidget):
                 self.expand(self.indexFromItem(widget, 0))
         finally:
             self._suppress_expansion_signals = False
+
+    def clear(self):
+        super().clear()
+        self._id_map.clear()
+        self._selected_ids.clear()
 
     def select_ids(self, ids: List[str]) -> None:
         self._suppress_selection_signal = True
