@@ -19,6 +19,8 @@ pyqtdarktheme-fork = "^2.3.2"
 
 [tool.poetry.group.flatpak-exclude.dependencies]
 pyside6 = "^6.7.2"
+black = "^24.4.2"
+block-timer = "^0.2.0"
 
 [build-system]
 requires = ["poetry-core"]
