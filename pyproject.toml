@@ -17,14 +17,25 @@ aiosqlite = "^0.20.0"
 pyqtdarktheme-fork = "^2.3.2"
 qasync = "^0.27.1"
 
+[tool.poetry.group.flatpak-exclude]
+optional = true
 
 [tool.poetry.group.flatpak-exclude.dependencies]
 pyside6 = "^6.7.2"
 black = "^24.4.2"
 block-timer = "^0.2.0"
+isort = "^5.13.2"
+
+[tool.poetry.group.local-deps]
+optional = true
+
+[tool.poetry.group.local-deps.dependencies]
 qcanvas-api-clients = { path = "../QCanvas-API-Clients/", develop = true }
 qcanvas-backend = { path = "../QCanvas-Backend/", develop = true }
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "black"

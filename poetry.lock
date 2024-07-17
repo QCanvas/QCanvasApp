@@ -688,6 +688,20 @@ files = [
 ]
 
 [[package]]
+name = "isort"
+version = "5.13.2"
+description = "A Python utility / library to sort Python imports."
+optional = false
+python-versions = ">=3.8.0"
+files = [
+    { file = "isort-5.13.2-py3-none-any.whl", hash = "sha256:8ca5e72a8d85860d5a3fa69b8745237f2939afe12dbf656afbcb47fe72d947a6" },
+    { file = "isort-5.13.2.tar.gz", hash = "sha256:48fdfcb9face5d58a4f6dde2e72a1fb8dcaf8ab26f95ab49fab84c2ddefb0109" },
+]
+
+[package.extras]
+colors = ["colorama (>=0.4.6)"]
+
+[[package]]
 name = "lmdb"
 version = "1.4.0"
 description = "Universal Python binding for the LMDB 'Lightning' Database"
@@ -1664,13 +1678,13 @@ multidict = ">=4.0"
 
 [[package]]
 name = "yt-dlp"
-version = "2024.7.9"
+version = "2024.7.16"
 description = "A feature-rich command-line audio/video downloader"
 optional = false
 python-versions = ">=3.8"
 files = [
-    { file = "yt_dlp-2024.7.9-py3-none-any.whl", hash = "sha256:b50a595abde523b5cc84d788f97e69c642503bd673ba740f709ebf65b5ec6592" },
-    { file = "yt_dlp-2024.7.9.tar.gz", hash = "sha256:e19f00f9e55e90bca1c94bcaf809aa33e51634be9f0de2df84a72d3206934f94" },
+    { file = "yt_dlp-2024.7.16-py3-none-any.whl", hash = "sha256:424805a112e757b141e767bc938d49db56d13d6415a92fa4cd8acadd55790be0" },
+    { file = "yt_dlp-2024.7.16.tar.gz", hash = "sha256:c5bd517a49dea1923ec8e14f51858f10fd89dfece14cb701392b480b41b2f516" },
 ]
 
 [package.dependencies]
@@ -1685,7 +1699,7 @@ websockets = ">=12.0"
 
 [package.extras]
 build = ["build", "hatchling", "pip", "setuptools", "wheel"]
-curl-cffi = ["curl-cffi (==0.5.10)"]
+curl-cffi = ["curl-cffi (==0.5.10)", "curl-cffi (>=0.5.10,<0.6.dev0 || ==0.7.*)"]
 dev = ["autopep8 (>=2.0,<3.0)", "pre-commit", "pytest (>=8.1,<9.0)", "ruff (>=0.5.0,<0.6.0)"]
 py2exe = ["py2exe (>=0.12)"]
 pyinstaller = ["pyinstaller (>=6.7.0)"]
@@ -1696,4 +1710,4 @@ test = ["pytest (>=8.1,<9.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "abfddb7a5828fd686036b68cf6426060a054b3479e7027051ef510cc2e9c2e4e"
+content-hash = "75acdb97ddfa1f08377185193671adb2214c2250de3e3bdec9e78252261453db"
