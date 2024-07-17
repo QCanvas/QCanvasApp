@@ -2,6 +2,9 @@ import logging
 from threading import Semaphore
 from typing import *
 
+import qcanvas_backend.database.types as db
+from PySide6.QtCore import Slot
+from block_timer.timer import Timer
 from qasync import asyncSlot
 from qcanvas_backend.database.data_monolith import DataMonolith
 from qcanvas_backend.qcanvas import QCanvas
@@ -10,10 +13,10 @@ from qtpy.QtGui import QPixmap
 from qtpy.QtWidgets import *
 
 from qcanvas import icons
+from qcanvas.ui.course_viewer.course_viewer import CourseViewer
 from qcanvas.ui.main_ui.course_tree import CourseTree
 from qcanvas.util import paths, settings
 from qcanvas.util.fe_resource_manager import _RM
-from qcanvas.util.layouts import layout_widget
 
 _logger = logging.getLogger(__name__)
 
@@ -36,12 +39,26 @@ class QCanvasWindow(QMainWindow):
             resource_manager_class=_RM,
         )
         self._course_tree = CourseTree(self._qcanvas)
+        self._course_tree.course_selected.connect(self._course_selected)
         self._sync_button = QPushButton("Synchronise")
         self._sync_button.clicked.connect(self._synchronise)
+        self._course_viewer: Optional[CourseViewer] = None
+        self._course_stack = QStackedWidget()
+        self._viewers: dict[str, CourseViewer] = {}
 
-        self.setCentralWidget(
-            layout_widget(QVBoxLayout, self._course_tree, self._sync_button)
-        )
+        # fixme terrible
+        h_box = QHBoxLayout()
+        v_box = QVBoxLayout()
+        v_box.addWidget(self._course_tree)
+        v_box.addWidget(self._sync_button)
+        h_box.addLayout(v_box)
+        h_box.addWidget(self._course_stack)
+        h_box.setStretch(0, 1)
+        h_box.setStretch(1, 5)
+
+        w = QWidget()
+        w.setLayout(h_box)
+        self.setCentralWidget(w)
 
         self._loaded.connect(self._load_db)
         self._loaded.emit()
@@ -63,3 +80,14 @@ class QCanvasWindow(QMainWindow):
             self._sync_button.setText("Done")
         finally:
             self._operation_semaphore.release()
+
+    @Slot()
+    def _course_selected(self, course: Optional[db.Course]):
+        if course is not None:
+            # fixme bad
+            if course.id not in self._viewers:
+                with Timer():
+                    self._viewers[course.id] = CourseViewer(course)
+                self._course_stack.addWidget(self._viewers[course.id])
+
+            self._course_stack.setCurrentWidget(self._viewers[course.id])
