@@ -1,0 +1,44 @@
+name: build-appimage
+on:
+    create:
+    push:
+        branches:
+            - "reborn"
+
+jobs:
+    build:
+        name: Build Appimage
+        runs-on: ubuntu-22.04
+        steps:
+            -   run: sudo apt install desktop-file-utils -y
+            -   uses: actions/checkout@v4
+            -   run: wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage -O appimagetool
+            -   run: chmod +x appimagetool
+            -   uses: actions/setup-python@v5
+                with:
+                    python-version: 3.11.9
+            -   name: Install poetry
+                uses: abatilo/actions-poetry@v2
+            -   name: Install deps
+                run: poetry install
+            -   name: Build pyinstaller
+                run: poetry run pyinstaller --hidden-import aiosqlite --onedir -n AppRun qcanvas/run.py
+            -   name: Move files
+                run: mv dist/*/* appimage/
+            -   name: Package AppImage
+                run: ./appimagetool appimage -u "gh-releases-zsync|QCanvas|QCanvasApp|latest|QCanvas-x86_64.Appimage"
+            -   uses: actions/upload-artifact@v4
+                with:
+                    path: |
+                        QCanvas-x86_64.AppImage
+                        QCanvas-x86_64.AppImage.zsync
+            -   uses: "marvinpinto/action-automatic-releases@latest"
+                with:
+                    repo_token: "${{ secrets.PUBLISH_TOKEN }}"
+                    automatic_release_tag: "latest"
+                    prerelease: true
+                    title: "Development Build"
+                    files: |
+                        QCanvas-x86_64.AppImage
+                        QCanvas-x86_64.AppImage.zsync
+            -   run: echo ${{env.GITHUB_REF}}

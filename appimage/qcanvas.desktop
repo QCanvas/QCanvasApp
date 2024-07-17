@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=QCanvas
+Comment=A desktop client for Canvas LMS
+Type=Application
+Categories=Education;
+Keywords=qtcanvas;canvas;qcanvas;
+Terminal=false
+Exec=AppRun
+Icon=qcanvas

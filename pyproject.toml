@@ -33,12 +33,12 @@ black = "^24.4.2"
 block-timer = "^0.2.0"
 isort = "^5.13.2"
 
-[tool.poetry.group.local-deps]
-optional = true
-
-[tool.poetry.group.local-deps.dependencies]
-qcanvas-api-clients = { path = "../QCanvas-API-Clients/", develop = true }
-qcanvas-backend = { path = "../QCanvas-Backend/", develop = true }
+#[tool.poetry.group.local-deps]
+#optional = true
+#
+#[tool.poetry.group.local-deps.dependencies]
+#qcanvas-api-clients = { path = "../QCanvas-API-Clients/", develop = false }
+#qcanvas-backend = { path = "../QCanvas-Backend/", develop = false }
 
 [build-system]
 requires = ["poetry-core"]

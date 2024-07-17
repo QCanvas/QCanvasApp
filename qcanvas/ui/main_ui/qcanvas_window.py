@@ -3,7 +3,7 @@ from threading import Semaphore
 from typing import *
 
 import qcanvas_backend.database.types as db
-from block_timer.timer import Timer
+# from block_timer.timer import Timer
 from qasync import asyncSlot
 from qcanvas_backend.database.data_monolith import DataMonolith
 from qcanvas_backend.qcanvas import QCanvas
@@ -85,8 +85,8 @@ class QCanvasWindow(QMainWindow):
         if course is not None:
             # fixme bad
             if course.id not in self._viewers:
-                with Timer():
-                    self._viewers[course.id] = CourseViewer(course)
+                # with Timer():
+                self._viewers[course.id] = CourseViewer(course)
                 self._course_stack.addWidget(self._viewers[course.id])
 
             self._course_stack.setCurrentWidget(self._viewers[course.id])
