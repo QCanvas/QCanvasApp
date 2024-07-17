@@ -9,8 +9,8 @@ def root() -> Path:
 
 
 def ui_storage() -> Path:
-    return root() / ".ui"
+    return root() / ".UI"
 
 
 def data_storage() -> Path:
-    return root() / ".data"
+    return root() / ".DATA"
