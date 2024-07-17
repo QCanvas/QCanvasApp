@@ -1208,24 +1208,26 @@ name = "qcanvas-backend"
 version = "0.1.0"
 description = ""
 optional = false
-python-versions = "!=2.7.*,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,!=3.7.*,!=3.8.*,!=3.9.*,>=3.10"
-files = [
-    { file = "qcanvas_backend-0.1.0-py3-none-any.whl", hash = "sha256:34983bcceb99f21dc579a41bee67769780050c49e3c8c74afb40e9c106f115e2" },
-    { file = "qcanvas_backend-0.1.0.tar.gz", hash = "sha256:a2016ac5385776eacb0b8a0e4688913e9367bfab840cee453c5bca19ce06039b" },
-]
+python-versions = "^3.10"
+files = []
+develop = true
 
 [package.dependencies]
-asynchronize = ">=0.0.1,<0.0.2"
-asynctaskpool = ">=0.2.0,<0.3.0"
-beautifulsoup4 = ">=4.12.3,<5.0.0"
-gql = ">=3.5.0,<4.0.0"
-httpx = ">=0.27.0,<0.28.0"
-pydantic = ">=2.7.0,<3.0.0"
-qcanvas-api-clients = ">=0.2.0,<0.3.0"
-rich = ">=13.7.1,<14.0.0"
-SQLAlchemy = ">=2.0.29,<3.0.0"
-stones-custom = ">=0.2.1,<0.3.0"
-yt-dlp = ">=2024.4.9,<2025.0.0"
+asynchronize = "^0.0.1"
+asynctaskpool = "^0.2.0"
+beautifulsoup4 = "^4.12.3"
+gql = "^3.5.0"
+httpx = "^0.27.0"
+pydantic = "^2.7.0"
+qcanvas-api-clients = "^0.2.0"
+rich = "^13.7.1"
+SQLAlchemy = "^2.0.29"
+stones-custom = "^0.2.1"
+yt-dlp = "^2024.4.9"
+
+[package.source]
+type = "directory"
+url = "../QCanvas-Backend"
 
 [[package]]
 name = "qtpy"
@@ -1694,4 +1696,4 @@ test = ["pytest (>=8.1,<9.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "b29814626a6aac444b2bc32c1bb683151612ecee5a56e483041b38539da22c96"
+content-hash = "abfddb7a5828fd686036b68cf6426060a054b3479e7027051ef510cc2e9c2e4e"

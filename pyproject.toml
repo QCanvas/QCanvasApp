@@ -23,6 +23,7 @@ pyside6 = "^6.7.2"
 black = "^24.4.2"
 block-timer = "^0.2.0"
 qcanvas-api-clients = { path = "../QCanvas-API-Clients/", develop = true }
+qcanvas-backend = { path = "../QCanvas-Backend/", develop = true }
 
 [build-system]
 requires = ["poetry-core"]
