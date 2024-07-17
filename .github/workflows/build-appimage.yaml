@@ -26,7 +26,7 @@ jobs:
             -   name: Move files
                 run: mv dist/*/* appimage/
             -   name: Package AppImage
-                run: ./appimagetool appimage -u "gh-releases-zsync|QCanvas|QCanvasApp|latest|QCanvas-x86_64.Appimage"
+                run: ./appimagetool appimage -u "gh-releases-zsync|QCanvas|QCanvasApp|latest|QCanvas-x86_64.AppImage.zsync"
             -   uses: actions/upload-artifact@v4
                 with:
                     path: |
