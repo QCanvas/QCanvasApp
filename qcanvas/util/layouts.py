@@ -16,14 +16,14 @@ class GridItem(NamedTuple):
     alignment: Qt.AlignmentFlag = Qt.AlignmentFlag.AlignLeft
 
 
-def layout_widget(layout_type: Type[T], *items: QWidget) -> QWidget:
+def layout_widget(layout_type: Type[T], *items: QWidget, **kwargs) -> QWidget:
     widget = QWidget()
-    widget.setLayout(layout(layout_type, *items))
+    widget.setLayout(layout(layout_type, *items, **kwargs))
     return widget
 
 
-def layout(layout_type: Type[T], *items: QWidget) -> T:
-    result_layout: QLayout = layout_type()
+def layout(layout_type: Type[T], *items: QWidget, **kwargs) -> T:
+    result_layout: QLayout = layout_type(**kwargs)
 
     for item in items:
         result_layout.addWidget(item)
