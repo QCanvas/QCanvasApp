@@ -4,24 +4,28 @@ from typing import *
 from qtpy.QtCore import QItemSelectionModel, Slot
 from qtpy.QtWidgets import QTreeWidget, QTreeWidgetItem, QWidget
 
-from qcanvas.ui.memory_tree.memory import Memory
+from qcanvas.ui.memory_tree._tree_memory import TreeMemory
 from qcanvas.ui.memory_tree.memory_tree_widget_item import MemoryTreeWidgetItem
 
 _logger = logging.getLogger(__name__)
 
 
 class MemoryTreeWidget(QTreeWidget):
-    def __init__(self, tree_name: str, parent: Optional[QWidget] = None):
+    def __init__(
+        self,
+        tree_name: str,
+        parent: Optional[QWidget] = None,
+    ):
         super().__init__(parent)
         self._id_map: dict[str, MemoryTreeWidgetItem] = {}
-        self._memory = Memory(tree_name, parent=self)
-        self._selected_ids = []
+        self._memory = TreeMemory(tree_name)
+        # self._selected_ids = []
         self._suppress_expansion_signals = False
         self._suppress_selection_signal = True
 
         self.itemExpanded.connect(self._expanded)
         self.itemCollapsed.connect(self._collapsed)
-        self.selectionModel().selectionChanged.connect(self._selection_changed)
+        # self.selectionModel().selectionChanged.connect(self._remember_new_selection)
 
     def reexpand(self) -> None:
         self.scheduleDelayedItemsLayout()
@@ -43,7 +47,7 @@ class MemoryTreeWidget(QTreeWidget):
     def clear(self):
         super().clear()
         self._id_map.clear()
-        self._selected_ids.clear()
+        # self._selected_ids.clear()
 
     def select_ids(self, ids: List[str]) -> None:
         self._suppress_selection_signal = True
@@ -113,13 +117,14 @@ class MemoryTreeWidget(QTreeWidget):
             _logger.debug("Collapsed %s", item.id)
             self._memory.collapsed(item.id)
 
-    @Slot()
-    def _selection_changed(self):
-        if self._suppress_selection_signal:
-            return
-
-        self._selected_ids = [
-            x.id for x in self.selectedItems() if isinstance(x, MemoryTreeWidgetItem)
-        ]
-
-        _logger.debug(self._selected_ids)
+    # todo: is this really needed?
+    # @Slot()
+    # def _remember_new_selection(self):
+    #     if self._suppress_selection_signal:
+    #         return
+    #
+    #     self._selected_ids = [
+    #         x.id for x in self.selectedItems() if isinstance(x, MemoryTreeWidgetItem)
+    #     ]
+    #
+    #     _logger.debug(self._selected_ids)
