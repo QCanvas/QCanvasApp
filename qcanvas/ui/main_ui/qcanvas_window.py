@@ -11,7 +11,7 @@ from qtpy.QtWidgets import *
 
 from qcanvas import icons
 from qcanvas.ui.main_ui.course_tree import CourseTree
-from qcanvas.util import settings, paths
+from qcanvas.util import paths, settings
 from qcanvas.util.fe_resource_manager import _RM
 from qcanvas.util.layouts import layout_widget
 

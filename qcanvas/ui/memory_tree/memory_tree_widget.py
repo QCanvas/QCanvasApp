@@ -1,8 +1,8 @@
 import logging
 from typing import *
 
-from qtpy.QtCore import Slot, QItemSelectionModel
-from qtpy.QtWidgets import QTreeWidget, QWidget, QTreeWidgetItem
+from qtpy.QtCore import QItemSelectionModel, Slot
+from qtpy.QtWidgets import QTreeWidget, QTreeWidgetItem, QWidget
 
 from qcanvas.ui.memory_tree.memory import Memory
 from qcanvas.ui.memory_tree.memory_tree_widget_item import MemoryTreeWidgetItem

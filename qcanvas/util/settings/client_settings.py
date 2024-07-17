@@ -6,7 +6,7 @@ from typing import *
 
 from qcanvas_api_clients.canvas import CanvasClientConfig
 from qcanvas_api_clients.panopto import PanoptoClientConfig
-from qtpy.QtCore import QSettings, QDir
+from qtpy.QtCore import QDir, QSettings
 
 from qcanvas.util.settings.mapped_setting import MappedSetting
 

@@ -4,8 +4,7 @@ from typing import *
 import qcanvas_backend.database.types as db
 from qasync import asyncSlot
 from qcanvas_backend.qcanvas import QCanvas
-from qtpy.QtCore import Qt, Slot, QObject
-from qtpy.QtCore import Signal
+from qtpy.QtCore import QObject, Qt, Signal, Slot
 from qtpy.QtWidgets import *
 
 from qcanvas.ui.memory_tree import MemoryTreeWidget, MemoryTreeWidgetItem

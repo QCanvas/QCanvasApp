@@ -2,7 +2,7 @@ import logging
 from typing import *
 
 from qtpy.QtCore import QObject, Slot
-from stones import stone, LmdbStore
+from stones import LmdbStore, stone
 
 from qcanvas.util import paths
 
