@@ -12,16 +12,23 @@ qcanvas-backend = "^0.1.0"
 asynctaskpool = "^0.2.1"
 sqlalchemy = "^2.0.31"
 qtpy = "^2.4.1"
-stones-custom = "^0.2.1"
 aiosqlite = "^0.20.0"
 pyqtdarktheme-fork = "^2.3.2"
 qasync = "^0.27.1"
+lightdb = "^2.0"
+pyinstaller = "^6.9.0"
+pyside6 = "^6.7.2"
 
-[tool.poetry.group.flatpak-exclude]
+#[tool.poetry.group.flatpak-exclude]
+#optional = true
+#
+#[tool.poetry.group.flatpak-exclude.dependencies]
+#pyside6 = "^6.7.2"
+
+[tool.poetry.group.dev-tools]
 optional = true
 
-[tool.poetry.group.flatpak-exclude.dependencies]
-pyside6 = "^6.7.2"
+[tool.poetry.group.dev-tools.dependencies]
 black = "^24.4.2"
 block-timer = "^0.2.0"
 isort = "^5.13.2"

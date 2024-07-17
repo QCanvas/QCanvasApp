@@ -1,8 +1,7 @@
 import logging
 
 import qcanvas_backend.database.types as db
-from PySide6.QtCore import Slot
-from qtpy.QtCore import Signal
+from qtpy.QtCore import Signal, Slot
 from qtpy.QtGui import Qt
 
 from qcanvas.ui.memory_tree import MemoryTreeWidget, MemoryTreeWidgetItem

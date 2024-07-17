@@ -1,7 +1,7 @@
 import logging
 
 import qcanvas_backend.database.types as db
-from PySide6.QtCore import Slot
+from qtpy.QtCore import Slot
 from qtpy.QtWidgets import *
 
 from qcanvas.ui.course_viewer.page_tree import PageTree
