@@ -27,11 +27,11 @@ jobs:
                 run: mv dist/*/* appimage/
             -   name: Package AppImage
                 run: ./appimagetool appimage -u "gh-releases-zsync|QCanvas|QCanvasApp|latest|QCanvas-x86_64.AppImage.zsync"
-            -   uses: actions/upload-artifact@v4
-                with:
-                    path: |
-                        QCanvas-x86_64.AppImage
-                        QCanvas-x86_64.AppImage.zsync
+            #            -   uses: actions/upload-artifact@v4
+            #                with:
+            #                    path: |
+            #                        QCanvas-x86_64.AppImage
+            #                        QCanvas-x86_64.AppImage.zsync
             -   run: echo "DATE=$(date +'%d-%m-%Y')" >> $GITHUB_ENV
             -   uses: "marvinpinto/action-automatic-releases@latest"
                 with:
