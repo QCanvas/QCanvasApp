@@ -21,6 +21,7 @@ class PageTree(MemoryTreeWidget):
         self._last_selected_id: Optional[str] = None
         self._course = course
 
+        self.setHeaderLabel("Content")
         self.setIndentation(15)
         self.selectionModel().selectionChanged.connect(self._selection_changed)
         self._add_items()
