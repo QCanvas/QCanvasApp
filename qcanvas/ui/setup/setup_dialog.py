@@ -5,7 +5,7 @@ from qasync import asyncSlot
 from qcanvas_api_clients.canvas import CanvasClient, CanvasClientConfig
 from qcanvas_api_clients.panopto import PanoptoClient, PanoptoClientConfig
 from qcanvas_api_clients.util.request_exceptions import ConfigInvalidError
-from qtpy.QtCore import QUrl, Slot
+from qtpy.QtCore import QUrl, Slot, Signal
 from qtpy.QtGui import QDesktopServices, QPixmap
 from qtpy.QtWidgets import *
 
@@ -22,6 +22,8 @@ _tutorial_url = (
 
 
 class SetupDialog(QDialog):
+    closed = Signal()
+
     def __init__(self):
         super().__init__()
 
@@ -192,6 +194,7 @@ class SetupDialog(QDialog):
         settings.client.canvas_url = self._get_url(self._canvas_url_box)
         settings.client.panopto_url = self._get_url(self._panopto_url_box)
         settings.client.canvas_api_key = self._canvas_api_key_box.text().strip()
+        self.closed.emit()
         self.close()
 
     @Slot()

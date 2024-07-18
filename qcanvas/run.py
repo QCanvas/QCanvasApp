@@ -28,6 +28,16 @@ from qtpy.QtWidgets import QApplication
 from qcanvas.ui.main_ui.qcanvas_window import QCanvasWindow
 from qcanvas.ui.setup import SetupDialog, setup_checker
 
+main_window = None
+setup_window = None
+
+
+def show_main():
+    global main_window
+    main_window = QCanvasWindow()
+    main_window.show()
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
@@ -38,11 +48,11 @@ if __name__ == "__main__":
     app.aboutToQuit.connect(app_close_event.set)
 
     if setup_checker.needs_setup():
-        w = SetupDialog()
-        w.show()
-
-    m = QCanvasWindow()
-    m.show()
+        setup_window = SetupDialog()
+        setup_window.show()
+        setup_window.closed.connect(show_main)
+    else:
+        show_main()
 
     with event_loop:
         event_loop.run_until_complete(app_close_event.wait())
