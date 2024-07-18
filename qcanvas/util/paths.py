@@ -3,13 +3,12 @@ import platform
 import sys
 from pathlib import Path
 
-from PySide6.QtCore import QStandardPaths
-from qtpy.QtCore import QDir
-from qtpy.QtCore import QSettings
+from qtpy.QtCore import QDir, QSettings, QStandardPaths
 
 _logger = logging.getLogger(__name__)
 
 _is_running_on_windows = platform.system() == "Windows"
+_is_running_on_linux = platform.system() == "Linux"
 _is_running_as_pyinstaller = getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS")
 
 
@@ -24,14 +23,20 @@ def client_settings() -> QSettings:
 
 
 def root() -> Path:
+    root_path = Path()
+
     if _is_running_as_pyinstaller:
-        return Path(
-            QStandardPaths.standardLocations(
-                QStandardPaths.StandardLocation.AppLocalDataLocation
-            )[0]
+        root_path = (
+                Path(
+                    QStandardPaths.standardLocations(
+                        QStandardPaths.StandardLocation.AppLocalDataLocation
+                    )[0]
+                )
+                / "QCanvasReborn"
         )
-    else:
-        return Path()
+
+    _logger.debug("Root path %s", root_path.absolute())
+    return root_path
 
 
 def ui_storage() -> Path:
