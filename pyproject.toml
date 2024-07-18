@@ -24,6 +24,7 @@ pyside6 = "^6.7.2"
 #
 #[tool.poetry.group.flatpak-exclude.dependencies]
 #pyside6 = "^6.7.2"
+black = "^24.4.2"
 
 [tool.poetry.group.dev-tools]
 optional = true
