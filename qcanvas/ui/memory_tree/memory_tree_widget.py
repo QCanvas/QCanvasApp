@@ -21,7 +21,7 @@ class MemoryTreeWidget(QTreeWidget):
         self._memory = TreeMemory(tree_name)
         # self._selected_ids = []
         self._suppress_expansion_signals = False
-        self._suppress_selection_signal = True
+        self._suppress_selection_signal = False
 
         self.itemExpanded.connect(self._expanded)
         self.itemCollapsed.connect(self._collapsed)
@@ -50,6 +50,7 @@ class MemoryTreeWidget(QTreeWidget):
         # self._selected_ids.clear()
 
     def select_ids(self, ids: List[str]) -> None:
+        # todo maybe need a new signal which suppresses automatically and emits a signal with None selected if the item isn't in the tree anymore
         self._suppress_selection_signal = True
         self.selectionModel().clearSelection()
 
