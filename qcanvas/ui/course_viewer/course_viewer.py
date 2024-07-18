@@ -20,6 +20,9 @@ class CourseViewer(QWidget):
         self.setLayout(layout(QHBoxLayout, self._page_tree, self._text_viewer))
         self._page_tree.reexpand()
 
+    def reload(self, course: db.Course):
+        self._page_tree.reload(course)
+
     @Slot()
     def _page_selected(self, page: db.ModulePage):
         if page is not None:

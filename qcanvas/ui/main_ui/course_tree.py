@@ -53,15 +53,15 @@ class CourseTree(MemoryTreeWidget):
         super().__init__("course_tree", parent)
         self.setHeaderLabel("Courses")
         self._qcanvas = qcanvas
-        self._last_selected: Optional[str] = None
-        self._suppress_selection = False
+        self._last_selected_id: Optional[str] = None
+        # self._suppress_selection = False
         self.selectionModel().selectionChanged.connect(self._on_selection_changed)
 
     async def load(self):
-        data = await self._qcanvas.get_data()
+        terms = (await self._qcanvas.get_data()).terms
         widgets = []
 
-        for term in reversed(data.terms):
+        for term in reversed(terms):
             term_widget = MemoryTreeWidgetItem(
                 id=term.id, data=term, strings=[term.name]
             )
@@ -74,22 +74,19 @@ class CourseTree(MemoryTreeWidget):
 
             widgets.append(term_widget)
 
+        last_id = self._last_selected_id
         self.clear()
         self.addTopLevelItems(widgets)
         self.reexpand()
 
-    def reselect(self):
-        self._suppress_selection = True
+        if last_id is not None:
+            self.select_ids([last_id])
 
-        try:
-            if self._last_selected is not None:
-                self.select_ids([self._last_selected])
-        finally:
-            self._suppress_selection = False
+    # def reload(self, ):
 
     @Slot()
     def _on_selection_changed(self):
-        if self._suppress_selection:
+        if self._suppress_selection_signal:
             return
 
         try:
@@ -100,13 +97,13 @@ class CourseTree(MemoryTreeWidget):
             ):
                 course = selected.extra_data
                 _logger.debug("Selected course %s", course.name)
-                self._last_selected = course.id
+                self._last_selected_id = course.id
                 self.course_selected.emit(course)
                 return
         except IndexError:
             pass
 
-        self._last_selected = None
+        self._last_selected_id = None
         self.course_selected.emit(None)
 
     @asyncSlot()

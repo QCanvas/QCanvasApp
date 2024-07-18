@@ -41,9 +41,11 @@ class QCanvasWindow(QMainWindow):
         self._course_tree.course_selected.connect(self._course_selected)
         self._sync_button = QPushButton("Synchronise")
         self._sync_button.clicked.connect(self._synchronise)
+        # fixme also bad
         self._course_viewer: Optional[CourseViewer] = None
         self._course_stack = QStackedWidget()
         self._viewers: dict[str, CourseViewer] = {}
+        self._selected_course_id: Optional[str] = None
 
         # fixme terrible
         h_box = QHBoxLayout()
@@ -65,7 +67,6 @@ class QCanvasWindow(QMainWindow):
     @asyncSlot()
     async def _load_db(self):
         await self._qcanvas.init()
-        self._data = await self._qcanvas.get_data()
         await self._course_tree.load()
 
     @asyncSlot()
@@ -77,6 +78,13 @@ class QCanvasWindow(QMainWindow):
         try:
             await self._qcanvas.synchronise_canvas()
             self._sync_button.setText("Done")
+            await self._course_tree.load()
+
+            # todo
+            for course in (await self._qcanvas.get_data()).courses:
+                if course.id in self._viewers:
+                    self._viewers[course.id].reload(course)
+
         finally:
             self._operation_semaphore.release()
 
@@ -89,4 +97,5 @@ class QCanvasWindow(QMainWindow):
                 self._viewers[course.id] = CourseViewer(course)
                 self._course_stack.addWidget(self._viewers[course.id])
 
+            self._selected_course_id = course.id
             self._course_stack.setCurrentWidget(self._viewers[course.id])
