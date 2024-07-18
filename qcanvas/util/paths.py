@@ -1,7 +1,7 @@
 import logging
+import platform
 import sys
 from pathlib import Path
-from sys import platform
 
 from PySide6.QtCore import QStandardPaths
 from qtpy.QtCore import QDir
