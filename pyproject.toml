@@ -18,6 +18,8 @@ qasync = "^0.27.1"
 lightdb = "^2.0"
 pyinstaller = "^6.9.0"
 pyside6 = "^6.7.2"
+#2024-07-18: Latest version causes error with pyinstaller
+setuptools = "=70.3.0"
 
 #[tool.poetry.group.flatpak-exclude]
 #optional = true
