@@ -54,7 +54,6 @@ class CourseTree(MemoryTreeWidget):
         self.setHeaderLabel("Courses")
         self._qcanvas = qcanvas
         self._last_selected_id: Optional[str] = None
-        # self._suppress_selection = False
         self.selectionModel().selectionChanged.connect(self._on_selection_changed)
 
     async def load(self):
@@ -86,9 +85,6 @@ class CourseTree(MemoryTreeWidget):
 
     @Slot()
     def _on_selection_changed(self):
-        if self._suppress_selection_signal:
-            return
-
         try:
             selected = self.selectedItems()[0]
 

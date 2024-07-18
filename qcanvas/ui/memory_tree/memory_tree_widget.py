@@ -19,13 +19,11 @@ class MemoryTreeWidget(QTreeWidget):
         super().__init__(parent)
         self._id_map: dict[str, MemoryTreeWidgetItem] = {}
         self._memory = TreeMemory(tree_name)
-        # self._selected_ids = []
         self._suppress_expansion_signals = False
         self._suppress_selection_signal = False
 
         self.itemExpanded.connect(self._expanded)
         self.itemCollapsed.connect(self._collapsed)
-        # self.selectionModel().selectionChanged.connect(self._remember_new_selection)
 
     def reexpand(self) -> None:
         self.scheduleDelayedItemsLayout()
@@ -47,20 +45,24 @@ class MemoryTreeWidget(QTreeWidget):
     def clear(self):
         super().clear()
         self._id_map.clear()
-        # self._selected_ids.clear()
 
     def select_ids(self, ids: List[str]) -> None:
-        # todo maybe need a new signal which suppresses automatically and emits a signal with None selected if the item isn't in the tree anymore
         self._suppress_selection_signal = True
-        self.selectionModel().clearSelection()
-
+        is_first = True
         for widget_id in ids:
             if widget_id in self._id_map:
                 _logger.debug("Selected %s", widget_id)
-                self.selectionModel().select(
-                    self.indexFromItem(self._id_map[widget_id], 0),
+
+                flags = (
                     QItemSelectionModel.SelectionFlag.Rows
-                    | QItemSelectionModel.SelectionFlag.Select,
+                    | QItemSelectionModel.SelectionFlag.Select
+                )
+
+                if is_first:
+                    flags |= QItemSelectionModel.SelectionFlag.Clear
+
+                self.selectionModel().select(
+                    self.indexFromItem(self._id_map[widget_id], 0), flags
                 )
 
         self._suppress_selection_signal = False
@@ -117,15 +119,3 @@ class MemoryTreeWidget(QTreeWidget):
         if isinstance(item, MemoryTreeWidgetItem):
             _logger.debug("Collapsed %s", item.id)
             self._memory.collapsed(item.id)
-
-    # todo: is this really needed?
-    # @Slot()
-    # def _remember_new_selection(self):
-    #     if self._suppress_selection_signal:
-    #         return
-    #
-    #     self._selected_ids = [
-    #         x.id for x in self.selectedItems() if isinstance(x, MemoryTreeWidgetItem)
-    #     ]
-    #
-    #     _logger.debug(self._selected_ids)

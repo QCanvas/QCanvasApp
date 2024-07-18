@@ -53,10 +53,6 @@ class PageTree(MemoryTreeWidget):
 
     @Slot()
     def _selection_changed(self):
-        # fixme are these suppression actually needed???
-        if self._suppress_selection_signal:
-            return
-
         try:
             selected = self.selectedItems()[0]
 

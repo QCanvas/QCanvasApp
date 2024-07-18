@@ -3,7 +3,6 @@ from threading import Semaphore
 from typing import *
 
 import qcanvas_backend.database.types as db
-# from block_timer.timer import Timer
 from qasync import asyncSlot
 from qcanvas_backend.database.data_monolith import DataMonolith
 from qcanvas_backend.qcanvas import QCanvas
@@ -12,8 +11,8 @@ from qtpy.QtGui import QPixmap
 from qtpy.QtWidgets import *
 
 from qcanvas import icons
-from qcanvas.ui.course_viewer.course_viewer import CourseViewer
 from qcanvas.ui.main_ui.course_tree import CourseTree
+from qcanvas.ui.main_ui.course_viewer_container import CourseViewerContainer
 from qcanvas.util import paths, settings
 from qcanvas.util.fe_resource_manager import _RM
 
@@ -41,28 +40,30 @@ class QCanvasWindow(QMainWindow):
         self._course_tree.course_selected.connect(self._course_selected)
         self._sync_button = QPushButton("Synchronise")
         self._sync_button.clicked.connect(self._synchronise)
-        # fixme also bad
-        self._course_viewer: Optional[CourseViewer] = None
-        self._course_stack = QStackedWidget()
-        self._viewers: dict[str, CourseViewer] = {}
-        self._selected_course_id: Optional[str] = None
+        self._course_viewer_container = CourseViewerContainer(self._qcanvas)
 
-        # fixme terrible
+        self.setCentralWidget(self._setup_main_layout())
+        self._loaded.connect(self._load_db)
+        self._loaded.emit()
+
+    def _setup_main_layout(self) -> QWidget:
         h_box = QHBoxLayout()
-        v_box = QVBoxLayout()
-        v_box.addWidget(self._course_tree)
-        v_box.addWidget(self._sync_button)
-        h_box.addLayout(v_box)
-        h_box.addWidget(self._course_stack)
+
+        h_box.addLayout(self._setup_course_column())
+        h_box.addWidget(self._course_viewer_container)
         h_box.setStretch(0, 1)
         h_box.setStretch(1, 5)
 
-        w = QWidget()
-        w.setLayout(h_box)
-        self.setCentralWidget(w)
+        widget = QWidget()
+        widget.setLayout(h_box)
+        return widget
 
-        self._loaded.connect(self._load_db)
-        self._loaded.emit()
+    def _setup_course_column(self) -> QLayout:
+        course_list_column = QVBoxLayout()
+        course_list_column.addWidget(self._course_tree)
+        course_list_column.addWidget(self._sync_button)
+
+        return course_list_column
 
     @asyncSlot()
     async def _load_db(self):
@@ -77,13 +78,10 @@ class QCanvasWindow(QMainWindow):
 
         try:
             await self._qcanvas.synchronise_canvas()
-            self._sync_button.setText("Done")
             await self._course_tree.load()
+            await self._course_viewer_container.reload_all()
 
-            # todo
-            for course in (await self._qcanvas.get_data()).courses:
-                if course.id in self._viewers:
-                    self._viewers[course.id].reload(course)
+            self._sync_button.setText("Done")
 
         finally:
             self._operation_semaphore.release()
@@ -91,11 +89,6 @@ class QCanvasWindow(QMainWindow):
     @Slot()
     def _course_selected(self, course: Optional[db.Course]):
         if course is not None:
-            # fixme bad
-            if course.id not in self._viewers:
-                # with Timer():
-                self._viewers[course.id] = CourseViewer(course)
-                self._course_stack.addWidget(self._viewers[course.id])
-
-            self._selected_course_id = course.id
-            self._course_stack.setCurrentWidget(self._viewers[course.id])
+            self._course_viewer_container.load_course(course)
+        else:
+            _logger.debug("Course is somehow null?")
