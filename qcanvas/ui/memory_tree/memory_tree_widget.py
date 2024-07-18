@@ -30,15 +30,13 @@ class MemoryTreeWidget(QTreeWidget):
 
         try:
             self._suppress_expansion_signals = True
-            for widget_id in self._memory.expanded_ids:
-                _logger.debug("Reexpand %s", widget_id)
 
-                widget = self._id_map.get(widget_id, None)
+            collapsed_ids = self._memory.collapsed_ids
 
-                if widget is None:
-                    continue
-
-                self.expand(self.indexFromItem(widget, 0))
+            for widget in self._id_map.values():
+                if widget.id not in collapsed_ids:
+                    _logger.debug("Re-expand %s", widget.id)
+                    self.expand(self.indexFromItem(widget, 0))
         finally:
             self._suppress_expansion_signals = False
 
@@ -46,26 +44,40 @@ class MemoryTreeWidget(QTreeWidget):
         super().clear()
         self._id_map.clear()
 
-    def select_ids(self, ids: List[str]) -> None:
+    def select_ids(self, ids: List[str]) -> bool:
+        """
+        :returns: True if all ids were still found in the tree, False if one or more was missing
+        """
         self._suppress_selection_signal = True
+
         is_first = True
-        for widget_id in ids:
-            if widget_id in self._id_map:
-                _logger.debug("Selected %s", widget_id)
+        all_ids_in_tree = True
 
-                flags = (
-                    QItemSelectionModel.SelectionFlag.Rows
-                    | QItemSelectionModel.SelectionFlag.Select
-                )
+        try:
+            for widget_id in ids:
+                if widget_id in self._id_map:
+                    _logger.debug("Selected %s", widget_id)
 
-                if is_first:
-                    flags |= QItemSelectionModel.SelectionFlag.Clear
+                    flags = (
+                        QItemSelectionModel.SelectionFlag.Rows
+                        | QItemSelectionModel.SelectionFlag.Select
+                    )
 
-                self.selectionModel().select(
-                    self.indexFromItem(self._id_map[widget_id], 0), flags
-                )
+                    if is_first:
+                        flags |= QItemSelectionModel.SelectionFlag.Clear
 
-        self._suppress_selection_signal = False
+                    self.selectionModel().select(
+                        self.indexFromItem(self._id_map[widget_id], 0), flags
+                    )
+                else:
+                    _logger.debug(
+                        "Item %s is no longer in the tree, can't select it", widget_id
+                    )
+                    all_ids_in_tree = False
+        finally:
+            self._suppress_selection_signal = False
+
+        return all_ids_in_tree
 
     def insertTopLevelItem(self, index: int, item: QTreeWidgetItem):
         super().insertTopLevelItem(index, item)

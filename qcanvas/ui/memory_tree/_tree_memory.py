@@ -20,7 +20,7 @@ _state_db = LightDB(str(_storage_path()))
 
 class _TreeState(Model, table="trees", db=_state_db):
     tree_name: str
-    expanded_items: List[str] = []
+    collapsed_items: List[str] = []
 
 
 def _get_or_create_state(name: str) -> _TreeState:
@@ -29,7 +29,7 @@ def _get_or_create_state(name: str) -> _TreeState:
     if state is None:
         state = _TreeState.create(tree_name=name)
         # Initialise the list here! Or else every instance has the same list object
-        state.expanded_items = []
+        state.collapsed_items = []
         # Important or instances will get duplicated data in some cases
         state.save()
         return state
@@ -52,15 +52,15 @@ class TreeMemory:
         self.set_expanded(node_id, False)
 
     def set_expanded(self, node_id: str, expanded: bool) -> None:
-        contains = node_id in self._state.expanded_items
+        contains = node_id in self._state.collapsed_items
 
-        if expanded and not contains:
-            self._state.expanded_items.append(node_id)
+        if expanded and contains:
+            self._state.collapsed_items.remove(node_id)
             self._state.save()
-        elif not expanded and contains:
-            self._state.expanded_items.remove(node_id)
+        elif not expanded and not contains:
+            self._state.collapsed_items.append(node_id)
             self._state.save()
 
     @property
-    def expanded_ids(self) -> List[str]:
-        return self._state.expanded_items
+    def collapsed_ids(self) -> List[str]:
+        return self._state.collapsed_items
