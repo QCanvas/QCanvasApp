@@ -32,12 +32,13 @@ jobs:
                     path: |
                         QCanvas-x86_64.AppImage
                         QCanvas-x86_64.AppImage.zsync
+            -   run: echo "DATE=$(date +'%d-%m-%Y')" >> $GITHUB_ENV
             -   uses: "marvinpinto/action-automatic-releases@latest"
                 with:
                     repo_token: "${{ secrets.PUBLISH_TOKEN }}"
-                    automatic_release_tag: "latest"
+                    automatic_release_tag: "prerelease-${{ env.DATE }}"
                     prerelease: true
-                    title: "Development Build"
+                    title: "Development Build "
                     files: |
                         QCanvas-x86_64.AppImage
                         QCanvas-x86_64.AppImage.zsync
