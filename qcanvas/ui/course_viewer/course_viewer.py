@@ -1,30 +1,28 @@
 import logging
 
 import qcanvas_backend.database.types as db
-from qtpy.QtCore import Slot
+from qcanvas_backend.net.resources.download.resource_manager import ResourceManager
 from qtpy.QtWidgets import *
 
-from qcanvas.ui.course_viewer.page_tree import PageTree
+from qcanvas.ui.course_viewer.tabs.pages_tab import PagesTab
+from qcanvas.util.basic_fonts import bold_font
 from qcanvas.util.layouts import layout
 
 _logger = logging.getLogger(__name__)
 
 
 class CourseViewer(QWidget):
-    def __init__(self, course: db.Course):
+    def __init__(self, course: db.Course, resource_manager: ResourceManager):
         super().__init__()
 
-        self._text_viewer = QTextBrowser()
-        self._page_tree = PageTree(course)
-        self._page_tree.page_selected.connect(self._page_selected)
-        self.setLayout(layout(QHBoxLayout, self._page_tree, self._text_viewer))
-        self._page_tree.reexpand()
+        self._course_label = QLabel(course.name)
+        self._course_label.setFont(bold_font)
+        self._tabs = QTabWidget()
 
-    def reload(self, course: db.Course):
-        self._page_tree.reload(course)
+        self._tabs.addTab(QLabel("Not implemented"), "Files")
+        self._tabs.addTab(PagesTab(course, resource_manager), "Pages")
+        self._tabs.addTab(QLabel("Not implemented"), "Assignments")
+        self._tabs.addTab(QLabel("Not implemented"), "Mail")
+        # self._tabs.addTab(QLabel("Not implemented"), "Panopto") The meme lives on!
 
-    @Slot()
-    def _page_selected(self, page: db.ModulePage):
-        if page is not None:
-            _logger.debug("Show page %s", page.name)
-            self._text_viewer.setPlainText(page.body)
+        self.setLayout(layout(QVBoxLayout, self._course_label, self._tabs))

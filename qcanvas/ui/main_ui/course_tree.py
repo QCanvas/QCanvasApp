@@ -3,11 +3,13 @@ from typing import *
 
 import qcanvas_backend.database.types as db
 from qasync import asyncSlot
+from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qcanvas_backend.qcanvas import QCanvas
 from qtpy.QtCore import QObject, Qt, Signal, Slot
 from qtpy.QtWidgets import *
 
 from qcanvas.ui.memory_tree import MemoryTreeWidget, MemoryTreeWidgetItem
+from qcanvas.util.basic_fonts import bold_font, normal_font
 
 _logger = logging.getLogger(__name__)
 
@@ -49,14 +51,16 @@ class _CourseTreeItem(MemoryTreeWidgetItem, QObject):
 class CourseTree(MemoryTreeWidget):
     course_selected = Signal(db.Course)
 
+    # todo: remove qcanvas
     def __init__(self, qcanvas: QCanvas, parent: Optional[QWidget] = None):
         super().__init__("course_tree", parent)
         self.setHeaderLabel("Courses")
         self._qcanvas = qcanvas
         self._last_selected_id: Optional[str] = None
         self.selectionModel().selectionChanged.connect(self._on_selection_changed)
+        self.setIndentation(15)
 
-    async def load(self):
+    async def load(self, sync_receipt: Optional[SyncReceipt]):
         terms = (await self._qcanvas.get_data()).terms
         widgets = []
 
@@ -69,6 +73,14 @@ class CourseTree(MemoryTreeWidget):
             for course in term.courses:
                 course_widget = _CourseTreeItem(course)
                 course_widget.renamed.connect(self._on_course_renamed)
+
+                is_new = (
+                    sync_receipt is not None
+                    and course.id in sync_receipt.updated_courses
+                )
+                if is_new:
+                    course_widget.setFont(0, bold_font)
+
                 term_widget.addChild(course_widget)
 
             widgets.append(term_widget)
@@ -91,6 +103,9 @@ class CourseTree(MemoryTreeWidget):
             if isinstance(selected, MemoryTreeWidgetItem) and isinstance(
                 selected.extra_data, db.Course
             ):
+                if selected.font(0).bold():
+                    selected.setFont(0, normal_font)
+
                 course = selected.extra_data
                 _logger.debug("Selected course %s", course.name)
                 self._last_selected_id = course.id

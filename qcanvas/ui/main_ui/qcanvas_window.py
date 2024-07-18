@@ -49,16 +49,14 @@ class QCanvasWindow(QMainWindow):
     def _setup_main_layout(self) -> QWidget:
         h_box = QHBoxLayout()
 
-        h_box.addLayout(self._setup_course_column())
-        h_box.addWidget(self._course_viewer_container)
-        h_box.setStretch(0, 1)
-        h_box.setStretch(1, 5)
+        h_box.addLayout(self._setup_course_column(), 1)
+        h_box.addWidget(self._course_viewer_container, 5)
 
         widget = QWidget()
         widget.setLayout(h_box)
         return widget
 
-    def _setup_course_column(self) -> QLayout:
+    def _setup_course_column(self) -> QVBoxLayout:
         course_list_column = QVBoxLayout()
         course_list_column.addWidget(self._course_tree)
         course_list_column.addWidget(self._sync_button)
@@ -68,7 +66,7 @@ class QCanvasWindow(QMainWindow):
     @asyncSlot()
     async def _load_db(self):
         await self._qcanvas.init()
-        await self._course_tree.load()
+        await self._course_tree.load(sync_receipt=None)
 
     @asyncSlot()
     async def _synchronise(self) -> None:
@@ -77,9 +75,9 @@ class QCanvasWindow(QMainWindow):
             return
 
         try:
-            await self._qcanvas.synchronise_canvas()
-            await self._course_tree.load()
-            await self._course_viewer_container.reload_all()
+            receipt = await self._qcanvas.synchronise_canvas()
+            await self._course_tree.load(sync_receipt=receipt)
+            await self._course_viewer_container.reload_all(sync_receipt=receipt)
 
             self._sync_button.setText("Done")
 
@@ -91,4 +89,4 @@ class QCanvasWindow(QMainWindow):
         if course is not None:
             self._course_viewer_container.load_course(course)
         else:
-            _logger.debug("Course is somehow null?")
+            self._course_viewer_container.show_blank()

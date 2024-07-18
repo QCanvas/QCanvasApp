@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 import qcanvas_backend.database.types as db
 from qtpy.QtCore import Signal, Slot
@@ -10,38 +9,30 @@ from qcanvas.ui.memory_tree import MemoryTreeWidget, MemoryTreeWidgetItem
 _logger = logging.getLogger(__name__)
 
 
-class PageTree(MemoryTreeWidget):
+class AssignmentTree(MemoryTreeWidget):
     page_selected = Signal(db.ModulePage)
 
     def __init__(self, course: db.Course):
-        super().__init__(tree_name=f"course.{course.id}.modules")
+        super().__init__(tree_name=f"course.{course.id}.assignments")
         self.selectionModel().selectionChanged.connect(self._selection_changed)
-        self._last_selected_id: Optional[str] = None
         self._course = course
         self._add_items()
-
-    def reload(self, course: db.Course):
-        self._course = course
-        self._add_items()
-
-        if self._last_selected_id is not None:
-            self.select_ids([self._last_selected_id])
 
     def _add_items(self) -> None:
         self.clear()
 
         widgets = []
 
-        for module in self._course.modules:  # type: db.Module
+        for module in self._course.assignment_groups:  # type: db.AssignmentGroup
             module_widget = MemoryTreeWidgetItem(
                 id=module.id, data=module, strings=[module.name]
             )
             widgets.append(module_widget)
             module_widget.setFlags(Qt.ItemFlag.ItemIsEnabled)
 
-            for page in module.pages:  # type: db.ModulePage
+            for page in module.assignments:  # type: db.Assignment
                 page_widget = MemoryTreeWidgetItem(
-                    id=page.id, data=page, strings=[page.name]
+                    id=page.id, data=page, strings=[page.name, page.due_date]
                 )
                 page_widget.setFlags(
                     Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
@@ -59,11 +50,10 @@ class PageTree(MemoryTreeWidget):
             if not isinstance(selected, MemoryTreeWidgetItem):
                 return
 
-            if isinstance(selected.extra_data, db.ModulePage):
+            if isinstance(selected.extra_data, db.Assignment):
+                _logger.debug(selected.extra_data.max_mark_possible)
                 self.page_selected.emit(selected.extra_data)
-                self._last_selected_id = selected.extra_data.id
             else:
                 self.page_selected.emit(None)
-                self._last_selected_id = None
         except IndexError:
             return

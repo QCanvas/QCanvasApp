@@ -1323,13 +1323,13 @@ tenacity = ">=8.2.3,<9.0.0"
 
 [[package]]
 name = "qcanvas-backend"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 optional = false
 python-versions = "<4.0,>=3.10"
 files = [
-    { file = "qcanvas_backend-0.1.1-py3-none-any.whl", hash = "sha256:730ffae3066b227ce28e15d27de65e0ec72f0a738f8ba1614b25ac13bfbe297c" },
-    { file = "qcanvas_backend-0.1.1.tar.gz", hash = "sha256:b26f8907673113d02784b00c276af455dea7cb533ca9376d0e211c72c82353da" },
+    { file = "qcanvas_backend-0.1.2-py3-none-any.whl", hash = "sha256:4057681346c9ed6ae6de5c7be3ddd8834b6b47b07c7141560c55a3801350304b" },
+    { file = "qcanvas_backend-0.1.2.tar.gz", hash = "sha256:cdbaa4ed46489f96546dcd524cf5a756659e16189cc40acc7812abf77b1f69ef" },
 ]
 
 [package.dependencies]
@@ -1827,4 +1827,4 @@ test = ["pytest (>=8.1,<9.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "f1a8882122698d31016f0d9151037f32236a027671cca2ff4f18334bee3879e2"
+content-hash = "8e14cca80688b62f1d2e0742e9adf1d9debedd6009b837a7761206dcaf588d3a"

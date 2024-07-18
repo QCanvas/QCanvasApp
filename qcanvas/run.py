@@ -1,7 +1,22 @@
 import logging
 
-logging.basicConfig(level="WARN")
+from rich.console import Console
+from rich.logging import RichHandler
+
+_console = Console(file=open("debug.log", "w"))
+
+logging.basicConfig(
+    level="WARN",
+    handlers=[
+        RichHandler(),
+        RichHandler(rich_tracebacks=False, console=_console),
+    ],
+    format="%(message)s",
+    datefmt="[%X]",
+)
 logging.getLogger("qcanvas").setLevel(logging.DEBUG)
+logging.getLogger("qcanvas_backend").setLevel(logging.DEBUG)
+# logging.getLogger("qcanvas_api_clients").setLevel(logging.DEBUG)
 _logger = logging.getLogger(__name__)
 
 import asyncio
