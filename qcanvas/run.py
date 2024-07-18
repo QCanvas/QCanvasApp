@@ -1,5 +1,10 @@
-import asyncio
 import logging
+
+logging.basicConfig(level="WARN")
+logging.getLogger("qcanvas").setLevel(logging.DEBUG)
+_logger = logging.getLogger(__name__)
+
+import asyncio
 import sys
 
 from qasync import QEventLoop
@@ -7,9 +12,6 @@ from qtpy.QtWidgets import QApplication
 
 from qcanvas.ui.main_ui.qcanvas_window import QCanvasWindow
 from qcanvas.ui.setup import SetupDialog, setup_checker
-
-_logger = logging.getLogger(__name__)
-logging.getLogger("qcanvas").setLevel(logging.DEBUG)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
