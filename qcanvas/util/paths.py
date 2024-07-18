@@ -3,7 +3,8 @@ import platform
 import sys
 from pathlib import Path
 
-from qtpy.QtCore import QDir, QSettings, QStandardPaths
+import platformdirs
+from qtpy.QtCore import QDir, QSettings
 
 _logger = logging.getLogger(__name__)
 
@@ -26,14 +27,7 @@ def root() -> Path:
     root_path = Path()
 
     if _is_running_as_pyinstaller:
-        root_path = (
-                Path(
-                    QStandardPaths.standardLocations(
-                        QStandardPaths.StandardLocation.AppLocalDataLocation
-                    )[0]
-                )
-                / "QCanvasReborn"
-        )
+        root_path = platformdirs.user_data_path("QCanvasReborn", "QCanvasTeam")
 
     _logger.debug("Root path %s", root_path.absolute())
     return root_path

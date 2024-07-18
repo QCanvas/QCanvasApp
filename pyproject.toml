@@ -20,13 +20,13 @@ pyinstaller = "^6.9.0"
 pyside6 = "^6.7.2"
 #2024-07-18: Latest version causes error with pyinstaller
 setuptools = "=70.3.0"
+platformdirs = "^4.2.2"
 
 #[tool.poetry.group.flatpak-exclude]
 #optional = true
 #
 #[tool.poetry.group.flatpak-exclude.dependencies]
 #pyside6 = "^6.7.2"
-black = "^24.4.2"
 
 [tool.poetry.group.dev-tools]
 optional = true
