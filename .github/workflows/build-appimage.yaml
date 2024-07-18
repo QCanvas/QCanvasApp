@@ -1,6 +1,6 @@
 name: build-appimage
 on:
-    create:
+    #    create:
     push:
         branches:
             - "reborn"
