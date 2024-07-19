@@ -6,7 +6,7 @@ from qcanvas_backend.net.resources.download.resource_manager import ResourceMana
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qtpy.QtWidgets import *
 
-from qcanvas.ui.course_viewer.tabs.assignments_tab.assignments_tab import AssignmentsTab
+from qcanvas.ui.course_viewer.tabs.assignments_tab import AssignmentsTab
 from qcanvas.ui.course_viewer.tabs.pages_tab import PagesTab
 from qcanvas.util.basic_fonts import bold_font
 from qcanvas.util.layouts import layout

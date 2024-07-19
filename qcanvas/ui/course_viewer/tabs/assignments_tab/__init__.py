@@ -1,3 +1,1 @@
-import logging
-
-_logger = logging.getLogger(__name__)
+from .assignments_tab import AssignmentsTab
