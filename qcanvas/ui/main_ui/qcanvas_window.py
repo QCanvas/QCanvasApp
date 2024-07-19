@@ -36,11 +36,14 @@ class QCanvasWindow(QMainWindow):
             storage_path=paths.data_storage(),
             resource_manager_class=_RM,
         )
-        self._course_tree = CourseTree(self._qcanvas)
-        self._course_tree.course_selected.connect(self._course_selected)
+        self._course_tree = CourseTree()
+        self._course_tree.course_selected.connect(self._on_course_selected)
+        self._course_tree.course_renamed.connect(self._on_course_renamed)
         self._sync_button = QPushButton("Synchronise")
         self._sync_button.clicked.connect(self._synchronise)
-        self._course_viewer_container = CourseViewerContainer(self._qcanvas)
+        self._course_viewer_container = CourseViewerContainer(
+            self._qcanvas.resource_manager
+        )
 
         self.setCentralWidget(self._setup_main_layout())
         self._loaded.connect(self._load_db)
@@ -96,8 +99,16 @@ class QCanvasWindow(QMainWindow):
         return (await self._qcanvas.get_data()).courses
 
     @Slot()
-    def _course_selected(self, course: Optional[db.Course]):
+    def _on_course_selected(self, course: Optional[db.Course]) -> None:
         if course is not None:
             self._course_viewer_container.load_course(course)
         else:
             self._course_viewer_container.show_blank()
+
+    @asyncSlot()
+    async def _on_course_renamed(self, course: db.Course, new_name: str) -> None:
+        _logger.debug("Rename %s -> %s", course.name, new_name)
+
+        async with self._qcanvas.database.session() as session:
+            session.add(course)
+            course.configuration.nickname = new_name

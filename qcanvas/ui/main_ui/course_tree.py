@@ -2,9 +2,7 @@ import logging
 from typing import *
 
 import qcanvas_backend.database.types as db
-from qasync import asyncSlot
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
-from qcanvas_backend.qcanvas import QCanvas
 from qtpy.QtCore import QObject, Qt, Signal, Slot
 from qtpy.QtWidgets import *
 
@@ -50,6 +48,7 @@ class _CourseTreeItem(MemoryTreeWidgetItem, QObject):
 
 class CourseTree(MemoryTreeWidget):
     course_selected = Signal(db.Course)
+    course_renamed = Signal(db.Course, str)
 
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__("course_tree", parent)
@@ -119,10 +118,6 @@ class CourseTree(MemoryTreeWidget):
         self._last_selected_id = None
         self.course_selected.emit(None)
 
-    @asyncSlot()
-    async def _on_course_renamed(self, course: db.Course, new_name: str):
-        _logger.debug("Rename %s -> %s", course.name, new_name)
-
-        async with self._qcanvas.database.session() as session:
-            session.add(course)
-            course.configuration.nickname = new_name
+    @Slot()
+    def _on_course_renamed(self, course: db.Course, new_name: str) -> None:
+        self.course_renamed.emit(course, new_name)
