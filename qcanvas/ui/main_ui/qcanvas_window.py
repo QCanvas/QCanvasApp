@@ -78,6 +78,7 @@ class QCanvasWindow(QMainWindow):
             return
 
         try:
+            # todo handle exceptions better
             receipt = await self._qcanvas.synchronise_canvas()
 
             await self._course_tree.reload(

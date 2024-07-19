@@ -6,6 +6,7 @@ from qcanvas_backend.net.resources.download.resource_manager import ResourceMana
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qtpy.QtWidgets import *
 
+from qcanvas.ui.course_viewer.tabs.assignments_tab.assignments_tab import AssignmentsTab
 from qcanvas.ui.course_viewer.tabs.pages_tab import PagesTab
 from qcanvas.util.basic_fonts import bold_font
 from qcanvas.util.layouts import layout
@@ -30,11 +31,14 @@ class CourseViewer(QWidget):
         self._pages_tab = PagesTab(
             course, page_resource_manager, initial_sync_receipt=initial_sync_receipt
         )
+        self._assignments_tab = AssignmentsTab(
+            course, page_resource_manager, initial_sync_receipt=initial_sync_receipt
+        )
         self._tabs = QTabWidget()
 
         self._tabs.addTab(QLabel("Not implemented"), "Files")
         self._tabs.addTab(self._pages_tab, "Pages")
-        self._tabs.addTab(QLabel("Not implemented"), "Assignments")
+        self._tabs.addTab(self._assignments_tab, "Assignments")
         self._tabs.addTab(QLabel("Not implemented"), "Mail")
         # self._tabs.addTab(QLabel("Not implemented"), "Panopto") The meme lives on!
 
@@ -43,3 +47,4 @@ class CourseViewer(QWidget):
     def reload(self, course: db.Course, *, sync_receipt: Optional[SyncReceipt]) -> None:
         # self._tabs.setTabText(1, "*Pages")
         self._pages_tab.reload(course, sync_receipt=sync_receipt)
+        self._assignments_tab.reload(course, sync_receipt=sync_receipt)

@@ -50,7 +50,7 @@ class PagesTab(QWidget):
     def _page_selected(self, page: db.ModulePage) -> None:
         if page is not None:
             _logger.debug("Show page %s (id='%s')", page.name, page.id)
-            self._viewer.show_page(page)
+            self._viewer.show_content(page)
             self._page_label.setText(page.name)
         else:
             self._page_label.setText(self._placeholder_page_label)

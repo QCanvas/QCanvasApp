@@ -23,7 +23,7 @@ class ResourceRichBrowser(QTextBrowser):
     def show_blank(self) -> None:
         self.setPlainText("No content")
 
-    def show_page(self, page: db.CourseContentItem) -> None:
+    def show_content(self, page: db.CourseContentItem) -> None:
         if page.body is None:
             self.show_blank()
         else:
