@@ -11,6 +11,7 @@ from qcanvas.ui.course_viewer.tabs.pages_tab.page_tree import PageTree
 from qcanvas.ui.course_viewer.tabs.resource_rich_browser import ResourceRichBrowser
 from qcanvas.util.basic_fonts import bold_font
 from qcanvas.util.layouts import layout
+from qcanvas.util.ui_tools import make_truncatable
 
 _logger = logging.getLogger(__name__)
 
@@ -28,6 +29,7 @@ class PagesTab(QWidget):
         self._placeholder_page_title = "No page selected"
         self._page_label = QLabel(self._placeholder_page_title)
         self._page_label.setFont(bold_font)
+        make_truncatable(self._page_label)
         self._viewer = ResourceRichBrowser(resource_manager)
 
         self.setLayout(self._setup_layout())

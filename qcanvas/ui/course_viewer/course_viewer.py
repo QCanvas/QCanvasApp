@@ -9,6 +9,7 @@ from qtpy.QtWidgets import *
 from qcanvas.ui.course_viewer.tabs.pages_tab import PagesTab
 from qcanvas.util.basic_fonts import bold_font
 from qcanvas.util.layouts import layout
+from qcanvas.util.ui_tools import make_truncatable
 
 _logger = logging.getLogger(__name__)
 
@@ -25,9 +26,7 @@ class CourseViewer(QWidget):
 
         self._course_label = QLabel(course.name)
         self._course_label.setFont(bold_font)
-        self._course_label.setSizePolicy(
-            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed
-        )
+        make_truncatable(self._course_label)
         self._pages_tab = PagesTab(
             course, page_resource_manager, initial_sync_receipt=initial_sync_receipt
         )
