@@ -26,7 +26,7 @@ class PageTree(MemoryTreeWidget):
         self.selectionModel().selectionChanged.connect(self._selection_changed)
         self.setHeaderLabel("Content")
         self.setIndentation(15)
-        self.setMaximumWidth(250)
+        self.setMaximumWidth(300)
         self.setMinimumWidth(150)
 
         self._add_items(sync_receipt)

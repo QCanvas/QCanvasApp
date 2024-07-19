@@ -2,10 +2,10 @@ import logging
 from typing import Optional
 
 import qcanvas_backend.database.types as db
-from qtpy.QtWidgets import QHeaderView
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qtpy.QtCore import Signal, Slot
 from qtpy.QtGui import Qt
+from qtpy.QtWidgets import QHeaderView
 
 from qcanvas.ui.memory_tree import MemoryTreeWidget, MemoryTreeWidgetItem
 from qcanvas.util.basic_fonts import bold_font, normal_font
@@ -30,7 +30,7 @@ class AssignmentTree(MemoryTreeWidget):
         self.header().setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
         self.header().setStretchLastSection(False)
         self.setIndentation(15)
-        self.setMaximumWidth(300)
+        self.setMaximumWidth(350)
         self.setMinimumWidth(150)
 
         self._add_items(sync_receipt)
