@@ -14,9 +14,15 @@ _logger = logging.getLogger(__name__)
 
 
 class PagesTab(QWidget):
-    def __init__(self, course: db.Course, resource_manager: ResourceManager):
+    def __init__(
+        self,
+        course: db.Course,
+        resource_manager: ResourceManager,
+        *,
+        initial_sync_receipt: Optional[SyncReceipt] = None
+    ):
         super().__init__()
-        self._page_tree = PageTree(course)
+        self._page_tree = PageTree(course, sync_receipt=initial_sync_receipt)
         self._viewer = ResourceRichBrowser(resource_manager)
 
         self.setLayout(self._setup_layout())

@@ -15,7 +15,9 @@ _logger = logging.getLogger(__name__)
 class PageTree(MemoryTreeWidget):
     page_selected = Signal(db.ModulePage)
 
-    def __init__(self, course: db.Course):
+    def __init__(
+        self, course: db.Course, *, sync_receipt: Optional[SyncReceipt] = None
+    ):
         super().__init__(tree_name=f"course.{course.id}.modules")
 
         self._last_selected_id: Optional[str] = None
@@ -24,7 +26,7 @@ class PageTree(MemoryTreeWidget):
         self.setHeaderLabel("Content")
         self.setIndentation(15)
         self.selectionModel().selectionChanged.connect(self._selection_changed)
-        self._add_items()
+        self._add_items(sync_receipt)
 
     def reload(self, course: db.Course, *, sync_receipt: Optional[SyncReceipt]):
         self._course = course

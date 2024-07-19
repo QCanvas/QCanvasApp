@@ -51,17 +51,21 @@ class _CourseTreeItem(MemoryTreeWidgetItem, QObject):
 class CourseTree(MemoryTreeWidget):
     course_selected = Signal(db.Course)
 
-    # todo: remove qcanvas
-    def __init__(self, qcanvas: QCanvas, parent: Optional[QWidget] = None):
+    def __init__(self, parent: Optional[QWidget] = None):
         super().__init__("course_tree", parent)
         self.setHeaderLabel("Courses")
-        self._qcanvas = qcanvas
         self._last_selected_id: Optional[str] = None
         self.selectionModel().selectionChanged.connect(self._on_selection_changed)
         self.setIndentation(15)
 
-    async def load(self, sync_receipt: Optional[SyncReceipt]):
-        terms = (await self._qcanvas.get_data()).terms
+    async def reload(
+        self, terms: Sequence[db.Term], *, sync_receipt: Optional[SyncReceipt]
+    ) -> None:
+        await self.load(terms, sync_receipt=sync_receipt)
+
+    async def load(
+        self, terms: Sequence[db.Term], *, sync_receipt: Optional[SyncReceipt]
+    ) -> None:
         widgets = []
 
         for term in reversed(terms):
@@ -93,10 +97,8 @@ class CourseTree(MemoryTreeWidget):
         if last_id is not None:
             self.select_ids([last_id])
 
-    # def reload(self, ):
-
     @Slot()
-    def _on_selection_changed(self):
+    def _on_selection_changed(self) -> None:
         try:
             selected = self.selectedItems()[0]
 

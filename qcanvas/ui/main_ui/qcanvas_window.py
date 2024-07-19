@@ -64,9 +64,9 @@ class QCanvasWindow(QMainWindow):
         return course_list_column
 
     @asyncSlot()
-    async def _load_db(self):
+    async def _load_db(self) -> None:
         await self._qcanvas.init()
-        await self._course_tree.load(sync_receipt=None)
+        await self._course_tree.load(await self._get_terms(), sync_receipt=None)
 
     @asyncSlot()
     async def _synchronise(self) -> None:
@@ -76,13 +76,24 @@ class QCanvasWindow(QMainWindow):
 
         try:
             receipt = await self._qcanvas.synchronise_canvas()
-            await self._course_tree.load(sync_receipt=receipt)
-            await self._course_viewer_container.reload_all(sync_receipt=receipt)
+
+            await self._course_tree.reload(
+                await self._get_terms(), sync_receipt=receipt
+            )
+            await self._course_viewer_container.reload_all(
+                await self._get_courses(), sync_receipt=receipt
+            )
 
             self._sync_button.setText("Done")
 
         finally:
             self._operation_semaphore.release()
+
+    async def _get_terms(self) -> Sequence[db.Term]:
+        return (await self._qcanvas.get_data()).terms
+
+    async def _get_courses(self) -> Sequence[db.Course]:
+        return (await self._qcanvas.get_data()).courses
 
     @Slot()
     def _course_selected(self, course: Optional[db.Course]):
