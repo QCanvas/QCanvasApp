@@ -23,12 +23,15 @@ class PageTree(MemoryTreeWidget):
         self._last_selected_id: Optional[str] = None
         self._course = course
 
+        self.selectionModel().selectionChanged.connect(self._selection_changed)
         self.setHeaderLabel("Content")
         self.setIndentation(15)
-        self.selectionModel().selectionChanged.connect(self._selection_changed)
+        self.setMaximumWidth(250)
+        self.setMinimumWidth(150)
+
         self._add_items(sync_receipt)
 
-    def reload(self, course: db.Course, *, sync_receipt: Optional[SyncReceipt]):
+    def reload(self, course: db.Course, *, sync_receipt: Optional[SyncReceipt]) -> None:
         self._course = course
         self._add_items(sync_receipt)
 
@@ -76,7 +79,7 @@ class PageTree(MemoryTreeWidget):
         self.reexpand()
 
     @Slot()
-    def _selection_changed(self):
+    def _selection_changed(self) -> None:
         try:
             selected = self.selectedItems()[0]
         except IndexError:

@@ -18,10 +18,14 @@ class ResourceRichBrowser(QTextBrowser):
         # todo use resource manager to download files when clicked!
         self._resource_manager = resource_manager
         self._extractors = resource_manager.extractors
+        self.setMinimumWidth(300)
+
+    def show_blank(self) -> None:
+        self.setPlainText("No content")
 
     def show_page(self, page: db.CourseContentItem) -> None:
         if page.body is None:
-            self.setPlainText("No content")
+            self.show_blank()
         else:
             html = clean_up_html(page.body)
             html = self._substitute_links(html, page.resources)

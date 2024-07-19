@@ -56,6 +56,8 @@ class CourseTree(MemoryTreeWidget):
         self._last_selected_id: Optional[str] = None
         self.selectionModel().selectionChanged.connect(self._on_selection_changed)
         self.setIndentation(15)
+        self.setMaximumWidth(250)
+        self.setMinimumWidth(150)
 
     async def reload(
         self, terms: Sequence[db.Term], *, sync_receipt: Optional[SyncReceipt]

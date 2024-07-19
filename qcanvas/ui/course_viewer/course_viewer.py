@@ -25,6 +25,9 @@ class CourseViewer(QWidget):
 
         self._course_label = QLabel(course.name)
         self._course_label.setFont(bold_font)
+        self._course_label.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed
+        )
         self._pages_tab = PagesTab(
             course, page_resource_manager, initial_sync_receipt=initial_sync_receipt
         )
