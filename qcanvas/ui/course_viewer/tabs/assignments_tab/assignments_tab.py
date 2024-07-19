@@ -54,7 +54,7 @@ class AssignmentsTab(QWidget):
                     self._due_date_label,
                 ],
                 [
-                    _bold_label("Score"),
+                    _bold_label("Score:"),
                     self._score_label,
                 ],
             ]
