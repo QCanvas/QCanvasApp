@@ -15,7 +15,8 @@ logging.basicConfig(
     datefmt="[%X]",
 )
 logging.getLogger("qcanvas").setLevel(logging.DEBUG)
-logging.getLogger("qcanvas_backend").setLevel(logging.DEBUG)
+logging.getLogger("qcanvas_backend").setLevel(logging.INFO)
+logging.getLogger("qcanvas.ui.memory_tree").setLevel(logging.INFO)
 # logging.getLogger("qcanvas_api_clients").setLevel(logging.DEBUG)
 _logger = logging.getLogger(__name__)
 
@@ -40,6 +41,15 @@ def show_main():
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+
+    # qdarktheme.setup_theme(
+    #     "light",
+    #     custom_colors={
+    #         "primary": "e21d31",
+    #         "[light]": {"foreground": "480910", "background": "fcf8f8"},
+    #         "[dark]": {"foreground": "fbdfe2", "background": "231f1f"},
+    #     },
+    # )
 
     event_loop = QEventLoop(app)
     asyncio.set_event_loop(event_loop)
