@@ -5,7 +5,7 @@ from qasync import asyncSlot
 from qcanvas_api_clients.canvas import CanvasClient, CanvasClientConfig
 from qcanvas_api_clients.panopto import PanoptoClient, PanoptoClientConfig
 from qcanvas_api_clients.util.request_exceptions import ConfigInvalidError
-from qtpy.QtCore import QUrl, Slot, Signal
+from qtpy.QtCore import QUrl, Signal, Slot
 from qtpy.QtGui import QDesktopServices, QPixmap
 from qtpy.QtWidgets import *
 

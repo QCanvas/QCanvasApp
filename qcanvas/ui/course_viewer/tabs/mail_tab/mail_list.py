@@ -1,12 +1,10 @@
 import logging
 from typing import *
 
-from qtpy.QtCore import Slot
-from qtpy.QtCore import Signal
-from qcanvas_backend.net.resources.download.resource_manager import ResourceManager
-from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
-from qtpy.QtWidgets import *
 import qcanvas_backend.database.types as db
+from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
+from qtpy.QtCore import Signal, Slot
+from qtpy.QtWidgets import *
 
 from qcanvas.ui.memory_tree import MemoryTreeWidget, MemoryTreeWidgetItem
 from qcanvas.util.basic_fonts import bold_font, normal_font

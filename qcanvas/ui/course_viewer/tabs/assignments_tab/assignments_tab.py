@@ -10,7 +10,7 @@ from qtpy.QtWidgets import *
 from qcanvas.ui.course_viewer.tabs.assignments_tab.assignment_tree import AssignmentTree
 from qcanvas.ui.course_viewer.tabs.resource_rich_browser import ResourceRichBrowser
 from qcanvas.util.basic_fonts import bold_font
-from qcanvas.util.layouts import layout, grid_layout
+from qcanvas.util.layouts import grid_layout, layout
 from qcanvas.util.ui_tools import make_truncatable
 
 _logger = logging.getLogger(__name__)

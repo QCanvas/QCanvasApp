@@ -1,6 +1,6 @@
 import logging
 
-from qtpy.QtWidgets import QWidget, QSizePolicy
+from qtpy.QtWidgets import QSizePolicy, QWidget
 
 _logger = logging.getLogger(__name__)
 
