@@ -7,6 +7,7 @@ from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qtpy.QtWidgets import *
 
 from qcanvas.ui.course_viewer.tabs.assignments_tab import AssignmentsTab
+from qcanvas.ui.course_viewer.tabs.mail_tab import MailTab
 from qcanvas.ui.course_viewer.tabs.pages_tab import PagesTab
 from qcanvas.util.basic_fonts import bold_font
 from qcanvas.util.layouts import layout
@@ -24,7 +25,7 @@ class CourseViewer(QWidget):
         initial_sync_receipt: Optional[SyncReceipt] = None
     ):
         super().__init__()
-
+        # todo this is a mess. there are several other messes like this too, do they all have to be a mess?
         self._course_label = QLabel(course.name)
         self._course_label.setFont(bold_font)
         make_truncatable(self._course_label)
@@ -34,12 +35,15 @@ class CourseViewer(QWidget):
         self._assignments_tab = AssignmentsTab(
             course, page_resource_manager, initial_sync_receipt=initial_sync_receipt
         )
+        self._mail_tab = MailTab(
+            course, page_resource_manager, initial_sync_receipt=initial_sync_receipt
+        )
         self._tabs = QTabWidget()
 
         self._tabs.addTab(QLabel("Not implemented"), "Files")
         self._tabs.addTab(self._pages_tab, "Pages")
         self._tabs.addTab(self._assignments_tab, "Assignments")
-        self._tabs.addTab(QLabel("Not implemented"), "Mail")
+        self._tabs.addTab(self._mail_tab, "Mail")
         # self._tabs.addTab(QLabel("Not implemented"), "Panopto") The meme lives on!
 
         self.setLayout(layout(QVBoxLayout, self._course_label, self._tabs))
@@ -48,3 +52,4 @@ class CourseViewer(QWidget):
         # self._tabs.setTabText(1, "*Pages")
         self._pages_tab.reload(course, sync_receipt=sync_receipt)
         self._assignments_tab.reload(course, sync_receipt=sync_receipt)
+        self._mail_tab.reload(course, sync_receipt=sync_receipt)
