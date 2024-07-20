@@ -4,7 +4,10 @@ import qdarktheme
 from rich.console import Console
 from rich.logging import RichHandler
 
-_console = Console(file=open("debug.log", "w"))
+from qcanvas.util import paths
+
+paths.data_storage().mkdir(parents=True, exist_ok=True)
+_console = Console(file=open(paths.data_storage() / "debug.log", "w"))
 
 logging.basicConfig(
     level="INFO",
