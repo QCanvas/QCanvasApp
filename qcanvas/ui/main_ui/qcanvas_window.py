@@ -11,7 +11,7 @@ from qtpy.QtGui import QPixmap
 from qtpy.QtWidgets import *
 
 from qcanvas import icons
-from qcanvas.ui.main_ui.course_tree import CourseTree
+from qcanvas.ui.course_viewer import CourseTree
 from qcanvas.ui.main_ui.course_viewer_container import CourseViewerContainer
 from qcanvas.util import paths, settings
 from qcanvas.util.fe_resource_manager import _RM
@@ -37,7 +37,7 @@ class QCanvasWindow(QMainWindow):
             resource_manager_class=_RM,
         )
         self._course_tree = CourseTree()
-        self._course_tree.course_selected.connect(self._on_course_selected)
+        self._course_tree.item_selected.connect(self._on_course_selected)
         self._course_tree.course_renamed.connect(self._on_course_renamed)
         self._sync_button = QPushButton("Synchronise")
         self._sync_button.clicked.connect(self._synchronise)
@@ -69,7 +69,7 @@ class QCanvasWindow(QMainWindow):
     @asyncSlot()
     async def _load_db(self) -> None:
         await self._qcanvas.init()
-        await self._course_tree.load(await self._get_terms(), sync_receipt=None)
+        self._course_tree.reload(await self._get_terms(), sync_receipt=None)
 
     @asyncSlot()
     async def _synchronise(self) -> None:
@@ -81,9 +81,7 @@ class QCanvasWindow(QMainWindow):
             # todo handle exceptions better
             receipt = await self._qcanvas.synchronise_canvas()
 
-            await self._course_tree.reload(
-                await self._get_terms(), sync_receipt=receipt
-            )
+            self._course_tree.reload(await self._get_terms(), sync_receipt=receipt)
             await self._course_viewer_container.reload_all(
                 await self._get_courses(), sync_receipt=receipt
             )

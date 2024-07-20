@@ -6,7 +6,7 @@ from qcanvas_backend.net.resources.download.resource_manager import ResourceMana
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qtpy.QtWidgets import *
 
-from qcanvas.ui.course_viewer.tabs.content_tree import ContentTree
+from qcanvas.ui.course_viewer.content_tree import ContentTree
 from qcanvas.ui.course_viewer.tabs.resource_rich_browser import ResourceRichBrowser
 from qcanvas.util.basic_fonts import bold_font
 from qcanvas.util.ui_tools import make_truncatable
@@ -18,7 +18,7 @@ class ContentTab(QWidget):
     def __init__(
         self,
         *,
-        explorer: ContentTree,
+        explorer: ContentTree[db.Course],
         title_placeholder_text: str,
         downloader: ResourceManager,
     ):

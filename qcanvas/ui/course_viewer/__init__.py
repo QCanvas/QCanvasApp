@@ -1,3 +1,2 @@
-import logging
-
-_logger = logging.getLogger(__name__)
+from .course_tree import CourseTree
+from .course_viewer import CourseViewer

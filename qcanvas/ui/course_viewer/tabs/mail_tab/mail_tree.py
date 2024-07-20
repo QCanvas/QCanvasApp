@@ -5,13 +5,13 @@ import qcanvas_backend.database.types as db
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qtpy.QtWidgets import *
 
-from qcanvas.ui.course_viewer.tabs.content_tree import ContentTree
+from qcanvas.ui.course_viewer.content_tree import ContentTree
 from qcanvas.ui.memory_tree import MemoryTreeWidgetItem
 
 _logger = logging.getLogger(__name__)
 
 
-class MailTree(ContentTree):
+class MailTree(ContentTree[db.Course]):
     @staticmethod
     def create_from_receipt(
         course: db.Course, *, sync_receipt: Optional[SyncReceipt]

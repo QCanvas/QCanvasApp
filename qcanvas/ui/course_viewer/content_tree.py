@@ -2,7 +2,6 @@ import logging
 from abc import abstractmethod
 from typing import *
 
-import qcanvas_backend.database.types as db
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qtpy.QtCore import Signal
 from qtpy.QtCore import Slot
@@ -13,8 +12,10 @@ from qcanvas.util.basic_fonts import normal_font, bold_font
 
 _logger = logging.getLogger(__name__)
 
+T = TypeVar("T")
 
-class ContentTree(MemoryTreeWidget):
+
+class ContentTree(MemoryTreeWidget, Generic[T]):
     item_selected = Signal(object)
 
     def __init__(
@@ -34,7 +35,7 @@ class ContentTree(MemoryTreeWidget):
         self,
         *,
         header_text: str | Sequence[str],
-        indentation: int,
+        indentation: int = 20,
         max_width: int,
         min_width: int,
     ) -> None:
@@ -47,12 +48,12 @@ class ContentTree(MemoryTreeWidget):
         self.setMaximumWidth(max_width)
         self.setMinimumWidth(min_width)
 
-    def reload(self, course: db.Course, *, sync_receipt: Optional[SyncReceipt]) -> None:
+    def reload(self, data: T, *, sync_receipt: Optional[SyncReceipt]) -> None:
         self._reloading = True
 
         try:
             self.clear()
-            self.addTopLevelItems(self.create_tree_items(course, sync_receipt))
+            self.addTopLevelItems(self.create_tree_items(data, sync_receipt))
             self.reexpand()
             self.reselect()
         finally:
@@ -65,7 +66,7 @@ class ContentTree(MemoryTreeWidget):
 
     @abstractmethod
     def create_tree_items(
-        self, course: db.Course, sync_receipt: Optional[SyncReceipt]
+        self, data: T, sync_receipt: Optional[SyncReceipt]
     ) -> Sequence[MemoryTreeWidgetItem]: ...
 
     @Slot()
@@ -75,7 +76,6 @@ class ContentTree(MemoryTreeWidget):
 
         if len(self.selectedItems()) > 0:
             selected = self.selectedItems()[0]
-            _logger.debug("Selected new item")
         else:
             self._clear_selection()
             return

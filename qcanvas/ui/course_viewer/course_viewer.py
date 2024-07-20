@@ -6,9 +6,9 @@ from qcanvas_backend.net.resources.download.resource_manager import ResourceMana
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qtpy.QtWidgets import *
 
-from qcanvas.ui.course_viewer.tabs.assignments_tab import AssignmentsTab
+from qcanvas.ui.course_viewer.tabs.assignment_tab import AssignmentTab
 from qcanvas.ui.course_viewer.tabs.mail_tab import MailTab
-from qcanvas.ui.course_viewer.tabs.pages_tab import PagesTab
+from qcanvas.ui.course_viewer.tabs.page_tab import PageTab
 from qcanvas.util.basic_fonts import bold_font
 from qcanvas.util.layouts import layout
 from qcanvas.util.ui_tools import make_truncatable
@@ -29,14 +29,20 @@ class CourseViewer(QWidget):
         self._course_label = QLabel(course.name)
         self._course_label.setFont(bold_font)
         make_truncatable(self._course_label)
-        self._pages_tab = PagesTab(
-            course, page_resource_manager, initial_sync_receipt=initial_sync_receipt
+        self._pages_tab = PageTab.create_from_receipt(
+            course=course,
+            downloader=page_resource_manager,
+            sync_receipt=initial_sync_receipt,
         )
-        self._assignments_tab = AssignmentsTab(
-            course, page_resource_manager, initial_sync_receipt=initial_sync_receipt
+        self._assignments_tab = AssignmentTab.create_from_receipt(
+            course=course,
+            downloader=page_resource_manager,
+            sync_receipt=initial_sync_receipt,
         )
-        self._mail_tab = MailTab(
-            course, page_resource_manager, initial_sync_receipt=initial_sync_receipt
+        self._mail_tab = MailTab.create_from_receipt(
+            course=course,
+            downloader=page_resource_manager,
+            sync_receipt=initial_sync_receipt,
         )
         self._tabs = QTabWidget()
 
