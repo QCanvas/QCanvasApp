@@ -128,6 +128,14 @@ class ResourceRichBrowser(QTextBrowser):
     async def _open_resource_from_link(self, url):
         resource_id = url.path()
         resource = self._current_content_resources[resource_id]
-        await self._resource_manager.download(resource)
+
+        try:
+            await self._resource_manager.download(resource)
+        except Exception as e:
+            _logger.warning(
+                "Download of resource id=%s failed", resource_id, exc_info=e
+            )
+            return
+
         resource_path = self._resource_manager.resource_download_location(resource)
         QDesktopServices.openUrl(QUrl.fromLocalFile(resource_path.absolute()))
