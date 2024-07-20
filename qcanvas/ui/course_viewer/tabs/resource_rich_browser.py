@@ -1,13 +1,13 @@
 import logging
 
 import qcanvas_backend.database.types as db
-from PySide6.QtGui import QDesktopServices
 from bs4 import BeautifulSoup, Tag
 from qasync import asyncSlot
 from qcanvas_backend.net.resources.download.resource_manager import ResourceManager
 from qcanvas_backend.net.resources.extracting.no_extractor_error import NoExtractorError
 from qcanvas_backend.net.resources.scanning.resource_scanner import ResourceScanner
 from qtpy.QtCore import QUrl
+from qtpy.QtGui import QDesktopServices
 from qtpy.QtWidgets import QTextBrowser
 
 from qcanvas import icons
@@ -27,8 +27,12 @@ class ResourceRichBrowser(QTextBrowser):
         self.setOpenLinks(False)
         self.anchorClicked.connect(self._open_url)
 
-    def show_blank(self) -> None:
-        self.setPlainText("No content")
+    def show_blank(self, completely_blank: bool = False) -> None:
+        if completely_blank:
+            self.clear()
+        else:
+            self.setPlainText("No content")
+
         self._current_content_resources.clear()
 
     def show_content(self, page: db.CourseContentItem) -> None:
@@ -85,7 +89,9 @@ class ResourceRichBrowser(QTextBrowser):
         )
 
         file_link_tag.append(self._file_icon_tag(doc, resource.download_state))
-        file_link_tag.append(resource.file_name)
+        file_link_tag.append("\N{NO-BREAK SPACE}" + resource.file_name)
+
+        _logger.debug(str(file_link_tag))
 
         return file_link_tag
 
@@ -96,8 +102,8 @@ class ResourceRichBrowser(QTextBrowser):
             "img",
             attrs={
                 "src": self._download_state_icon(download_state),
-                "style": "vertical-align:middle; margin-right: 1mm;",
-                "width": 20,
+                "style": "vertical-align:middle",
+                "width": 18,
             },
         )
 

@@ -4,35 +4,65 @@ from typing import *
 import qcanvas_backend.database.types as db
 from qcanvas_backend.net.resources.download.resource_manager import ResourceManager
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
-from qtpy.QtCore import Slot
 from qtpy.QtWidgets import *
 
-from qcanvas.ui.course_viewer.tabs.mail_tab.mail_list import MailList
-from qcanvas.ui.course_viewer.tabs.resource_rich_browser import ResourceRichBrowser
-from qcanvas.util.layouts import layout
+from qcanvas.ui.course_viewer.tabs.content_tab import ContentTab
+from qcanvas.ui.course_viewer.tabs.mail_tab.mail_tree import MailTree
+from qcanvas.ui.course_viewer.tabs.util import date_strftime_format
+from qcanvas.util.basic_fonts import bold_label
+from qcanvas.util.layouts import grid_layout
 
 _logger = logging.getLogger(__name__)
 
 
-# todo show date and subject of the mail in a label somewhere
 # todo maybe update has_been_read? probably not the responsibility of this class though
-class MailTab(QWidget):
+class MailTab(ContentTab):
+    @staticmethod
+    def create_from_receipt(
+        *,
+        course: db.Course,
+        sync_receipt: Optional[SyncReceipt],
+        downloader: ResourceManager,
+    ) -> "MailTab":
+        return MailTab(course=course, sync_receipt=sync_receipt, downloader=downloader)
+
     def __init__(
         self,
-        course: db.Course,
-        resource_manager: ResourceManager,
         *,
-        initial_sync_receipt: Optional[SyncReceipt] = None
+        course: db.Course,
+        sync_receipt: Optional[SyncReceipt],
+        downloader: ResourceManager,
     ):
-        super().__init__()
-        self._viewer = ResourceRichBrowser(resource_manager)
-        self._mail_list = MailList(course, initial_sync_receipt=initial_sync_receipt)
-        self.setLayout(layout(QHBoxLayout, self._mail_list, self._viewer))
-        self._mail_list.mail_selected.connect(self._mail_selected)
+        super().__init__(
+            explorer=MailTree.create_from_receipt(course, sync_receipt=sync_receipt),
+            title_placeholder_text="No mail selected",
+            downloader=downloader,
+        )
 
-    def reload(self, course: db.Course, *, sync_receipt: Optional[SyncReceipt]) -> None:
-        self._mail_list.reload(course, sync_receipt=sync_receipt)
+        self._date_sent_label = QLabel("")
+        self._sender_label = QLabel("")
 
-    @Slot()
-    def _mail_selected(self, mail: db.CourseMessage):
-        self._viewer.show_content(mail)
+        self.enable_info_grid()
+
+    def setup_info_grid(self) -> QGridLayout:
+        grid = grid_layout(
+            [
+                [
+                    bold_label("From:"),
+                    self._sender_label,
+                ],
+                [
+                    bold_label("Date:"),
+                    self._date_sent_label,
+                ],
+            ]
+        )
+
+        grid.setColumnStretch(0, 0)
+        grid.setColumnStretch(1, 1)
+
+        return grid
+
+    def update_info_grid(self, mail: db.CourseMessage) -> None:
+        self._date_sent_label.setText(mail.creation_date.strftime(date_strftime_format))
+        self._sender_label.setText(mail.sender_name)
