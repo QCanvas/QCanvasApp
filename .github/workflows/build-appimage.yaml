@@ -1,4 +1,4 @@
-name: build-appimage
+name: build
 on:
     #    create:
     push:
@@ -6,7 +6,7 @@ on:
             - "reborn"
 
 jobs:
-    build:
+    build-appimage:
         name: Build Appimage
         runs-on: ubuntu-22.04
         steps:
@@ -38,8 +38,35 @@ jobs:
                     repo_token: "${{ secrets.PUBLISH_TOKEN }}"
                     automatic_release_tag: "prerelease-${{ env.DATE }}"
                     prerelease: true
-                    title: "Development Build "
+                    title: "Development Build"
                     files: |
                         QCanvas-x86_64.AppImage
                         QCanvas-x86_64.AppImage.zsync
             -   run: echo ${{env.GITHUB_REF}}
+    build-windows:
+        name: Build PyInstaller Windows
+        runs-on: windows-latest
+        steps:
+            -   uses: actions/checkout@v4
+            -   uses: actions/setup-python@v5
+                with:
+                    python-version: 3.11.9
+            -   name: Install poetry
+                uses: abatilo/actions-poetry@v2
+            -   name: Install deps
+                run: poetry install
+            -   name: Build pyinstaller
+                run: poetry run pyinstaller --hidden-import aiosqlite --onefile -n QCanvas --icon windows/qcanvas.ico --windowed
+            -   name: Get time
+                uses: Kaven-Universe/github-action-current-date-time@v1
+                id: get_time
+                with:
+                    format: "DD-MM-YYYY"
+            -   uses: "marvinpinto/action-automatic-releases@latest"
+                with:
+                    repo_token: "${{ secrets.PUBLISH_TOKEN }}"
+                    automatic_release_tag: "prerelease-${{ steps.get_time.outputs.time }}"
+                    prerelease: true
+                    title: "Development Build"
+                    files: |
+                        QCanvas.exe
