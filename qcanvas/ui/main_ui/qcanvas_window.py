@@ -11,10 +11,11 @@ from qtpy.QtGui import QPixmap
 from qtpy.QtWidgets import *
 
 from qcanvas import icons
-from qcanvas.frontend_resource_manager import _RM
 from qcanvas.ui.course_viewer import CourseTree
 from qcanvas.ui.main_ui.course_viewer_container import CourseViewerContainer
 from qcanvas.util import paths, settings
+# from qcanvas.frontend_resource_manager import _RM
+from qcanvas.util.fe_resource_manager import _RM
 
 _logger = logging.getLogger(__name__)
 
