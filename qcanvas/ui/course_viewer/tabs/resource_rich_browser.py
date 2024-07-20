@@ -103,7 +103,7 @@ class ResourceRichBrowser(QTextBrowser):
             attrs={
                 "src": self._download_state_icon(download_state),
                 "style": "vertical-align:middle",
-                "width": 18,
+                "width": 20,
             },
         )
 
