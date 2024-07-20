@@ -46,7 +46,7 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     qdarktheme.setup_theme(
-        "light",
+        "auto",
         custom_colors={"primary": "ff1814"},
     )
 
