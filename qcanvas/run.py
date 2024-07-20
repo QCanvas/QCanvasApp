@@ -10,7 +10,7 @@ paths.data_storage().mkdir(parents=True, exist_ok=True)
 _console = Console(file=open(paths.data_storage() / "debug.log", "w"))
 
 logging.basicConfig(
-    level="INFO",
+    level="WARN",
     handlers=[
         RichHandler(),
         RichHandler(rich_tracebacks=False, console=_console),
@@ -18,6 +18,8 @@ logging.basicConfig(
     format="%(message)s",
     datefmt="[%X]",
 )
+logging.getLogger("qcanvas").setLevel(logging.INFO)
+logging.getLogger("qcanvas_backend").setLevel(logging.INFO)
 
 _logger = logging.getLogger(__name__)
 
