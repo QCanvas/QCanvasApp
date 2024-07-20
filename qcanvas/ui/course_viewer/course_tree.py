@@ -78,7 +78,7 @@ class CourseTree(ContentTree[Sequence[db.Term]]):
         is_new = sync_receipt is not None and course.id in sync_receipt.updated_courses
 
         if is_new:
-            self.mark_as_unseen(course)
+            self.mark_as_unseen(course_widget)
 
         return course_widget
 
