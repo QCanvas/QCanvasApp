@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     qdarktheme.setup_theme(
         "light",
-        custom_colors={"primary": "db0400"},
+        custom_colors={"primary": "ff1814"},
     )
 
     event_loop = QEventLoop(app)
