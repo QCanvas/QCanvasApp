@@ -1,12 +1,13 @@
 import logging
 
+import qdarktheme
 from rich.console import Console
 from rich.logging import RichHandler
 
 _console = Console(file=open("debug.log", "w"))
 
 logging.basicConfig(
-    level="WARN",
+    level="INFO",
     handlers=[
         RichHandler(),
         RichHandler(rich_tracebacks=False, console=_console),
@@ -14,10 +15,7 @@ logging.basicConfig(
     format="%(message)s",
     datefmt="[%X]",
 )
-logging.getLogger("qcanvas").setLevel(logging.DEBUG)
-logging.getLogger("qcanvas_backend").setLevel(logging.INFO)
-logging.getLogger("qcanvas.ui.memory_tree").setLevel(logging.INFO)
-# logging.getLogger("qcanvas_api_clients").setLevel(logging.DEBUG)
+
 _logger = logging.getLogger(__name__)
 
 import asyncio
@@ -42,14 +40,10 @@ def show_main():
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
-    # qdarktheme.setup_theme(
-    #     "light",
-    #     custom_colors={
-    #         "primary": "e21d31",
-    #         "[light]": {"foreground": "480910", "background": "fcf8f8"},
-    #         "[dark]": {"foreground": "fbdfe2", "background": "231f1f"},
-    #     },
-    # )
+    qdarktheme.setup_theme(
+        "light",
+        custom_colors={"primary": "db0400"},
+    )
 
     event_loop = QEventLoop(app)
     asyncio.set_event_loop(event_loop)
