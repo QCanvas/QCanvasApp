@@ -11,10 +11,10 @@ from qtpy.QtGui import QPixmap
 from qtpy.QtWidgets import *
 
 from qcanvas import icons
+from qcanvas.frontend_resource_manager import _RM
 from qcanvas.ui.course_viewer import CourseTree
 from qcanvas.ui.main_ui.course_viewer_container import CourseViewerContainer
 from qcanvas.util import paths, settings
-from qcanvas.util.fe_resource_manager import _RM
 
 _logger = logging.getLogger(__name__)
 
@@ -78,15 +78,15 @@ class QCanvasWindow(QMainWindow):
             return
 
         try:
-            # todo handle exceptions better
+            # todo handle exceptions and PROGRESS!! better
+            self._sync_button.setText("Sync in progress...")
             receipt = await self._qcanvas.synchronise_canvas()
 
             self._course_tree.reload(await self._get_terms(), sync_receipt=receipt)
             await self._course_viewer_container.reload_all(
                 await self._get_courses(), sync_receipt=receipt
             )
-
-            self._sync_button.setText("Done")
+            self._sync_button.setText("Synchronise")
 
         finally:
             self._operation_semaphore.release()
