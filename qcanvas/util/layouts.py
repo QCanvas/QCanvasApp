@@ -31,13 +31,13 @@ def layout(layout_type: Type[T], *items: QWidget, **kwargs) -> T:
     return result_layout
 
 
-def grid_layout_widget(grid: List[List[QWidget | GridItem]]) -> QWidget:
+def grid_layout_widget(grid: Iterable[Iterable[QWidget | GridItem]]) -> QWidget:
     widget = QWidget()
     widget.setLayout(grid_layout(grid))
     return widget
 
 
-def grid_layout(grid: List[List[QWidget | GridItem]]) -> QGridLayout:
+def grid_layout(grid: Iterable[Iterable[QWidget | GridItem]]) -> QGridLayout:
     result_layout = QGridLayout()
 
     for row, row_list in enumerate(grid):
