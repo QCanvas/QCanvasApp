@@ -1,12 +1,16 @@
 import logging
 
 import qcanvas_backend.database.types as db
-from bs4 import BeautifulSoup
+from PySide6.QtGui import QDesktopServices
+from bs4 import BeautifulSoup, Tag
+from qasync import asyncSlot
 from qcanvas_backend.net.resources.download.resource_manager import ResourceManager
 from qcanvas_backend.net.resources.extracting.no_extractor_error import NoExtractorError
 from qcanvas_backend.net.resources.scanning.resource_scanner import ResourceScanner
+from qtpy.QtCore import QUrl
 from qtpy.QtWidgets import QTextBrowser
 
+from qcanvas import icons
 from qcanvas.util.html_cleaner import clean_up_html
 
 _logger = logging.getLogger(__name__)
@@ -17,49 +21,107 @@ class ResourceRichBrowser(QTextBrowser):
         super().__init__()
         # todo use resource manager to download files when clicked!
         self._resource_manager = resource_manager
+        self._current_content_resources: dict[str, db.Resource] = {}
         self._extractors = resource_manager.extractors
         self.setMinimumWidth(300)
+        self.setOpenLinks(False)
+        self.anchorClicked.connect(self._open_url)
 
     def show_blank(self) -> None:
         self.setPlainText("No content")
+        self._current_content_resources.clear()
 
     def show_content(self, page: db.CourseContentItem) -> None:
         if page.body is None:
             self.show_blank()
         else:
-            html = clean_up_html(page.body)
-            html = self._substitute_links(html, page.resources)
-            self.setHtml(html)
+            self._collect_resources(page)
+            self._show_page_content(page)
 
-    def _substitute_links(self, html: str, resources: list[db.Resource]) -> str:
-        page_resources: dict[str, db.Resource] = {
-            resoruce.id: resoruce for resoruce in resources
+    def _collect_resources(self, page: db.CourseContentItem):
+        self._current_content_resources = {
+            resource.id: resource for resource in page.resources
         }
+
+    def _show_page_content(self, page: db.CourseContentItem):
+        html = clean_up_html(page.body)
+        html = self._substitute_links(html)
+        self.setHtml(html)
+
+    def _substitute_links(self, html: str) -> str:
         doc = BeautifulSoup(html, "html.parser")
 
         for resource_link in doc.find_all(self._extractors.tag_whitelist):
             try:
-                # _logger.debug("Tag %s", resource_link)
                 extractor = self._extractors.extractor_for_tag(resource_link)
                 resource_id = extractor.resource_id_from_tag(resource_link)
 
+                # FIXME private method
                 if ResourceScanner._is_link_invisible(resource_link):
                     _logger.debug("Found dead link for %s, removing", resource_id)
                     resource_link.decompose()
                     continue
-                elif resource_id not in page_resources:
+                elif resource_id not in self._current_content_resources:
                     _logger.debug(
                         "%s not found in page resources, ignoring", resource_id
                     )
                     continue
 
-                new_tag = doc.new_tag("a")
-                # todo
-                new_tag["href"] = f"data:,{resource_id}"
-                new_tag.string = f"FILE {page_resources[resource_id].file_name}"
-
-                resource_link.replace_with(new_tag)
+                file_link_tag = self._create_resource_link_tag(doc, resource_id)
+                resource_link.replace_with(file_link_tag)
             except NoExtractorError:
                 pass
 
         return str(doc)
+
+    def _create_resource_link_tag(self, doc: BeautifulSoup, resource_id: str) -> Tag:
+        resource = self._current_content_resources[resource_id]
+
+        file_link_tag = doc.new_tag(
+            "a",
+            attrs={
+                "href": f"data:{resource_id}",
+            },
+        )
+
+        file_link_tag.append(self._file_icon_tag(doc, resource.download_state))
+        file_link_tag.append(resource.file_name)
+
+        return file_link_tag
+
+    def _file_icon_tag(
+        self, document: BeautifulSoup, download_state: db.ResourceDownloadState
+    ) -> Tag:
+        return document.new_tag(
+            "img",
+            attrs={
+                "src": self._download_state_icon(download_state),
+                "style": "vertical-align:middle; margin-right: 1mm;",
+                "width": 20,
+            },
+        )
+
+    def _download_state_icon(self, download_state: db.ResourceDownloadState) -> str:
+        match download_state:
+            case db.ResourceDownloadState.DOWNLOADED:
+                return icons.file_downloaded
+            case db.ResourceDownloadState.NOT_DOWNLOADED:
+                return icons.file_not_downloaded
+            case db.ResourceDownloadState.FAILED:
+                return icons.file_download_failed
+            case _:
+                raise ValueError()
+
+    @asyncSlot()
+    async def _open_url(self, url: QUrl) -> None:
+        if url.scheme() == "data":
+            await self._open_resource_from_link(url)
+        else:
+            QDesktopServices.openUrl(url)
+
+    async def _open_resource_from_link(self, url):
+        resource_id = url.path()
+        resource = self._current_content_resources[resource_id]
+        await self._resource_manager.download(resource)
+        resource_path = self._resource_manager.resource_download_location(resource)
+        QDesktopServices.openUrl(QUrl.fromLocalFile(resource_path.absolute()))
