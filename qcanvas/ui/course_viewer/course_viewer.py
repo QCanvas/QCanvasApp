@@ -20,7 +20,7 @@ class CourseViewer(QWidget):
     def __init__(
         self,
         course: db.Course,
-        page_resource_manager: ResourceManager,
+        downloader: ResourceManager,
         *,
         initial_sync_receipt: Optional[SyncReceipt] = None
     ):
@@ -31,17 +31,17 @@ class CourseViewer(QWidget):
         make_truncatable(self._course_label)
         self._pages_tab = PageTab.create_from_receipt(
             course=course,
-            downloader=page_resource_manager,
+            downloader=downloader,
             sync_receipt=initial_sync_receipt,
         )
         self._assignments_tab = AssignmentTab.create_from_receipt(
             course=course,
-            downloader=page_resource_manager,
+            downloader=downloader,
             sync_receipt=initial_sync_receipt,
         )
         self._mail_tab = MailTab.create_from_receipt(
             course=course,
-            downloader=page_resource_manager,
+            downloader=downloader,
             sync_receipt=initial_sync_receipt,
         )
         self._tabs = QTabWidget()

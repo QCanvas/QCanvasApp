@@ -17,12 +17,11 @@ _logger = logging.getLogger(__name__)
 
 
 class ResourceRichBrowser(QTextBrowser):
-    def __init__(self, resource_manager: ResourceManager):
+    def __init__(self, downloader: ResourceManager):
         super().__init__()
-        # todo use resource manager to download files when clicked!
-        self._resource_manager = resource_manager
+        self._downloader = downloader
         self._current_content_resources: dict[str, db.Resource] = {}
-        self._extractors = resource_manager.extractors
+        self._extractors = downloader.extractors
         self.setMinimumWidth(300)
         self.setOpenLinks(False)
         self.anchorClicked.connect(self._open_url)
@@ -130,12 +129,12 @@ class ResourceRichBrowser(QTextBrowser):
         resource = self._current_content_resources[resource_id]
 
         try:
-            await self._resource_manager.download(resource)
+            await self._downloader.download(resource)
         except Exception as e:
             _logger.warning(
                 "Download of resource id=%s failed", resource_id, exc_info=e
             )
             return
 
-        resource_path = self._resource_manager.resource_download_location(resource)
+        resource_path = self._downloader.resource_download_location(resource)
         QDesktopServices.openUrl(QUrl.fromLocalFile(resource_path.absolute()))

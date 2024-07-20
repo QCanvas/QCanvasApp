@@ -27,7 +27,7 @@ class ContentTab(QWidget):
         self._placeholder_text = title_placeholder_text
         self._title_label = self._create_title_label()
         self._info_grid: Optional[QWidget] = None
-        self._viewer = ResourceRichBrowser(resource_manager=downloader)
+        self._viewer = ResourceRichBrowser(downloader=downloader)
         self._explorer = explorer
 
         self._setup_layout()

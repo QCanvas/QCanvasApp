@@ -13,10 +13,10 @@ _logger = logging.getLogger(__name__)
 
 
 class CourseViewerContainer(QStackedWidget):
-    def __init__(self, page_resource_manager: ResourceManager):
+    def __init__(self, downloader: ResourceManager):
         super().__init__()
         self._course_viewers: dict[str, CourseViewer] = {}
-        self._resource_manager = page_resource_manager
+        self._downloader = downloader
         self._last_course_id: Optional[str] = None
         self._last_sync_receipt: Optional[SyncReceipt] = None
         self._placeholder = QLabel("No Course Selected")
@@ -31,7 +31,7 @@ class CourseViewerContainer(QStackedWidget):
         if course.id not in self._course_viewers:
             viewer = CourseViewer(
                 course=course,
-                page_resource_manager=self._resource_manager,
+                downloader=self._downloader,
                 initial_sync_receipt=self._last_sync_receipt,
             )
             self._course_viewers[course.id] = viewer
