@@ -27,7 +27,7 @@ def launch():
 
     qdarktheme.setup_theme(
         "auto",
-        custom_colors={"primary": "ff1814"},
+        custom_colors={"primary": "e02424"},
     )
 
     event_loop = QEventLoop(app)
