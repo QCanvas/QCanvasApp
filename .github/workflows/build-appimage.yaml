@@ -56,7 +56,7 @@ jobs:
             -   name: Install deps
                 run: poetry install
             -   name: Build pyinstaller
-                run: poetry run pyinstaller --hidden-import aiosqlite --onefile -n QCanvas --icon windows/qcanvas.ico qcanvas/run.py #--windowed
+                run: poetry run pyinstaller --hidden-import aiosqlite --onefile -n QCanvas --icon windows/qcanvas.ico qcanvas/run.py --windowed
             -   name: Get time
                 uses: Kaven-Universe/github-action-current-date-time@v1
                 id: get_time

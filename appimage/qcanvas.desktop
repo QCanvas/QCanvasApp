@@ -8,3 +8,4 @@ Keywords=qtcanvas;canvas;qcanvas;
 Terminal=false
 Exec=AppRun
 Icon=qcanvas
+StartupWMClass=QCanvas

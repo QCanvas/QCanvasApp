@@ -21,6 +21,7 @@ def _show_main():
 
 def launch():
     app = QApplication(sys.argv)
+    app.setApplicationName("QCanvas")
 
     task_master.register()
 
