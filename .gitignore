@@ -3,3 +3,5 @@ dist
 build
 qcanvas/test_drive
 run
+*.spec
+*.AppImage
