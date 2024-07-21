@@ -6,7 +6,7 @@ authors = ["QCanvas <QCanvas@noreply.codeberg.org>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.11,<3.13"
+python = ">=3.12,<3.13"
 qcanvas-api-clients = "^0.2.2"
 qcanvas-backend = { git = "https://codeberg.org/QCanvas/QCanvas-Backend.git" }
 asynctaskpool = "^0.2.1"
