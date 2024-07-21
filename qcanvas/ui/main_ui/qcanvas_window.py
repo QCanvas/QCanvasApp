@@ -11,11 +11,11 @@ from qtpy.QtGui import QPixmap
 from qtpy.QtWidgets import *
 
 from qcanvas import icons
+from qcanvas.backend_connectors import FrontendResourceManager
 from qcanvas.ui.course_viewer import CourseTree
 from qcanvas.ui.main_ui.course_viewer_container import CourseViewerContainer
+from qcanvas.ui.main_ui.status_bar_progress_display import StatusBarProgressDisplay
 from qcanvas.util import paths, settings
-# from qcanvas.frontend_resource_manager import _RM
-from qcanvas.util.fe_resource_manager import _RM
 
 _logger = logging.getLogger(__name__)
 
@@ -31,11 +31,11 @@ class QCanvasWindow(QMainWindow):
 
         self._operation_semaphore = Semaphore()
         self._data: Optional[DataMonolith] = None
-        self._qcanvas = QCanvas[_RM](
+        self._qcanvas = QCanvas[FrontendResourceManager](
             canvas_config=settings.client.canvas_config,
             panopto_config=settings.client.panopto_config,
             storage_path=paths.data_storage(),
-            resource_manager_class=_RM,
+            resource_manager_class=FrontendResourceManager,
         )
         self._course_tree = CourseTree()
         self._course_tree.item_selected.connect(self._on_course_selected)
@@ -49,6 +49,7 @@ class QCanvasWindow(QMainWindow):
         self.setCentralWidget(self._setup_main_layout())
         self._loaded.connect(self._load_db)
         self._loaded.emit()
+        self.setStatusBar(StatusBarProgressDisplay())
 
     def _setup_main_layout(self) -> QWidget:
         h_box = QHBoxLayout()

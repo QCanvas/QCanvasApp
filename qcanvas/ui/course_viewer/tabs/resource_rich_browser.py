@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 import qcanvas_backend.database.types as db
 from bs4 import BeautifulSoup, Tag
@@ -7,10 +8,12 @@ from qcanvas_backend.net.resources.download.resource_manager import ResourceMana
 from qcanvas_backend.net.resources.extracting.no_extractor_error import NoExtractorError
 from qcanvas_backend.net.resources.scanning.resource_scanner import ResourceScanner
 from qtpy.QtCore import QUrl
+from qtpy.QtCore import Slot
 from qtpy.QtGui import QDesktopServices
 from qtpy.QtWidgets import QTextBrowser
 
 from qcanvas import icons
+from qcanvas.backend_connectors import FrontendResourceManager
 from qcanvas.util.html_cleaner import clean_up_html
 
 _logger = logging.getLogger(__name__)
@@ -20,11 +23,15 @@ class ResourceRichBrowser(QTextBrowser):
     def __init__(self, downloader: ResourceManager):
         super().__init__()
         self._downloader = downloader
+        self._content: Optional[db.CourseContentItem] = None
         self._current_content_resources: dict[str, db.Resource] = {}
         self._extractors = downloader.extractors
         self.setMinimumWidth(300)
         self.setOpenLinks(False)
         self.anchorClicked.connect(self._open_url)
+
+        if isinstance(self._downloader, FrontendResourceManager):
+            self._downloader.download_finished.connect(self._download_finished)
 
     def show_blank(self, completely_blank: bool = False) -> None:
         if completely_blank:
@@ -32,6 +39,7 @@ class ResourceRichBrowser(QTextBrowser):
         else:
             self.setPlainText("No content")
 
+        self._content = None
         self._current_content_resources.clear()
 
     def show_content(self, page: db.CourseContentItem) -> None:
@@ -47,6 +55,7 @@ class ResourceRichBrowser(QTextBrowser):
         }
 
     def _show_page_content(self, page: db.CourseContentItem):
+        self._content = page
         html = clean_up_html(page.body)
         html = self._substitute_links(html)
         self.setHtml(html)
@@ -124,7 +133,7 @@ class ResourceRichBrowser(QTextBrowser):
         else:
             QDesktopServices.openUrl(url)
 
-    async def _open_resource_from_link(self, url):
+    async def _open_resource_from_link(self, url) -> None:
         resource_id = url.path()
         resource = self._current_content_resources[resource_id]
 
@@ -138,3 +147,8 @@ class ResourceRichBrowser(QTextBrowser):
 
         resource_path = self._downloader.resource_download_location(resource)
         QDesktopServices.openUrl(QUrl.fromLocalFile(resource_path.absolute()))
+
+    @Slot()
+    def _download_finished(self, resource: db.Resource) -> None:
+        if self._content is not None and resource.id in self._current_content_resources:
+            self._show_page_content(self._content)
