@@ -95,7 +95,7 @@ class StatusBarProgressDisplay(QStatusBar):
         self.showMessage(id.step_name)
 
     def _show_multiple_tasks_progress(self, tasks: list[_TaskProgress]) -> None:
-        _logger.debug("Multiple tasks", tasks)
+        _logger.debug("Multiple tasks %s", tasks)
         self.showMessage(f"{len(tasks)} tasks in progress")
         self._show_progress(self._calculate_progress(tasks))
 
