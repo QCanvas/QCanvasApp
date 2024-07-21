@@ -3,12 +3,11 @@ from abc import abstractmethod
 from typing import *
 
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
-from qtpy.QtCore import Signal
-from qtpy.QtCore import Slot
+from qtpy.QtCore import Signal, Slot
 from qtpy.QtWidgets import *
 
 from qcanvas.ui.memory_tree import MemoryTreeWidget, MemoryTreeWidgetItem
-from qcanvas.util.basic_fonts import normal_font, bold_font
+from qcanvas.util.basic_fonts import bold_font, normal_font
 
 _logger = logging.getLogger(__name__)
 

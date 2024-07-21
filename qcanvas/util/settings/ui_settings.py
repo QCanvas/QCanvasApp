@@ -1,7 +1,6 @@
 import logging
 
-from qtpy.QtCore import QByteArray
-from qtpy.QtCore import QSettings
+from qtpy.QtCore import QByteArray, QSettings
 
 from qcanvas.util.settings.mapped_setting import MappedSetting
 

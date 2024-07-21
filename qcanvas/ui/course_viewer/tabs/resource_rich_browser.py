@@ -7,8 +7,7 @@ from qasync import asyncSlot
 from qcanvas_backend.net.resources.download.resource_manager import ResourceManager
 from qcanvas_backend.net.resources.extracting.no_extractor_error import NoExtractorError
 from qcanvas_backend.net.resources.scanning.resource_scanner import ResourceScanner
-from qtpy.QtCore import QUrl
-from qtpy.QtCore import Slot
+from qtpy.QtCore import QUrl, Slot
 from qtpy.QtGui import QDesktopServices
 from qtpy.QtWidgets import QTextBrowser
 

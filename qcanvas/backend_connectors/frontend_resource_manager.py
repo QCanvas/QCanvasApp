@@ -8,8 +8,7 @@ from qcanvas_backend.database import QCanvasDatabase
 from qcanvas_backend.net.resources.download.resource_manager import ResourceManager
 from qcanvas_backend.net.resources.extracting.extractors import Extractors
 from qcanvas_backend.task_master import TaskID
-from qtpy.QtCore import QObject
-from qtpy.QtCore import Signal
+from qtpy.QtCore import QObject, Signal
 
 from qcanvas.backend_connectors.qcanvas_task_master import task_master
 

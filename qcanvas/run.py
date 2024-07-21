@@ -1,8 +1,8 @@
 import logging
-from logging import INFO, WARNING, DEBUG
+from logging import DEBUG, INFO, WARNING
 
 import qcanvas.app_start
-from qcanvas.util import paths, logs
+from qcanvas.util import logs, paths
 
 paths.data_storage().mkdir(parents=True, exist_ok=True)
 

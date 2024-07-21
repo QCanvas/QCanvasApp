@@ -6,10 +6,8 @@ import qcanvas_backend.database.types as db
 from qasync import asyncSlot
 from qcanvas_backend.database.data_monolith import DataMonolith
 from qcanvas_backend.qcanvas import QCanvas
-from qtpy.QtCore import QUrl
-from qtpy.QtCore import Signal, Slot
-from qtpy.QtGui import QDesktopServices, QKeySequence
-from qtpy.QtGui import QPixmap
+from qtpy.QtCore import QUrl, Signal, Slot
+from qtpy.QtGui import QDesktopServices, QKeySequence, QPixmap
 from qtpy.QtWidgets import *
 
 from qcanvas import icons
