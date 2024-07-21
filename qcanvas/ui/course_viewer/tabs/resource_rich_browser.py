@@ -33,6 +33,7 @@ _logger = logging.getLogger(__name__)
 #
 # _dark_listener = _DarkListener()
 
+
 class ResourceRichBrowser(QTextBrowser):
     def __init__(self, downloader: ResourceManager):
         super().__init__()
