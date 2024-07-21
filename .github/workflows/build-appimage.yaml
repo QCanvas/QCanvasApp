@@ -39,7 +39,7 @@ jobs:
                     release_name: "Build ${{ env.DATE }}"
                     repo_token: ${{ secrets.PUBLISH_TOKEN }}
                     file: QCanvas-*
-                    tag: "prerelease-${{ env.DATE }}"
+                    tag: "release-${{ env.DATE }}"
                     overwrite: true
                     file_glob: true
             -   run: echo ${{env.GITHUB_REF}}
@@ -68,5 +68,5 @@ jobs:
                     release_name: "Build ${{ steps.get_time.outputs.time }}"
                     repo_token: ${{ secrets.PUBLISH_TOKEN }}
                     file: dist/QCanvas.exe
-                    tag: "prerelease-${{ steps.get_time.outputs.time }}"
+                    tag: "release-${{ steps.get_time.outputs.time }}"
                     overwrite: true
