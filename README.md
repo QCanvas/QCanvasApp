@@ -26,7 +26,7 @@ poetry shell
 poetry install
 python qcanvas/run.py
 
-# Alternatively you can run it luke this:
+# Alternatively you can run it like this:
 poetry install
 poetry run python qcanvas/run.py
 ```
