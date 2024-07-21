@@ -1,2 +1,2 @@
 from .frontend_resource_manager import FrontendResourceManager
-from .task_master import task_master
+from .qcanvas_task_master import task_master

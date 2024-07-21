@@ -11,7 +11,7 @@ from qcanvas_backend.task_master import TaskID
 from qtpy.QtCore import QObject
 from qtpy.QtCore import Signal
 
-from qcanvas.backend_connectors.task_master import task_master
+from qcanvas.backend_connectors.qcanvas_task_master import task_master
 
 _logger = logging.getLogger(__name__)
 
