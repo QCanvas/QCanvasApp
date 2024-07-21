@@ -54,9 +54,10 @@ class ContentTree(MemoryTreeWidget, Generic[T]):
             self.clear()
             self.addTopLevelItems(self.create_tree_items(data, sync_receipt))
             self.reexpand()
-            self.reselect()
         finally:
             self._reloading = False
+
+        self.reselect()
 
     def reselect(self) -> None:
         if self._last_selected_id is not None:
