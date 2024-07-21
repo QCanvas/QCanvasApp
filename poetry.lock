@@ -1277,24 +1277,28 @@ name = "qcanvas-backend"
 version = "0.1.10a0"
 description = ""
 optional = false
-python-versions = "<4.0,>=3.10"
-files = [
-    { file = "qcanvas_backend-0.1.10a0-py3-none-any.whl", hash = "sha256:35205bac8b026ce7dda54ee26a32cb4c08f030312fa31cca873be3d352bca5b2" },
-    { file = "qcanvas_backend-0.1.10a0.tar.gz", hash = "sha256:21e003730ac7c7fc5853baa85c6e0b16c1ff8eef2b51d6939149129705960e68" },
-]
+python-versions = "^3.10"
+files = []
+develop = false
 
 [package.dependencies]
-asynchronize = ">=0.0.1,<0.0.2"
-asynctaskpool = ">=0.2.0,<0.3.0"
-beautifulsoup4 = ">=4.12.3,<5.0.0"
-gql = ">=3.5.0,<4.0.0"
-httpx = ">=0.27.0,<0.28.0"
-lightdb = ">=2.0,<3.0"
-pydantic = ">=2.7.0,<3.0.0"
-qcanvas-api-clients = ">=0.2.0,<0.3.0"
-rich = ">=13.7.1,<14.0.0"
-SQLAlchemy = ">=2.0.29,<3.0.0"
-yt-dlp = ">=2024.4.9,<2025.0.0"
+asynchronize = "^0.0.1"
+asynctaskpool = "^0.2.0"
+beautifulsoup4 = "^4.12.3"
+gql = "^3.5.0"
+httpx = "^0.27.0"
+lightdb = "^2.0"
+pydantic = "^2.7.0"
+qcanvas-api-clients = "^0.2.0"
+rich = "^13.7.1"
+SQLAlchemy = "^2.0.29"
+yt-dlp = "^2024.4.9"
+
+[package.source]
+type = "git"
+url = "https://codeberg.org/QCanvas/QCanvas-Backend.git"
+reference = "HEAD"
+resolved_reference = "ce3f68bbd1225517f214a0cd3977b1b8183f8106"
 
 [[package]]
 name = "qtpy"
@@ -1764,4 +1768,4 @@ test = ["pytest (>=8.1,<9.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "f683ea94012fbaa2791948d433f2994185ae1f11a879e0ac69032f21036f0076"
+content-hash = "d02ead477096cefc11d709e1b49dcf92ae682692b34c2fabd8c77f7282fb11d1"
