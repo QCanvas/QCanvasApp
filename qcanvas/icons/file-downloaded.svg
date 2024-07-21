@@ -1,13 +1,6 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
-     viewBox="0 0 512 512" xml:space="preserve">
-<polygon style="fill:#72C6EF;" points="384,448 128,448 128,64 288,64 288,160 384,160 "/>
-    <path style="fill:#00384E;" d="M310.624,0H64v512h384V137.376L310.624,0z M320,54.624L393.376,128H320V54.624z M96,480V32h192v128
-	h128v320H96z"/>
-    <g>
-	<rect x="176" y="368" style="fill:#00384D;" width="160" height="32"/>
-        <rect x="176" y="304" style="fill:#00384D;" width="160" height="32"/>
-        <rect x="176" y="240" style="fill:#00384D;" width="160" height="32"/>
-</g>
+<svg fill="#000000" width="800px" height="800px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <title>file</title>
+    <path d="M26.731 9.902c-0.005-0.035-0.011-0.066-0.019-0.095l0.001 0.005c-0.031-0.134-0.094-0.249-0.182-0.342l0 0-8-8c-0.092-0.087-0.207-0.15-0.335-0.181l-0.005-0.001c-0.027-0.008-0.059-0.014-0.092-0.019l-0.003-0c-0.026-0.007-0.059-0.014-0.092-0.019l-0.004-0h-12c-0.414 0-0.75 0.336-0.75 0.75v0 28c0 0.414 0.336 0.75 0.75 0.75h20c0.414-0 0.75-0.336 0.75-0.75v0-20c-0.005-0.038-0.012-0.071-0.020-0.103l0.001 0.005zM24.189 9.25h-5.439v-5.439zM6.75 29.25v-26.5h10.5v7.25c0 0.414 0.336 0.75 0.75 0.75h7.25v18.5z"></path>
 </svg>

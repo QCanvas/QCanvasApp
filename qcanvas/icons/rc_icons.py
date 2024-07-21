@@ -6,282 +6,335 @@
 from qtpy import QtCore
 
 qt_resource_data = b"\
-\x00\x00\x04;\
+\x00\x00\x04\xf2\
 <\
 ?xml version=\x221.\
-0\x22 encoding=\x22iso\
--8859-1\x22?>\x0d\x0a<!--\
- Uploaded to: SV\
-G Repo, www.svgr\
-epo.com, Generat\
-or: SVG Repo Mix\
-er Tools -->\x0d\x0a<s\
-vg version=\x221.1\x22\
- id=\x22Layer_1\x22 xm\
-lns=\x22http://www.\
-w3.org/2000/svg\x22\
- xmlns:xlink=\x22ht\
-tp://www.w3.org/\
-1999/xlink\x22 \x0d\x0a\x09 \
-viewBox=\x220 0 512\
- 512\x22 xml:space=\
-\x22preserve\x22>\x0d\x0a<ci\
-rcle style=\x22fill\
-:#FAA85F;\x22 cx=\x223\
-76\x22 cy=\x22400\x22 r=\x22\
-112\x22/>\x0d\x0a<polygon\
- style=\x22fill:#FF\
-FFFF;\x22 points=\x223\
-92,400 392,336 3\
-60,336 360,400 3\
-28,400 376,464 4\
-24,400 \x22/>\x0d\x0a<pat\
-h style=\x22fill:#0\
-0384E;\x22 d=\x22M256.\
-352,480H56V32h19\
-2v128h128v96c11.\
-008,0,21.696,1.3\
-6,32,3.712V137.3\
-76L270.624,0H24v\
-512h261.696\x0d\x0a\x09C2\
-74.384,502.864,2\
-64.464,492.096,2\
-56.352,480z M280\
-,54.624L353.376,\
-128H280V54.624z\x22\
-/>\x0d\x0a<path style=\
-\x22fill:#72C6EF;\x22 \
-d=\x22M232,400c0-68\
-.384,47.968-125.\
-68,112-140.288V1\
-60h-96V64H88v384\
-h152.4\x0d\x0a\x09C235.05\
-6,432.96,232,416\
-.848,232,400z\x22/>\
-\x0d\x0a<g>\x0d\x0a\x09<rect x=\
-\x22136\x22 y=\x22240\x22 st\
-yle=\x22fill:#00384\
-D;\x22 width=\x22160\x22 \
-height=\x2232\x22/>\x0d\x0a\x09\
-<path style=\x22fil\
-l:#00384D;\x22 d=\x22M\
-268.976,304H136v\
-32h111.2C253.008\
-,324.336,260.352\
-,313.6,268.976,3\
-04z\x22/>\x0d\x0a\x09<path s\
-tyle=\x22fill:#0038\
-4D;\x22 d=\x22M136,368\
-v32h96c0-11.008,\
-1.36-21.696,3.71\
-2-32H136z\x22/>\x0d\x0a</\
-g>\x0d\x0a</svg>\
-\x00\x00\x03.\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22iso\
--8859-1\x22?>\x0d\x0a<!--\
- Uploaded to: SV\
-G Repo, www.svgr\
-epo.com, Generat\
-or: SVG Repo Mix\
-er Tools -->\x0d\x0a<s\
-vg height=\x22800px\
-\x22 width=\x22800px\x22 \
-version=\x221.1\x22 id\
-=\x22Layer_1\x22 xmlns\
+0\x22 encoding=\x22utf\
+-8\x22?>\x0d\x0a<!-- Uplo\
+aded to: SVG Rep\
+o, www.svgrepo.c\
+om, Generator: S\
+VG Repo Mixer To\
+ols -->\x0a<svg fil\
+l=\x22#000000\x22 widt\
+h=\x22800px\x22 height\
+=\x22800px\x22 viewBox\
+=\x220 0 32 32\x22 ver\
+sion=\x221.1\x22 xmlns\
 =\x22http://www.w3.\
-org/2000/svg\x22 xm\
-lns:xlink=\x22http:\
-//www.w3.org/199\
-9/xlink\x22 \x0d\x0a\x09 vie\
-wBox=\x220 0 512 51\
-2\x22 xml:space=\x22pr\
-eserve\x22>\x0d\x0a<path \
-style=\x22fill:#003\
-84E;\x22 d=\x22M310.62\
-4,0H64v512h384V1\
-37.376L310.624,0\
-z M320,54.624L39\
-3.376,128H320V54\
-.624z M96,480V32\
-h192v128\x0d\x0a\x09h128v\
-320H96z\x22/>\x0d\x0a<pol\
-ygon style=\x22fill\
-:#72C6EF;\x22 point\
-s=\x22384,448 128,4\
-48 128,64 288,64\
- 288,160 384,160\
- \x22/>\x0d\x0a<circle st\
-yle=\x22fill:#00384\
-D;\x22 cx=\x22256\x22 cy=\
-\x22400\x22 r=\x2216\x22/>\x0d\x0a\
-<path style=\x22fil\
-l:#00384E;\x22 d=\x22M\
-272,368h-32v-64h\
-16c17.648,0,32-1\
-4.352,32-32s-14.\
-352-32-32-32s-32\
-,14.352-32,32h-3\
-2\x0d\x0a\x09c0-35.296,28\
-.704-64,64-64s64\
-,28.704,64,64c0,\
-29.76-20.416,54.\
-864-48,61.968V36\
-8z\x22/>\x0d\x0a</svg>\
-\x00\x00\x02\xf3\
+org/2000/svg\x22>\x0d\x0a\
+<title>file-arro\
+w-down</title>\x0d\x0a\
+<path d=\x22M26.731\
+ 9.902c-0.005-0.\
+035-0.011-0.066-\
+0.019-0.095l0.00\
+1 0.005c-0.031-0\
+.134-0.094-0.249\
+-0.182-0.342l0 0\
+-8-8c-0.092-0.08\
+7-0.207-0.15-0.3\
+35-0.181l-0.005-\
+0.001c-0.027-0.0\
+08-0.059-0.014-0\
+.092-0.019l-0.00\
+3-0c-0.026-0.007\
+-0.059-0.014-0.0\
+92-0.019l-0.004-\
+0h-12c-0.414 0-0\
+.75 0.336-0.75 0\
+.75v0 28c0 0.414\
+ 0.336 0.75 0.75\
+ 0.75h20c0.414-0\
+ 0.75-0.336 0.75\
+-0.75v0-20c-0.00\
+5-0.038-0.012-0.\
+071-0.020-0.103l\
+0.001 0.005zM24.\
+189 9.25h-5.439v\
+-5.439zM6.75 29.\
+25v-26.5h10.5v7.\
+25c0 0.414 0.336\
+ 0.75 0.75 0.75h\
+7.25v18.5zM20.46\
+9 20.91l-3.719 3\
+.721v-10.676c0-0\
+.414-0.336-0.75-\
+0.75-0.75s-0.75 \
+0.336-0.75 0.75v\
+0 10.675l-3.72-3\
+.72c-0.136-0.134\
+-0.322-0.218-0.5\
+28-0.218-0.415 0\
+-0.751 0.336-0.7\
+51 0.751 0 0.207\
+ 0.083 0.394 0.2\
+19 0.529l5 5c0.0\
+26 0.026 0.065 0\
+.017 0.093 0.038\
+ 0.052 0.040 0.0\
+88 0.098 0.15 0.\
+124 0.085 0.035 \
+0.184 0.056 0.28\
+7 0.057h0c0 0 0 \
+0 0 0 0.207 0 0.\
+394-0.084 0.53-0\
+.219l5.001-5c0.1\
+36-0.136 0.22-0.\
+324 0.22-0.531 0\
+-0.415-0.336-0.7\
+51-0.751-0.751-0\
+.207 0-0.395 0.0\
+84-0.531 0.22v0z\
+\x22></path>\x0d\x0a</svg\
+>\
+\x00\x00\x06\xbd\
 <\
 ?xml version=\x221.\
-0\x22 encoding=\x22iso\
--8859-1\x22?>\x0d\x0a<!--\
- Uploaded to: SV\
-G Repo, www.svgr\
-epo.com, Generat\
-or: SVG Repo Mix\
-er Tools -->\x0d\x0a<s\
-vg version=\x221.1\x22\
- id=\x22Layer_1\x22 xm\
-lns=\x22http://www.\
-w3.org/2000/svg\x22\
- xmlns:xlink=\x22ht\
-tp://www.w3.org/\
-1999/xlink\x22 \x0d\x0a\x09 \
-viewBox=\x220 0 512\
- 512\x22 xml:space=\
-\x22preserve\x22>\x0d\x0a<po\
-lygon style=\x22fil\
-l:#72C6EF;\x22 poin\
-ts=\x22384,448 128,\
-448 128,64 288,6\
-4 288,160 384,16\
-0 \x22/>\x0d\x0a<path sty\
-le=\x22fill:#00384E\
-;\x22 d=\x22M310.624,0\
-H64v512h384V137.\
-376L310.624,0z M\
-320,54.624L393.3\
-76,128H320V54.62\
-4z M96,480V32h19\
-2v128\x0d\x0a\x09h128v320\
-H96z\x22/>\x0d\x0a<g>\x0d\x0a\x09<\
-rect x=\x22176\x22 y=\x22\
-368\x22 style=\x22fill\
-:#00384D;\x22 width\
-=\x22160\x22 height=\x223\
-2\x22/>\x0d\x0a\x09<rect x=\x22\
-176\x22 y=\x22304\x22 sty\
-le=\x22fill:#00384D\
-;\x22 width=\x22160\x22 h\
-eight=\x2232\x22/>\x0d\x0a\x09<\
-rect x=\x22176\x22 y=\x22\
-240\x22 style=\x22fill\
-:#00384D;\x22 width\
-=\x22160\x22 height=\x223\
-2\x22/>\x0d\x0a</g>\x0d\x0a</sv\
-g>\
-\x00\x00\x03\xb0\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22iso\
--8859-1\x22?>\x0d\x0a<!--\
- Uploaded to: SV\
-G Repo, www.svgr\
-epo.com, Generat\
-or: SVG Repo Mix\
-er Tools -->\x0d\x0a<s\
-vg height=\x22800px\
-\x22 width=\x22800px\x22 \
-version=\x221.1\x22 id\
-=\x22Layer_1\x22 xmlns\
+0\x22 encoding=\x22utf\
+-8\x22?>\x0d\x0a<!-- Uplo\
+aded to: SVG Rep\
+o, www.svgrepo.c\
+om, Generator: S\
+VG Repo Mixer To\
+ols -->\x0a<svg fil\
+l=\x22#000000\x22 widt\
+h=\x22800px\x22 height\
+=\x22800px\x22 viewBox\
+=\x220 0 32 32\x22 ver\
+sion=\x221.1\x22 xmlns\
 =\x22http://www.w3.\
-org/2000/svg\x22 xm\
-lns:xlink=\x22http:\
-//www.w3.org/199\
-9/xlink\x22 \x0d\x0a\x09 vie\
-wBox=\x220 0 512 51\
-2\x22 xml:space=\x22pr\
-eserve\x22>\x0d\x0a<path \
-style=\x22fill:#003\
-84E;\x22 d=\x22M310.62\
-4,0H64v512h384V1\
-37.376L310.624,0\
-z M320,54.624L39\
-3.376,128H320V54\
-.624z M96,480V32\
-h192v128\x0d\x0a\x09h128v\
-320H96z\x22/>\x0d\x0a<pol\
-ygon style=\x22fill\
-:#72C6EF;\x22 point\
-s=\x22384,448 128,4\
-48 128,64 288,64\
- 288,160 384,160\
- \x22/>\x0d\x0a<path styl\
-e=\x22fill:#00384D;\
-\x22 d=\x22M256,208c-5\
-2.944,0-96,43.05\
-6-96,96s43.056,9\
-6,96,96s96-43.05\
-6,96-96S308.944,\
-208,256,208z M25\
-6,240\x0d\x0a\x09c11.84,0\
-,22.784,3.456,32\
-.32,9.072l-87.24\
-8,87.216c-5.632-\
-9.504-9.056-20.4\
-64-9.056-32.304C\
-192,268.704,220.\
-72,240,256,240z\x0d\
-\x0a\x09 M256,368c-11.\
-84,0-22.784-3.45\
-6-32.32-9.072l87\
-.248-87.216c5.63\
-2,9.504,9.056,20\
-.464,9.056,32.30\
-4C320,339.296,29\
-1.28,368,256,368\
-z\x0d\x0a\x09\x22/>\x0d\x0a</svg>\
-\x00\x00\x02u\
-\x00\
-\x00\x0a\xdfx\xda\xb5\x96\xcbn\xa30\x14\x86\xd7\x8d\x94\
-w\xf0\xb8[\x08\xb6\x81`h\x92*\xe4\xd2Y\xb4\x9b\
-\xb9t;B\xc4M\x98\x12\x8c\xc0\xcdeF\xf3\xeec\
-\x12\x08Xb\xe9\x0a\x84\xf5\x1f\xdb|6\xb6\x7f\xce\xe4\
-\xf1\xb4O\xc1\x81\x15e\xc2\xb3)\xc4#\x04\x01\xcbb\
-\xbeI\xb2\xed\x14~\x887\x93\xc2\xc7\xd9p0\x1cL\
-\xbe\x98&\xf8\x99\xa7<\xda\xb0\x0d\x10<\x00\xdf_\x9f\
-\xc07\x96s\x03\x1c\x8f\xc7Qy\xd8\x16R\x8cb\xbe\
-7\xc0\x13\xcbX\x11\x09^\xb4\xad\xc0Krb\x05\xf8\
-\xc1yZ\x02\xd3\x9c\x0d&\xb2G\x97\x8c!H6S\
-\xf8\x1c\x9dY\xf1K\x0a9\xb0\xac\x9c\xc2\x9d\x10y`\
-Y\x15\xe2h\x8fx\xb1\xb5\x08B\xc8\x92\x9d\xeb&\xc1\
-)M\xb2\xf7\xbe\x86\xd8\xf7}\xebR\x0b\xc1pp\x07\
-\x0e\x09;\x86\xfc4\x85\x08 `W\xf7\xe5\x15A\x99\
-G1\x9b\xc2\xbc`%+\x0e\x0c\xca\xf9NJqN\
-\x19\x10\xe7\x5cV\x08v\x12V\x5c\x96U\xc5\xdd\xa8\x14\
-\xe8\xef[\x92\xa6A\xc63\xf6P\x8a\x82\xbf\xb3\xe0~\
-\xbc\xb0\x97\xa1WK\xf3\x98l\xc4.p\x1a)\x87\xc0\
-\xe2(\x0f\x0a\xfe\x91m\xba\xc1\xdf<\xc9\xd4\xe8>\x11\
-\xacH\x13Y\x04\x18=\xfc\xbb\x02q\x0f\x10\xaf}\x9f\
-\xcc?\x09H\xfaf8\xa7v\xf8Y@\xfb\x0a\xbc\xa7\
-s:_\xafoLE\xd6L\xa2\x8b\xe9\xd4Le\xe9\
-\xfaWR\x1b\xd3\xad\x99s\xd7\x1bw\xe6\xa9H\xdd\xcc\
-q\xcd\x5c\x930t\xf0\x8d\xa9H\xddL\xaff\xae\x10\
-\xa56\xbd1\x15\xa9\x9bIk\xa6r2\xfa\x0f\x8a6\
-\xa6_3\xdd\xd5\x02\xe3\xd5\x8d\xa9H\xddL\x8c\x9a\x8f\
-k\xaf\xbb\x87E\x91\xda\xa1\xb8\xd9Ek\x17\xf9v\xbb\
-\x8b\xbaR;\xb4\xf6\xa1\xfb\xd0#\xae\xd7\xceT\x91\xda\
-\xa1\x8d\x17\xb9\x98\xfa+\xb7]\xd3\xae\xd4\x0e\xbd\x99\xd1\
-*\xec\xae\xa9\x22\xb5C\x1b7Z-\x97\xbe\xd7:\xa0\
-\x22\xb5C\x1b;\xa2\x0b\xc7\xeeZ}Wj\x876~\
-\xe4\x12\x97\x84\xad7(R;\x94\xf6\xfcE\xfb\x0e\xa9\
-\xbe<\xa1\xb1#\xdbu\x16^\xbbu\x15\xa9s\x9a\x13\
-\xeb\x92'U\x09S\x1e\x89\x1d\x88\xd3\xa8\x949\x9b\xfc\
-\xe7@ s\xb9\x17\xec\x1b\xf6W\xba\x18\x8fdi\x8c\
-\x0d[\x96c\xc3=\x10\x14#Cf|\x06\x92\x01R\
-];\xec\xc4\x97\x80A\xccK\xd0$\xaf\xf4\xb9\xea\xfe\
-\x07Z\x97\xd7\xf3\xf4\xbc\xe5YK\xf0 \xc8\xe5\x00\x85\
-\x14U3 \x1f\x14\x10G>\xae\x1d\xaa\x0cq\xf6\x1f\
-\xe5V\xbf/\
+org/2000/svg\x22>\x0d\x0a\
+<title>question<\
+/title>\x0d\x0a<path d\
+=\x22M19.943 5.251c\
+-1.145-0.635-2.5\
+11-1.008-3.964-1\
+.008-1.461 0-2.8\
+34 0.378-4.026 1\
+.040l0.042-0.022\
+c-1.649 0.916-2.\
+746 2.648-2.746 \
+4.635 0 0.037 0 \
+0.074 0.001 0.11\
+1l-0-0.006c0.001\
+ 0.413 0.336 0.7\
+47 0.75 0.747 0 \
+0 0 0 0 0h-0c0.4\
+07-0.021 0.731-0\
+.346 0.75-0.751l\
+0-0.002c-0.001-0\
+.026-0.001-0.058\
+-0.001-0.089 0-1\
+.441 0.8-2.694 1\
+.98-3.341l0.020-\
+0.010c0.934-0.51\
+1 2.047-0.812 3.\
+23-0.812 1.178 0\
+ 2.287 0.298 3.2\
+55 0.824l-0.036-\
+0.018c1.23 0.657\
+ 2.053 1.933 2.0\
+53 3.401 0 0.017\
+-0 0.033-0 0.050\
+l0-0.003c0.033 0\
+.19 0.051 0.408 \
+0.051 0.631 0 1.\
+699-1.084 3.145-\
+2.598 3.684l-0.0\
+27 0.008c-2.303 \
+1.102-3.424 3.28\
+5-3.426 6.677 0 \
+0 0 0 0 0.001 0 \
+0.414 0.335 0.74\
+9 0.749 0.749h0.\
+001c0.414-0 0.75\
+-0.336 0.75-0.75\
+v0c0.002-2.793 0\
+.819-4.485 2.586\
+-5.329 2.037-0.7\
+83 3.457-2.725 3\
+.457-4.997 0-0.2\
+38-0.016-0.473-0\
+.046-0.703l0.003\
+ 0.027c0-0.017 0\
+-0.037 0-0.057 0\
+-2.018-1.123-3.7\
+74-2.779-4.676l-\
+0.028-0.014zM15.\
+46 25.459c-0.123\
+ 0.145-0.198 0.3\
+34-0.2 0.541v0c-\
+0.001 0.016-0.00\
+2 0.034-0.002 0.\
+052 0 0.082 0.01\
+5 0.16 0.044 0.2\
+31l-0.002-0.004c\
+0.039 0.094 0.09\
+3 0.173 0.16 0.2\
+4l0 0c0.071 0.07\
+6 0.158 0.137 0.\
+255 0.178l0.005 \
+0.002c0.084 0.02\
+6 0.18 0.041 0.2\
+8 0.041s0.196-0.\
+015 0.287-0.043l\
+-0.007 0.002c0.1\
+02-0.043 0.189-0\
+.104 0.26-0.179l\
+0-0c0.067-0.067 \
+0.12-0.147 0.157\
+-0.235l0.002-0.0\
+05c0.038-0.079 0\
+.061-0.173 0.061\
+-0.271 0-0.003-0\
+-0.006-0-0.009v0\
+c-0.010-0.209-0.\
+092-0.397-0.221-\
+0.542l0.001 0.00\
+1c-0.145-0.121-0\
+.334-0.195-0.54-\
+0.195s-0.395 0.0\
+74-0.541 0.196l0\
+.001-0.001z\x22></p\
+ath>\x0d\x0a</svg>\
+\x00\x00\x03\x11\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22utf\
+-8\x22?>\x0d\x0a<!-- Uplo\
+aded to: SVG Rep\
+o, www.svgrepo.c\
+om, Generator: S\
+VG Repo Mixer To\
+ols -->\x0a<svg fil\
+l=\x22#000000\x22 widt\
+h=\x22800px\x22 height\
+=\x22800px\x22 viewBox\
+=\x220 0 32 32\x22 ver\
+sion=\x221.1\x22 xmlns\
+=\x22http://www.w3.\
+org/2000/svg\x22>\x0d\x0a\
+<title>file</tit\
+le>\x0d\x0a<path d=\x22M2\
+6.731 9.902c-0.0\
+05-0.035-0.011-0\
+.066-0.019-0.095\
+l0.001 0.005c-0.\
+031-0.134-0.094-\
+0.249-0.182-0.34\
+2l0 0-8-8c-0.092\
+-0.087-0.207-0.1\
+5-0.335-0.181l-0\
+.005-0.001c-0.02\
+7-0.008-0.059-0.\
+014-0.092-0.019l\
+-0.003-0c-0.026-\
+0.007-0.059-0.01\
+4-0.092-0.019l-0\
+.004-0h-12c-0.41\
+4 0-0.75 0.336-0\
+.75 0.75v0 28c0 \
+0.414 0.336 0.75\
+ 0.75 0.75h20c0.\
+414-0 0.75-0.336\
+ 0.75-0.75v0-20c\
+-0.005-0.038-0.0\
+12-0.071-0.020-0\
+.103l0.001 0.005\
+zM24.189 9.25h-5\
+.439v-5.439zM6.7\
+5 29.25v-26.5h10\
+.5v7.25c0 0.414 \
+0.336 0.75 0.75 \
+0.75h7.25v18.5z\x22\
+></path>\x0d\x0a</svg>\
+\
+\x00\x00\x05+\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22utf\
+-8\x22?>\x0d\x0a<!-- Uplo\
+aded to: SVG Rep\
+o, www.svgrepo.c\
+om, Generator: S\
+VG Repo Mixer To\
+ols -->\x0a<svg fil\
+l=\x22#000000\x22 widt\
+h=\x22800px\x22 height\
+=\x22800px\x22 viewBox\
+=\x220 0 32 32\x22 ver\
+sion=\x221.1\x22 xmlns\
+=\x22http://www.w3.\
+org/2000/svg\x22>\x0d\x0a\
+<title>file-time\
+s</title>\x0d\x0a<path\
+ d=\x22M26.731 9.90\
+2c-0.005-0.035-0\
+.011-0.066-0.019\
+-0.095l0.001 0.0\
+05c-0.031-0.134-\
+0.094-0.249-0.18\
+2-0.342l0 0-8-8c\
+-0.092-0.087-0.2\
+07-0.15-0.335-0.\
+181l-0.005-0.001\
+c-0.027-0.008-0.\
+059-0.014-0.092-\
+0.019l-0.003-0c-\
+0.026-0.007-0.05\
+9-0.014-0.092-0.\
+019l-0.004-0h-12\
+c-0.414 0-0.75 0\
+.336-0.75 0.75v0\
+ 28c0 0.414 0.33\
+6 0.75 0.75 0.75\
+h20c0.414-0 0.75\
+-0.336 0.75-0.75\
+v0-20c-0.005-0.0\
+38-0.012-0.071-0\
+.020-0.103l0.001\
+ 0.005zM24.189 9\
+.25h-5.439v-5.43\
+9zM6.75 29.25v-2\
+6.5h10.5v7.25c0 \
+0.414 0.336 0.75\
+ 0.75 0.75h7.25v\
+18.5zM20.066 15.\
+935c-0.136-0.136\
+-0.324-0.22-0.53\
+1-0.22s-0.395 0.\
+084-0.531 0.22v0\
+l-3.004 3.004-3.\
+005-3.004c-0.136\
+-0.141-0.327-0.2\
+28-0.538-0.228-0\
+.414 0-0.75 0.33\
+6-0.75 0.75 0 0.\
+211 0.087 0.402 \
+0.228 0.538l3.00\
+4 3.005-3.004 3.\
+004c-0.136 0.136\
+-0.22 0.324-0.22\
+ 0.531 0 0.415 0\
+.336 0.751 0.751\
+ 0.751 0.207 0 0\
+.395-0.084 0.53-\
+0.219v0l3.005-3.\
+005 3.004 3.005c\
+0.136 0.136 0.32\
+4 0.22 0.531 0.2\
+2 0.415 0 0.751-\
+0.336 0.751-0.75\
+1 0-0.207-0.084-\
+0.395-0.22-0.531\
+l-3.005-3.004 3.\
+005-3.005c0.135-\
+0.136 0.218-0.32\
+3 0.218-0.53s-0.\
+083-0.394-0.218-\
+0.53l0 0z\x22></pat\
+h>\x0d\x0a</svg>\
 \x00\x00\x0d7\
 \x00\
 \x00>\xe8x\xda\xdd[m\x8f\xdb6\x12\xfe\xbe\xbfB\
@@ -518,10 +571,6 @@ qt_resource_name = b"\
 \x00f\
 \x00i\x00l\x00e\x00-\x00d\x00o\x00w\x00n\x00l\x00o\x00a\x00d\x00-\x00f\x00a\x00i\
 \x00l\x00e\x00d\x00.\x00s\x00v\x00g\
-\x00\x0f\
-\x06b\x1e\xa7\
-\x00f\
-\x00i\x00l\x00e\x00-\x00y\x00e\x00l\x00l\x00o\x00w\x00.\x00s\x00v\x00g\
 \x00\x0d\
 \x01a\xd0\x87\
 \x00m\
@@ -529,33 +578,24 @@ qt_resource_name = b"\
 "
 
 qt_resource_struct = b"\
-\x00\x00\x00\x00\x00\x02\x00\x00\x00\x06\x00\x00\x00\x01\
+\x00\x00\x00\x00\x00\x02\x00\x00\x00\x05\x00\x00\x00\x01\
 \x00\x00\x00\x00\x00\x00\x00\x00\
-\x00\x00\x00\xe0\x00\x01\x00\x00\x00\x01\x00\x00\x10\x95\
+\x00\x00\x00\xbc\x00\x01\x00\x00\x00\x01\x00\x00\x13\xfb\
 \x00\x00\x01\x90\xb8\xf1\xdc\xe5\
-\x00\x00\x00Z\x00\x00\x00\x00\x00\x01\x00\x00\x07q\
-\x00\x00\x01\x90\xcd\x99\xee\x09\
+\x00\x00\x00Z\x00\x00\x00\x00\x00\x01\x00\x00\x0b\xb7\
+\x00\x00\x01\x90\xd5,g@\
 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\
-\x00\x00\x01\x90\xcd\x99\xd4\xd9\
-\x00\x00\x00\xbc\x00\x01\x00\x00\x00\x01\x00\x00\x0e\x1c\
-\x00\x00\x01\x90\xcd\x85\xfe\x0d\
-\x00\x00\x004\x00\x00\x00\x00\x00\x01\x00\x00\x04?\
-\x00\x00\x01\x90\xcd\x9cb\xba\
-\x00\x00\x00\x86\x00\x00\x00\x00\x00\x01\x00\x00\x0ah\
-\x00\x00\x01\x90\xcd\x99\xe4\x05\
+\x00\x00\x01\x90\xd59\xb8\x92\
+\x00\x00\x004\x00\x00\x00\x00\x00\x01\x00\x00\x04\xf6\
+\x00\x00\x01\x90\xd5;\x8d>\
+\x00\x00\x00\x86\x00\x00\x00\x00\x00\x01\x00\x00\x0e\xcc\
+\x00\x00\x01\x90\xd59\x5c\xa2\
 "
 
-
 def qInitResources():
-    QtCore.qRegisterResourceData(
-        0x03, qt_resource_struct, qt_resource_name, qt_resource_data
-    )
-
+    QtCore.qRegisterResourceData(0x03, qt_resource_struct, qt_resource_name, qt_resource_data)
 
 def qCleanupResources():
-    QtCore.qUnregisterResourceData(
-        0x03, qt_resource_struct, qt_resource_name, qt_resource_data
-    )
-
+    QtCore.qUnregisterResourceData(0x03, qt_resource_struct, qt_resource_name, qt_resource_data)
 
 qInitResources()
