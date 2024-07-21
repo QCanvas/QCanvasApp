@@ -53,6 +53,7 @@ class QCanvasWindow(QMainWindow):
         self.setCentralWidget(self._setup_main_layout())
         self.setStatusBar(StatusBarProgressDisplay())
         self._setup_menu_bar()
+        self._restore_window_position()
 
         self._loaded.connect(self._load_db)
         self._loaded.emit()
@@ -80,6 +81,14 @@ class QCanvasWindow(QMainWindow):
             triggered=lambda: self.close(),
             parent=menu_item,
         )
+
+    def _restore_window_position(self):
+        self.restoreGeometry(settings.ui.last_geometry)
+        self.restoreState(settings.ui.last_window_state)
+
+    def closeEvent(self, event):
+        settings.ui.last_geometry = self.saveGeometry()
+        settings.ui.last_window_state = self.saveState()
 
     def _setup_main_layout(self) -> QWidget:
         h_box = QHBoxLayout()

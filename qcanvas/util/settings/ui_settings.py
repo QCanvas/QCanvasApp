@@ -1,5 +1,6 @@
 import logging
 
+from qtpy.QtCore import QByteArray
 from qtpy.QtCore import QSettings
 
 from qcanvas.util.settings.mapped_setting import MappedSetting
@@ -29,4 +30,6 @@ class ThemeSetting(MappedSetting):
 
 class _UISettings:
     settings = QSettings("QCanvasTeam", "QCanvas")
-    theme: ThemeSetting
+    theme: ThemeSetting = ThemeSetting()
+    last_geometry: MappedSetting[QByteArray] = MappedSetting()
+    last_window_state: MappedSetting[QByteArray] = MappedSetting()
