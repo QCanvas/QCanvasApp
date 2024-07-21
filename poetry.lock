@@ -1298,7 +1298,7 @@ yt-dlp = "^2024.4.9"
 type = "git"
 url = "https://codeberg.org/QCanvas/QCanvas-Backend.git"
 reference = "HEAD"
-resolved_reference = "ce3f68bbd1225517f214a0cd3977b1b8183f8106"
+resolved_reference = "939ddfcfe7d9d715fd4c231148ee72e700a3f390"
 
 [[package]]
 name = "qtpy"
@@ -1767,5 +1767,5 @@ test = ["pytest (>=8.1,<9.0)"]
 
 [metadata]
 lock-version = "2.0"
-python-versions = ">=3.11,<3.13"
-content-hash = "d02ead477096cefc11d709e1b49dcf92ae682692b34c2fabd8c77f7282fb11d1"
+python-versions = ">=3.12,<3.13"
+content-hash = "afd794d64c980266f7fd7d70a3c55e0401b0a0ad57ab5fddeff87f73d63e35b5"
