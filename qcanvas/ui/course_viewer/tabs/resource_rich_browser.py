@@ -18,6 +18,21 @@ from qcanvas.util.html_cleaner import clean_up_html
 _logger = logging.getLogger(__name__)
 
 
+# class _DarkListener(QObject):
+#     theme_changed = Signal(str)
+#
+#     def __init__(self):
+#         super().__init__()
+#
+#         self._thread = threading.Thread(target=darkdetect.listener, args=(self._emit,))
+#         self._thread.daemon = True
+#         self._thread.start()
+#
+#     def _emit(self, theme: str) -> None:
+#         self.theme_changed.emit(theme)
+#
+# _dark_listener = _DarkListener()
+
 class ResourceRichBrowser(QTextBrowser):
     def __init__(self, downloader: ResourceManager):
         super().__init__()
@@ -32,6 +47,12 @@ class ResourceRichBrowser(QTextBrowser):
         if isinstance(self._downloader, FrontendResourceManager):
             self._downloader.download_finished.connect(self._download_updated)
             self._downloader.download_failed.connect(self._download_updated)
+
+        # _dark_listener.theme_changed.connect(self._theme_changed)
+
+    # @Slot()
+    # def _theme_changed(self, theme: str) -> None:
+    #     print(theme)
 
     def show_blank(self, completely_blank: bool = False) -> None:
         if completely_blank:
@@ -111,7 +132,7 @@ class ResourceRichBrowser(QTextBrowser):
             attrs={
                 "src": self._download_state_icon(download_state),
                 "style": "vertical-align:middle",
-                "width": 20,
+                "width": 18,
             },
         )
 
