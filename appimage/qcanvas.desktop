@@ -9,3 +9,4 @@ Terminal=false
 Exec=AppRun
 Icon=qcanvas
 StartupWMClass=QCanvas
+X-AppImage-Version=#VERSION#

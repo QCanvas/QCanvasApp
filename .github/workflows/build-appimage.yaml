@@ -1,9 +1,10 @@
-name: build
+name: release
 on:
-    #    create:
     push:
         branches:
             - "reborn"
+        tags:
+            - "v1.**"
 
 jobs:
     build-appimage:
@@ -12,7 +13,8 @@ jobs:
         steps:
             -   run: sudo apt install desktop-file-utils -y
             -   uses: actions/checkout@v4
-            -   run: wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage -O appimagetool
+            -   name: Download appimagetool
+                run: wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage -O appimagetool
             -   run: chmod +x appimagetool
             -   uses: actions/setup-python@v5
                 with:
@@ -26,24 +28,22 @@ jobs:
                 run: poetry run pyinstaller --hidden-import aiosqlite --onedir -n AppRun qcanvas/run.py
             -   name: Move files
                 run: mv dist/*/* appimage/
+            -   name: Set version
+                uses: richardrigutins/replace-in-files@v2
+                with:
+                    files: "appimage/qcanvas.desktop"
+                    search-text: "#VERSION#"
+                    replacement-text: ${{github.ref}}
             -   name: Package AppImage
                 run: ./appimagetool appimage -u "gh-releases-zsync|QCanvas|QCanvasApp|latest|QCanvas-x86_64.AppImage.zsync"
-            #            -   uses: actions/upload-artifact@v4
-            #                with:
-            #                    path: |
-            #                        QCanvas-x86_64.AppImage
-            #                        QCanvas-x86_64.AppImage.zsync
-            -   run: echo "DATE=$(date +'%d-%m-%Y')" >> $GITHUB_ENV
             -   name: Upload binaries to release
                 uses: svenstaro/upload-release-action@v2
                 with:
-                    release_name: "Build ${{ env.DATE }}"
                     repo_token: ${{ secrets.PUBLISH_TOKEN }}
                     file: QCanvas-*
-                    tag: "release-${{ env.DATE }}"
                     overwrite: true
                     file_glob: true
-            -   run: echo ${{env.GITHUB_REF}}
+            -   run: echo ${{github.ref}}
     build-windows:
         name: Build PyInstaller Windows
         runs-on: windows-latest
@@ -59,16 +59,9 @@ jobs:
             -   run: poetry update qcanvas-backend
             -   name: Build pyinstaller
                 run: poetry run pyinstaller --hidden-import aiosqlite --onefile -n QCanvas --icon windows/qcanvas.ico qcanvas/run.py --windowed
-            -   name: Get time
-                uses: Kaven-Universe/github-action-current-date-time@v1
-                id: get_time
-                with:
-                    format: "DD-MM-YYYY"
             -   name: Upload binaries to release
                 uses: svenstaro/upload-release-action@v2
                 with:
-                    release_name: "Build ${{ steps.get_time.outputs.time }}"
                     repo_token: ${{ secrets.PUBLISH_TOKEN }}
                     file: dist/QCanvas.exe
-                    tag: "release-${{ steps.get_time.outputs.time }}"
                     overwrite: true
