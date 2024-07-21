@@ -1,5 +1,5 @@
 import logging
-from logging import INFO, WARNING
+from logging import INFO, WARNING, DEBUG
 
 import qcanvas.app_start
 from qcanvas.util import paths, logs
@@ -11,6 +11,13 @@ logging.basicConfig(
     level="WARN",
 )
 
-logs.set_levels({"qcanvas": INFO, "qcanvas.ui": WARNING, "qcanvas_backend": INFO})
+logs.set_levels(
+    {
+        "qcanvas": INFO,
+        "qcanvas.ui": WARNING,
+        "qcanvas_backend": INFO,
+        "qcanvas.ui.main_ui.status_bar_progress_display": DEBUG,
+    }
+)
 
 qcanvas.app_start.launch()

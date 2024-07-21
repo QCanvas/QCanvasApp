@@ -45,25 +45,29 @@ class StatusBarProgressDisplay(QStatusBar):
         _logger.debug("Progress %s: %i/%i", task_id, current, total)
 
         async with self._lock:
+            if task_id not in self._tasks:
+                self._add_task(task_id, current, total)
             if current == total and total != 0:
-                _logger.debug("Task finished %s", task_id)
-                self._tasks.pop(task_id, None)
-            elif task_id not in self._tasks:
-                self._tasks[task_id] = _TaskProgress(current, total)
+                self._remove_task(task_id)
             else:
-                task = self._tasks[task_id]
-
-                task.current = current
-                task.total = total
+                self._update_task(task_id, current, total)
 
         await self._update_task_status()
 
+    def _update_task(self, task_id: TaskID, current: int, total: int) -> None:
+        _logger.debug("Update %s", task_id)
+        task = self._tasks[task_id]
+        task.current = current
+        task.total = total
+
     @asyncSlot()
     async def _on_task_failed(self, task_id: TaskID, context: str | Exception) -> None:
-        async with self._lock:
-            self._tasks.pop(task_id, None)
+        _logger.debug("%s failed", task_id)
 
-            if len(self._tasks) == 0:
+        async with self._lock:
+            self._remove_task(task_id)
+
+            if self._has_no_tasks:
                 self._progress_bar.hide()
 
         self.showMessage(f"Failed: {task_id.step_name}", 5000)
@@ -71,24 +75,27 @@ class StatusBarProgressDisplay(QStatusBar):
     async def _update_task_status(self) -> None:
         _logger.debug("Tasks: %s", self._tasks)
         async with self._lock:
-            if len(self._tasks) == 0:
+            if self._has_no_tasks:
                 self._show_done()
-            elif len(self._tasks) == 1:
+            elif self._has_single_task:
                 self._show_single_task_progress(list(self._tasks.items())[0])
             else:
                 self._show_multiple_tasks_progress(list(self._tasks.values()))
 
     def _show_done(self) -> None:
+        _logger.debug("Finished tasks. Tasks: %s", self._tasks)
         self.showMessage("All tasks finished", 5000)
         self._progress_bar.hide()
 
     def _show_single_task_progress(self, task: Tuple[TaskID, _TaskProgress]) -> None:
+        _logger.debug("Single task %s", task)
         id, progress = task
 
         self._show_progress(progress)
         self.showMessage(id.step_name)
 
     def _show_multiple_tasks_progress(self, tasks: list[_TaskProgress]) -> None:
+        _logger.debug("Multiple tasks", tasks)
         self.showMessage(f"{len(tasks)} tasks in progress")
         self._show_progress(self._calculate_progress(tasks))
 
@@ -122,3 +129,25 @@ class StatusBarProgressDisplay(QStatusBar):
             self._progress_bar.setFormat("")
 
         self._progress_bar.show()
+
+    def _add_task(self, task: TaskID, current: int, total: int) -> None:
+        self._tasks[task] = _TaskProgress(current, total)
+        _logger.debug("Added task %s", task)
+        _logger.debug("Tasks: %s", self._tasks)
+
+    def _remove_task(self, task: TaskID) -> None:
+        self._tasks.pop(task, None)
+        _logger.debug("Removed task %s", task)
+        _logger.debug("Tasks: %s", self._tasks)
+
+    @property
+    def _has_single_task(self) -> bool:
+        return len(self._tasks) == 1
+
+    @property
+    def _has_many_tasks(self) -> bool:
+        return len(self._tasks) > 1
+
+    @property
+    def _has_no_tasks(self) -> bool:
+        return len(self._tasks) == 0
