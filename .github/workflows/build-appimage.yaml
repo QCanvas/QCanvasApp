@@ -1,8 +1,6 @@
 name: Create release
 on:
     push:
-        branches:
-            - "reborn"
         tags:
             - "v1.**"
 
@@ -33,7 +31,7 @@ jobs:
                 with:
                     files: "appimage/qcanvas.desktop"
                     search-text: "#VERSION#"
-                    replacement-text: ${{github.ref}}
+                    replacement-text: ${{github.ref_name}}
             -   name: Package AppImage
                 run: ./appimagetool appimage -u "gh-releases-zsync|QCanvas|QCanvasApp|latest|QCanvas-x86_64.AppImage.zsync"
             -   name: Upload binaries to release
@@ -43,7 +41,6 @@ jobs:
                     file: QCanvas-*
                     overwrite: true
                     file_glob: true
-            -   run: echo ${{github.ref}}
     build-windows:
         name: Build PyInstaller Windows
         runs-on: windows-latest
