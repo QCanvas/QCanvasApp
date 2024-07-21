@@ -6,7 +6,9 @@ import qcanvas_backend.database.types as db
 from qasync import asyncSlot
 from qcanvas_backend.database.data_monolith import DataMonolith
 from qcanvas_backend.qcanvas import QCanvas
+from qtpy.QtCore import QUrl
 from qtpy.QtCore import Signal, Slot
+from qtpy.QtGui import QDesktopServices, QKeySequence
 from qtpy.QtGui import QPixmap
 from qtpy.QtWidgets import *
 
@@ -16,6 +18,7 @@ from qcanvas.ui.course_viewer import CourseTree
 from qcanvas.ui.main_ui.course_viewer_container import CourseViewerContainer
 from qcanvas.ui.main_ui.status_bar_progress_display import StatusBarProgressDisplay
 from qcanvas.util import paths, settings
+from qcanvas.util.ui_tools import create_qaction
 
 _logger = logging.getLogger(__name__)
 
@@ -37,6 +40,7 @@ class QCanvasWindow(QMainWindow):
             storage_path=paths.data_storage(),
             resource_manager_class=FrontendResourceManager,
         )
+
         self._course_tree = CourseTree()
         self._course_tree.item_selected.connect(self._on_course_selected)
         self._course_tree.course_renamed.connect(self._on_course_renamed)
@@ -47,9 +51,35 @@ class QCanvasWindow(QMainWindow):
         )
 
         self.setCentralWidget(self._setup_main_layout())
+        self.setStatusBar(StatusBarProgressDisplay())
+        self._setup_menu_bar()
+
         self._loaded.connect(self._load_db)
         self._loaded.emit()
-        self.setStatusBar(StatusBarProgressDisplay())
+
+    def _setup_menu_bar(self) -> None:
+        menu_item = self.menuBar().addMenu("File")
+
+        create_qaction(
+            name="Open downloads folder",
+            shortcut=QKeySequence("Ctrl+D"),
+            triggered=self._open_downloads_folder,
+            parent=menu_item,
+        )
+
+        create_qaction(
+            name="Quick canvas login",
+            shortcut=QKeySequence("Ctrl+O"),
+            triggered=self._open_quick_auth_in_browser,
+            parent=menu_item,
+        )
+
+        create_qaction(
+            name="Quit",
+            shortcut=QKeySequence("Ctrl+Q"),
+            triggered=lambda: self.close(),
+            parent=menu_item,
+        )
 
     def _setup_main_layout(self) -> QWidget:
         h_box = QHBoxLayout()
@@ -113,3 +143,20 @@ class QCanvasWindow(QMainWindow):
         async with self._qcanvas.database.session() as session:
             session.add(course)
             course.configuration.nickname = new_name
+
+    @asyncSlot()
+    async def _open_quick_auth_in_browser(self):
+        opening_progress_dialog = QProgressDialog("Opening canvas", None, 0, 0, self)
+        opening_progress_dialog.setWindowTitle("Please wait")
+        opening_progress_dialog.show()
+        QDesktopServices.openUrl(
+            await self._qcanvas.canvas_client.get_temporary_session_url()
+        )
+        opening_progress_dialog.close()
+
+    @Slot()
+    def _open_downloads_folder(self) -> None:
+        # fixme hard coded path! >:(
+        QDesktopServices.openUrl(
+            QUrl(f"file://{(paths.data_storage() / 'downloads').absolute()}")
+        )
