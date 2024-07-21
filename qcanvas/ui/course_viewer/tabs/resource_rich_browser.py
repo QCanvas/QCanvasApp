@@ -31,7 +31,8 @@ class ResourceRichBrowser(QTextBrowser):
         self.anchorClicked.connect(self._open_url)
 
         if isinstance(self._downloader, FrontendResourceManager):
-            self._downloader.download_finished.connect(self._download_finished)
+            self._downloader.download_finished.connect(self._download_updated)
+            self._downloader.download_failed.connect(self._download_updated)
 
     def show_blank(self, completely_blank: bool = False) -> None:
         if completely_blank:
@@ -149,6 +150,6 @@ class ResourceRichBrowser(QTextBrowser):
         QDesktopServices.openUrl(QUrl.fromLocalFile(resource_path.absolute()))
 
     @Slot()
-    def _download_finished(self, resource: db.Resource) -> None:
+    def _download_updated(self, resource: db.Resource) -> None:
         if self._content is not None and resource.id in self._current_content_resources:
             self._show_page_content(self._content)

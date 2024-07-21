@@ -21,6 +21,7 @@ class _Meta(type(QObject), ABCMeta): ...
 
 class FrontendResourceManager(QObject, ResourceManager, metaclass=_Meta):
     download_finished = Signal(db.Resource)
+    download_failed = Signal(db.Resource)
 
     def __init__(
         self,
@@ -56,6 +57,8 @@ class FrontendResourceManager(QObject, ResourceManager, metaclass=_Meta):
             )
 
         task_master.report_failed(task, "Download failed")
+
+        self.download_failed.emit(resource)
 
     def on_download_finished(self, resource: db.Resource) -> None:
         self.download_finished.emit(resource)
