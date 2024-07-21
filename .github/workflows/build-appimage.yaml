@@ -21,6 +21,7 @@ jobs:
                 uses: abatilo/actions-poetry@v2
             -   name: Install deps
                 run: poetry install
+            -   run: poetry update qcanvas-backend
             -   name: Build pyinstaller
                 run: poetry run pyinstaller --hidden-import aiosqlite --onedir -n AppRun qcanvas/run.py
             -   name: Move files
@@ -55,6 +56,7 @@ jobs:
                 uses: abatilo/actions-poetry@v2
             -   name: Install deps
                 run: poetry install
+            -   run: poetry update qcanvas-backend
             -   name: Build pyinstaller
                 run: poetry run pyinstaller --hidden-import aiosqlite --onefile -n QCanvas --icon windows/qcanvas.ico qcanvas/run.py --windowed
             -   name: Get time
