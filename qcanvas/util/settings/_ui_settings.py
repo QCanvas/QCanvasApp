@@ -2,7 +2,7 @@ import logging
 
 from qtpy.QtCore import QByteArray, QSettings
 
-from qcanvas.util.settings.mapped_setting import MappedSetting
+from qcanvas.util.settings._mapped_setting import MappedSetting
 
 _logger = logging.getLogger(__name__)
 

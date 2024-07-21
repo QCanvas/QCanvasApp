@@ -14,6 +14,8 @@ from qcanvas import icons
 from qcanvas.backend_connectors import FrontendResourceManager
 from qcanvas.ui.course_viewer import CourseTree
 from qcanvas.ui.main_ui.course_viewer_container import CourseViewerContainer
+from qcanvas.ui.main_ui.options.quick_sync_option import QuickSyncOption
+from qcanvas.ui.main_ui.options.sync_on_start_option import SyncOnStartOption
 from qcanvas.ui.main_ui.status_bar_progress_display import StatusBarProgressDisplay
 from qcanvas.util import paths, settings
 from qcanvas.util.ui_tools import create_qaction
@@ -43,7 +45,7 @@ class QCanvasWindow(QMainWindow):
         self._course_tree.item_selected.connect(self._on_course_selected)
         self._course_tree.course_renamed.connect(self._on_course_renamed)
         self._sync_button = QPushButton("Synchronise")
-        self._sync_button.clicked.connect(self._synchronise)
+        self._sync_button.clicked.connect(self._synchronise_requested)
         self._course_viewer_container = CourseViewerContainer(
             self._qcanvas.resource_manager
         )
@@ -53,32 +55,45 @@ class QCanvasWindow(QMainWindow):
         self._setup_menu_bar()
         self._restore_window_position()
 
-        self._loaded.connect(self._load_db)
+        self._loaded.connect(self._on_app_loaded)
         self._loaded.emit()
 
     def _setup_menu_bar(self) -> None:
-        menu_item = self.menuBar().addMenu("File")
+        menu_bar = self.menuBar()
+        app_menu = menu_bar.addMenu("Actions")
+
+        create_qaction(
+            name="Synchronise",
+            shortcut=QKeySequence("Ctrl+S"),
+            triggered=self._synchronise_requested,
+            parent=app_menu,
+        )
 
         create_qaction(
             name="Open downloads folder",
             shortcut=QKeySequence("Ctrl+D"),
             triggered=self._open_downloads_folder,
-            parent=menu_item,
+            parent=app_menu,
         )
 
         create_qaction(
             name="Quick canvas login",
             shortcut=QKeySequence("Ctrl+O"),
             triggered=self._open_quick_auth_in_browser,
-            parent=menu_item,
+            parent=app_menu,
         )
 
         create_qaction(
             name="Quit",
             shortcut=QKeySequence("Ctrl+Q"),
             triggered=lambda: self.close(),
-            parent=menu_item,
+            parent=app_menu,
         )
+
+        options_menu = menu_bar.addMenu("Options")
+
+        options_menu.addAction(QuickSyncOption(options_menu))
+        options_menu.addAction(SyncOnStartOption(options_menu))
 
     def _restore_window_position(self):
         self.restoreGeometry(settings.ui.last_geometry)
@@ -106,11 +121,17 @@ class QCanvasWindow(QMainWindow):
         return course_list_column
 
     @asyncSlot()
-    async def _load_db(self) -> None:
+    async def _on_app_loaded(self) -> None:
         await self._qcanvas.init()
         self._course_tree.reload(await self._get_terms(), sync_receipt=None)
 
+        if settings.client.sync_on_start:
+            await self._synchronise()
+
     @asyncSlot()
+    async def _synchronise_requested(self) -> None:
+        await self._synchronise()
+
     async def _synchronise(self) -> None:
         if not self._operation_semaphore.acquire(False):
             _logger.debug("Sync operation already in progress")
@@ -119,7 +140,9 @@ class QCanvasWindow(QMainWindow):
         try:
             # todo handle exceptions and PROGRESS!! better
             self._sync_button.setText("Sync in progress...")
-            receipt = await self._qcanvas.synchronise_canvas()
+            receipt = await self._qcanvas.synchronise_canvas(
+                quick_sync=settings.client.quick_sync_enabled
+            )
 
             self._course_tree.reload(await self._get_terms(), sync_receipt=receipt)
             await self._course_viewer_container.reload_all(
