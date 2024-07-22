@@ -25,5 +25,5 @@ def main():
     qcanvas.app_start.launch()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
