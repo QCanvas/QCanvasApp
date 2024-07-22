@@ -47,7 +47,7 @@ jobs:
                     GH_TOKEN: ${{ github.token }}
     build-appimage:
         needs: [ create-release, check-version ]
-        name: Build Appimage
+        name: Build .AppImage
         runs-on: ubuntu-22.04
         steps:
             -   run: sudo apt install desktop-file-utils -y
@@ -81,7 +81,7 @@ jobs:
                     GH_TOKEN: ${{ github.token }}
     build-windows:
         needs: [ create-release, check-version ]
-        name: Build PyInstaller Windows
+        name: Build .exe
         runs-on: windows-latest
         steps:
             -   uses: actions/checkout@v4
