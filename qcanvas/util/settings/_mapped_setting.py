@@ -5,8 +5,10 @@ from qtpy.QtCore import QSettings
 
 _logger = logging.getLogger(__name__)
 
+T = TypeVar("T")
 
-class MappedSetting[T]:
+
+class MappedSetting(Generic[T]):
     """
     Acts as a proxy for a named value in a QSettings object.
     Stores the value in memory when initialised and updates it accordingly, to protect it from changes on disk.
@@ -46,7 +48,7 @@ class BoolSetting(MappedSetting[bool]):
     def __init__(self, default: bool = False):
         super().__init__(default)
 
-    @override
+    # @override
     def _read(self) -> bool:
         try:
             # noinspection PyTypeChecker
@@ -55,7 +57,7 @@ class BoolSetting(MappedSetting[bool]):
         except:
             return self.default
 
-    @override
+    # @override
     def _write(self, value: object) -> None:
         if not isinstance(value, bool):
             raise TypeError()

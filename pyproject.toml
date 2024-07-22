@@ -9,7 +9,7 @@ readme = "README.md"
 qcanvas = "qcanvas.run:main"
 
 [tool.poetry.dependencies]
-python = ">=3.12,<3.13"
+python = ">=3.11,<3.13"
 qcanvas-api-clients = "^0.2.2"
 qcanvas-backend = "0.1.10a1"
 asynctaskpool = "^0.2.1"
