@@ -1,5 +1,6 @@
 name: Create release
 on:
+    workflow_dispatch:
     push:
         paths:
             - 'pyproject.toml'
@@ -50,7 +51,7 @@ jobs:
             -   name: Install poetry
                 uses: abatilo/actions-poetry@v2
             -   name: Install deps
-                run: poetry install
+                run: poetry install --with flatpak-exclude
             -   run: poetry update qcanvas-backend
             -   name: Build pyinstaller
                 run: poetry run pyinstaller --hidden-import aiosqlite --onedir -n AppRun qcanvas/run.py
@@ -69,7 +70,8 @@ jobs:
                 env:
                     GH_TOKEN: ${{ github.token }}
             -   name: Upload binaries
-                run: gh release ${{ needs.check-version.outputs.new-version }} QCanvas-* --clobber
+                if: always()
+                run: gh release upload ${{ needs.check-version.outputs.new-version }} QCanvas-* --clobber
                 env:
                     GH_TOKEN: ${{ github.token }}
     build-windows:
@@ -85,7 +87,7 @@ jobs:
             -   name: Install poetry
                 uses: abatilo/actions-poetry@v2
             -   name: Install deps
-                run: poetry install
+                run: poetry install --with flatpak-exclude
             -   run: poetry update qcanvas-backend
             -   name: Build pyinstaller
                 run: poetry run pyinstaller --hidden-import aiosqlite --onefile -n QCanvas --icon windows/qcanvas.ico qcanvas/run.py --windowed
@@ -94,7 +96,8 @@ jobs:
                 env:
                     GH_TOKEN: ${{ github.token }}
             -   name: Upload binaries
-                run: gh release ${{ needs.check-version.outputs.new-version }} dist/QCanvas.exe --clobber
+                if: always()
+                run: gh release upload ${{ needs.check-version.outputs.new-version }} dist/QCanvas.exe --clobber
                 env:
                     GH_TOKEN: ${{ github.token }}
     publish-pypi:

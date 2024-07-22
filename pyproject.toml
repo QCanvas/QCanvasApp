@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "qcanvas"
-version = "1.0.3.post0"
+version = "1.0.3.post4"
 description = "QCanvas is a desktop client for Canvas LMS."
 authors = ["QCanvas <QCanvas@noreply.codeberg.org>"]
 readme = "README.md"
@@ -19,13 +19,13 @@ aiosqlite = "^0.20.0"
 pyqtdarktheme-fork = "^2.3.2"
 qasync = "^0.27.1"
 lightdb = "^2.0"
-pyinstaller = "^6.9.0"
-#2024-07-18: Latest version causes error with pyinstaller
-setuptools = "=70.3.0"
 platformdirs = "^4.2.2"
 
 [tool.poetry.group.flatpak-exclude.dependencies]
 pyside6 = "^6.7.2"
+#2024-07-18: Latest version causes error with pyinstaller
+setuptools = "=70.3.0"
+pyinstaller = "^6.9.0"
 
 [tool.poetry.group.dev-tools]
 optional = true
