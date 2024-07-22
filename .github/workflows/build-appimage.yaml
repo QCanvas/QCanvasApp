@@ -46,7 +46,7 @@ jobs:
                 env:
                     GH_TOKEN: ${{ github.token }}
     build-appimage:
-        needs: create-release
+        needs: [ create-release, check-version ]
         name: Build Appimage
         runs-on: ubuntu-22.04
         steps:
@@ -80,7 +80,7 @@ jobs:
                 env:
                     GH_TOKEN: ${{ github.token }}
     build-windows:
-        needs: create-release
+        needs: [ create-release, check-version ]
         name: Build PyInstaller Windows
         runs-on: windows-latest
         steps:
