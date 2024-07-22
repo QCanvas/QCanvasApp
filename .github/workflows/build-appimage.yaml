@@ -35,8 +35,12 @@ jobs:
                 run: ./appimagetool appimage -u "gh-releases-zsync|QCanvas|QCanvasApp|latest|QCanvas-x86_64.AppImage.zsync"
             -   name: Create release
                 run: gh release create ${{ github.ref_name }} --generate-notes
+                env:
+                    GH_TOKEN: ${{ github.token }}
             -   name: Upload binaries
                 run: gh release ${{ github.ref_name }} QCanvas-* --clobber
+                env:
+                    GH_TOKEN: ${{ github.token }}
     build-windows:
         name: Build PyInstaller Windows
         runs-on: windows-latest
@@ -54,5 +58,9 @@ jobs:
                 run: poetry run pyinstaller --hidden-import aiosqlite --onefile -n QCanvas --icon windows/qcanvas.ico qcanvas/run.py --windowed
             -   name: Create release
                 run: gh release create ${{ github.ref_name }} --generate-notes
+                env:
+                    GH_TOKEN: ${{ github.token }}
             -   name: Upload binaries
                 run: gh release ${{ github.ref_name }} dist/QCanvas.exe --clobber
+                env:
+                    GH_TOKEN: ${{ github.token }}
