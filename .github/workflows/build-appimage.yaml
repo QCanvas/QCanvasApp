@@ -41,7 +41,6 @@ jobs:
         runs-on: ubuntu-22.04
         steps:
             -   name: Create release
-                continue-on-error: true
                 run: gh release create ${{ needs.check-version.outputs.new-version }} --generate-notes
                 env:
                     GH_TOKEN: ${{ github.token }}
