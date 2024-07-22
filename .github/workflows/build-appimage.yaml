@@ -5,6 +5,7 @@ on:
             - 'pyproject.toml'
 jobs:
     check-version:
+        name: Check if package version changed
         runs-on: ubuntu-latest
         outputs:
             needs-build: ${{ steps.check.outputs.value }}
