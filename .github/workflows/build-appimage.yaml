@@ -34,9 +34,19 @@ jobs:
                 run: echo "value=${{ steps.package_version.outputs.value != steps.previous_tag.outputs.tag }}" >> "$GITHUB_OUTPUT"
             -   id: new-version
                 run: echo "value=${{ steps.package_version.outputs.value }}" >> "$GITHUB_OUTPUT"
-    build-appimage:
+    create-release:
         needs: check-version
         if: ${{ needs.check-version.outputs.needs-build == 'true' }}
+        name: Create release
+        runs-on: ubuntu-22.04
+        steps:
+            -   name: Create release
+                continue-on-error: true
+                run: gh release create ${{ needs.check-version.outputs.new-version }} --generate-notes
+                env:
+                    GH_TOKEN: ${{ github.token }}
+    build-appimage:
+        needs: create-release
         name: Build Appimage
         runs-on: ubuntu-22.04
         steps:
@@ -65,18 +75,12 @@ jobs:
                     replacement-text: ${{ needs.check-version.outputs.new-version }}
             -   name: Package AppImage
                 run: ./appimagetool appimage -u "gh-releases-zsync|QCanvas|QCanvasApp|latest|QCanvas-x86_64.AppImage.zsync"
-            -   name: Create release
-                run: gh release create ${{ needs.check-version.outputs.new-version }} --generate-notes
-                env:
-                    GH_TOKEN: ${{ github.token }}
             -   name: Upload binaries
-                if: always()
                 run: gh release upload ${{ needs.check-version.outputs.new-version }} QCanvas-* --clobber
                 env:
                     GH_TOKEN: ${{ github.token }}
     build-windows:
-        needs: check-version
-        if: ${{ needs.check-version.outputs.needs-build == 'true' }}
+        needs: create-release
         name: Build PyInstaller Windows
         runs-on: windows-latest
         steps:
@@ -91,23 +95,18 @@ jobs:
             -   run: poetry update qcanvas-backend
             -   name: Build pyinstaller
                 run: poetry run pyinstaller --hidden-import aiosqlite --onefile -n QCanvas --icon windows/qcanvas.ico qcanvas/run.py --windowed
-            -   name: Create release
-                run: gh release create ${{ needs.check-version.outputs.new-version }} --generate-notes
-                env:
-                    GH_TOKEN: ${{ github.token }}
             -   name: Upload binaries
-                if: always()
                 run: gh release upload ${{ needs.check-version.outputs.new-version }} dist/QCanvas.exe --clobber
                 env:
                     GH_TOKEN: ${{ github.token }}
-    publish-pypi:
-        needs: check-version
-        if: ${{ needs.check-version.outputs.needs-build == 'true' }}
-        name: Publish PyPI package
-        runs-on: ubuntu-22.04
-        steps:
-            -   uses: actions/checkout@v4
-            -   name: Build and publish to pypi
-                uses: JRubics/poetry-publish@v2.0
-                with:
-                    pypi_token: ${{ secrets.PYPI_TOKEN }}
+#    publish-pypi:
+#        needs: check-version
+#        if: ${{ needs.check-version.outputs.needs-build == 'true' }}
+#        name: Publish PyPI package
+#        runs-on: ubuntu-22.04
+#        steps:
+#            -   uses: actions/checkout@v4
+#            -   name: Build and publish to pypi
+#                uses: JRubics/poetry-publish@v2.0
+#                with:
+#                    pypi_token: ${{ secrets.PYPI_TOKEN }}
