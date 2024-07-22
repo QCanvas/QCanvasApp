@@ -3,7 +3,6 @@ on:
     push:
         tags:
             - "v1.**"
-
 jobs:
     build-appimage:
         name: Build Appimage
@@ -34,13 +33,10 @@ jobs:
                     replacement-text: ${{github.ref_name}}
             -   name: Package AppImage
                 run: ./appimagetool appimage -u "gh-releases-zsync|QCanvas|QCanvasApp|latest|QCanvas-x86_64.AppImage.zsync"
-            -   name: Upload binaries to release
-                uses: svenstaro/upload-release-action@v2
-                with:
-                    repo_token: ${{ secrets.PUBLISH_TOKEN }}
-                    file: QCanvas-*
-                    overwrite: true
-                    file_glob: true
+            -   name: Create release
+                run: gh release create ${{ github.ref_name }} --generate-notes
+            -   name: Upload binaries
+                run: gh release ${{ github.ref_name }} QCanvas-* --clobber
     build-windows:
         name: Build PyInstaller Windows
         runs-on: windows-latest
@@ -56,9 +52,7 @@ jobs:
             -   run: poetry update qcanvas-backend
             -   name: Build pyinstaller
                 run: poetry run pyinstaller --hidden-import aiosqlite --onefile -n QCanvas --icon windows/qcanvas.ico qcanvas/run.py --windowed
-            -   name: Upload binaries to release
-                uses: svenstaro/upload-release-action@v2
-                with:
-                    repo_token: ${{ secrets.PUBLISH_TOKEN }}
-                    file: dist/QCanvas.exe
-                    overwrite: true
+            -   name: Create release
+                run: gh release create ${{ github.ref_name }} --generate-notes
+            -   name: Upload binaries
+                run: gh release ${{ github.ref_name }} dist/QCanvas.exe --clobber
