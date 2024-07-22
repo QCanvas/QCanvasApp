@@ -7,6 +7,7 @@ from qcanvas.util import logs, paths
 paths.data_storage().mkdir(parents=True, exist_ok=True)
 
 logging.basicConfig(
+    filemode="w",
     filename=paths.data_storage() / "debug.log",
     level="WARN",
 )
