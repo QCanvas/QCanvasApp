@@ -1,10 +1,40 @@
 name: Create release
 on:
     push:
-        tags:
-            - "v1.**"
+        paths:
+            - 'pyproject.toml'
 jobs:
+    check-version:
+        runs-on: ubuntu-latest
+        outputs:
+            needs-build: ${{ steps.check.outputs.value }}
+            new-version: ${{ steps.new-version.outputs.value }}
+        steps:
+            -   uses: actions/checkout@v4
+                with:
+                    fetch-depth: 0
+            -   name: "Get previous tag"
+                id: previous_tag
+                uses: "WyriHaximus/github-action-get-previous-tag@v1.4.0"
+                with:
+                    prefix: "v"
+                    fallback: 0.0.0
+            -   name: "Get package version"
+                id: package_version_raw
+                uses: sravinet/toml-select@v1.0.1
+                with:
+                    file: "pyproject.toml"
+                    field: "tool.poetry.version"
+            # Add a 'v' onto the start of the package version for comparison
+            -   id: package_version
+                run: echo "value=v${{steps.package_version_raw.outputs.value}}" >> "$GITHUB_OUTPUT"
+            -   id: check
+                run: echo "value=${{ steps.package_version.outputs.value != steps.previous_tag.outputs.tag }}" >> "$GITHUB_OUTPUT"
+            -   id: new-version
+                run: echo "value=${{ steps.package_version.outputs.value }}" >> "$GITHUB_OUTPUT"
     build-appimage:
+        needs: check-version
+        if: ${{ needs.check-version.outputs.needs-build == 'true' }}
         name: Build Appimage
         runs-on: ubuntu-22.04
         steps:
@@ -30,18 +60,20 @@ jobs:
                 with:
                     files: "appimage/qcanvas.desktop"
                     search-text: "#VERSION#"
-                    replacement-text: ${{github.ref_name}}
+                    replacement-text: ${{ needs.check-version.outputs.new-version }}
             -   name: Package AppImage
                 run: ./appimagetool appimage -u "gh-releases-zsync|QCanvas|QCanvasApp|latest|QCanvas-x86_64.AppImage.zsync"
             -   name: Create release
-                run: gh release create ${{ github.ref_name }} --generate-notes
+                run: gh release create ${{ needs.check-version.outputs.new-version }} --generate-notes
                 env:
                     GH_TOKEN: ${{ github.token }}
             -   name: Upload binaries
-                run: gh release ${{ github.ref_name }} QCanvas-* --clobber
+                run: gh release ${{ needs.check-version.outputs.new-version }} QCanvas-* --clobber
                 env:
                     GH_TOKEN: ${{ github.token }}
     build-windows:
+        needs: check-version
+        if: ${{ needs.check-version.outputs.needs-build == 'true' }}
         name: Build PyInstaller Windows
         runs-on: windows-latest
         steps:
@@ -57,10 +89,10 @@ jobs:
             -   name: Build pyinstaller
                 run: poetry run pyinstaller --hidden-import aiosqlite --onefile -n QCanvas --icon windows/qcanvas.ico qcanvas/run.py --windowed
             -   name: Create release
-                run: gh release create ${{ github.ref_name }} --generate-notes
+                run: gh release create ${{ needs.check-version.outputs.new-version }} --generate-notes
                 env:
                     GH_TOKEN: ${{ github.token }}
             -   name: Upload binaries
-                run: gh release ${{ github.ref_name }} dist/QCanvas.exe --clobber
+                run: gh release ${{ needs.check-version.outputs.new-version }} dist/QCanvas.exe --clobber
                 env:
                     GH_TOKEN: ${{ github.token }}
