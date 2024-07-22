@@ -97,3 +97,14 @@ jobs:
                 run: gh release ${{ needs.check-version.outputs.new-version }} dist/QCanvas.exe --clobber
                 env:
                     GH_TOKEN: ${{ github.token }}
+    publish-pypi:
+        needs: check-version
+        if: ${{ needs.check-version.outputs.needs-build == 'true' }}
+        name: Publish PyPI package
+        runs-on: ubuntu-22.04
+        steps:
+            -   uses: actions/checkout@v4
+            -   name: Build and publish to pypi
+                uses: JRubics/poetry-publish@v2.0
+                with:
+                    pypi_token: ${{ secrets.PYPI_TOKEN }}
