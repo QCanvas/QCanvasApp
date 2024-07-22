@@ -5,6 +5,7 @@ from typing import *
 import qcanvas_backend.database.types as db
 from qasync import asyncSlot
 from qcanvas_backend.database.data_monolith import DataMonolith
+from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qcanvas_backend.qcanvas import QCanvas
 from qtpy.QtCore import QUrl, Signal, Slot
 from qtpy.QtGui import QDesktopServices, QKeySequence, QPixmap
@@ -84,6 +85,10 @@ class QCanvasWindow(QMainWindow):
         )
 
         create_qaction(
+            name="Mark all as seen", triggered=self._clear_new_items, parent=app_menu
+        )
+
+        create_qaction(
             name="Quit",
             shortcut=QKeySequence("Ctrl+Q"),
             triggered=lambda: self.close(),
@@ -143,15 +148,21 @@ class QCanvasWindow(QMainWindow):
             receipt = await self._qcanvas.synchronise_canvas(
                 quick_sync=settings.client.quick_sync_enabled
             )
-
-            self._course_tree.reload(await self._get_terms(), sync_receipt=receipt)
-            await self._course_viewer_container.reload_all(
-                await self._get_courses(), sync_receipt=receipt
-            )
+            await self._reload(receipt)
             self._sync_button.setText("Synchronise")
+        except Exception as e:
+            error = QErrorMessage(self)
+            error.showMessage(str(e))
 
+            raise e
         finally:
             self._operation_semaphore.release()
+
+    async def _reload(self, receipt: Optional[SyncReceipt]) -> None:
+        self._course_tree.reload(await self._get_terms(), sync_receipt=receipt)
+        await self._course_viewer_container.reload_all(
+            await self._get_courses(), sync_receipt=receipt
+        )
 
     async def _get_terms(self) -> Sequence[db.Term]:
         return (await self._qcanvas.get_data()).terms
@@ -175,7 +186,7 @@ class QCanvasWindow(QMainWindow):
             course.configuration.nickname = new_name
 
     @asyncSlot()
-    async def _open_quick_auth_in_browser(self):
+    async def _open_quick_auth_in_browser(self) -> None:
         opening_progress_dialog = QProgressDialog("Opening canvas", None, 0, 0, self)
         opening_progress_dialog.setWindowTitle("Please wait")
         opening_progress_dialog.show()
@@ -190,3 +201,7 @@ class QCanvasWindow(QMainWindow):
         QDesktopServices.openUrl(
             QUrl(f"file://{(paths.data_storage() / 'downloads').absolute()}")
         )
+
+    @asyncSlot()
+    async def _clear_new_items(self) -> None:
+        await self._reload(None)
