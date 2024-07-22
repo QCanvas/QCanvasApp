@@ -5,6 +5,9 @@ description = ""
 authors = ["QCanvas <QCanvas@noreply.codeberg.org>"]
 readme = "README.md"
 
+[tool.poetry.scripts]
+qcanvas = "qcanvas.run:main"
+
 [tool.poetry.dependencies]
 python = ">=3.12,<3.13"
 qcanvas-api-clients = "^0.2.2"

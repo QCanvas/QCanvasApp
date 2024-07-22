@@ -20,4 +20,10 @@ logs.set_levels(
     }
 )
 
-qcanvas.app_start.launch()
+
+def main():
+    qcanvas.app_start.launch()
+
+
+if __name__ == '__main__':
+    main()
