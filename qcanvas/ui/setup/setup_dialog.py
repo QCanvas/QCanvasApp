@@ -6,8 +6,7 @@ from qcanvas_api_clients.canvas import CanvasClient, CanvasClientConfig
 from qcanvas_api_clients.panopto import PanoptoClient, PanoptoClientConfig
 from qcanvas_api_clients.util.request_exceptions import ConfigInvalidError
 from qtpy.QtCore import QUrl, Signal, Slot
-from qtpy.QtGui import QDesktopServices
-from qtpy.QtGui import QIcon
+from qtpy.QtGui import QDesktopServices, QIcon
 from qtpy.QtWidgets import *
 
 import qcanvas.util.settings as settings

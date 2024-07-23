@@ -2,9 +2,8 @@ import logging
 from abc import abstractmethod
 from typing import *
 
-from qtpy.QtCore import QItemSelection
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
-from qtpy.QtCore import Signal, Slot
+from qtpy.QtCore import QItemSelection, Signal, Slot
 from qtpy.QtWidgets import *
 
 from qcanvas.ui.memory_tree import MemoryTreeWidget, MemoryTreeWidgetItem

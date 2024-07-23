@@ -8,8 +8,7 @@ from qcanvas_backend.database.data_monolith import DataMonolith
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qcanvas_backend.qcanvas import QCanvas
 from qtpy.QtCore import QUrl, Signal, Slot
-from qtpy.QtGui import QDesktopServices, QKeySequence
-from qtpy.QtGui import QIcon
+from qtpy.QtGui import QDesktopServices, QIcon, QKeySequence
 from qtpy.QtWidgets import *
 
 from qcanvas import icons
