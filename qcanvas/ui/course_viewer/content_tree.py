@@ -2,7 +2,7 @@ import logging
 from abc import abstractmethod
 from typing import *
 
-from PyQt6.QtCore import QItemSelection
+from qtpy.QtCore import QItemSelection
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qtpy.QtCore import Signal, Slot
 from qtpy.QtWidgets import *

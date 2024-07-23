@@ -3,13 +3,13 @@ from threading import Semaphore
 from typing import *
 
 import qcanvas_backend.database.types as db
-from PyQt6.QtGui import QIcon
 from qasync import asyncSlot
 from qcanvas_backend.database.data_monolith import DataMonolith
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qcanvas_backend.qcanvas import QCanvas
 from qtpy.QtCore import QUrl, Signal, Slot
 from qtpy.QtGui import QDesktopServices, QKeySequence
+from qtpy.QtGui import QIcon
 from qtpy.QtWidgets import *
 
 from qcanvas import icons
