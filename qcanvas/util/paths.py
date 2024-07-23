@@ -35,7 +35,7 @@ def root() -> Path:
     elif _is_running_as_pyinstaller:
         root_path = platformdirs.user_data_path("QCanvasReborn", "QCanvasTeam")
 
-    print("Root path %s", root_path.absolute())
+    print("Root path", root_path.absolute())
     _logger.debug("Root path %s", root_path.absolute())
     return root_path
 
@@ -45,4 +45,4 @@ def ui_storage() -> Path:
 
 
 def data_storage() -> Path:
-    return root() / ".DATA"
+    return root()
