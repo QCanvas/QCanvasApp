@@ -3,7 +3,7 @@ from typing import *
 
 import qcanvas_backend.database.types as db
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
-from qtpy.QtCore import QObject, Qt, Signal, Slot
+from qtpy.QtCore import Qt, Signal
 
 from qcanvas.ui.course_viewer.content_tree import ContentTree
 from qcanvas.ui.memory_tree import MemoryTreeWidgetItem
@@ -11,18 +11,16 @@ from qcanvas.ui.memory_tree import MemoryTreeWidgetItem
 _logger = logging.getLogger(__name__)
 
 
-class _CourseTreeItem(MemoryTreeWidgetItem, QObject):
-    renamed = Signal(db.Course, str)
-
-    def __init__(self, course: db.Course):
+class _CourseTreeItem(MemoryTreeWidgetItem):
+    def __init__(self, course: db.Course, owner: "CourseTree"):
         MemoryTreeWidgetItem.__init__(
             self,
             id=course.id,
             data=course,
             strings=[course.configuration.nickname or course.name],
         )
-        QObject.__init__(self)
 
+        self._owner = owner
         self._course = course
 
         self.setFlags(
@@ -39,10 +37,10 @@ class _CourseTreeItem(MemoryTreeWidgetItem, QObject):
 
         if len(value) == 0:
             super().setData(column, role, self._course.name)
-            self.renamed.emit(self._course, None)
+            self._owner.course_renamed.emit(self._course, None)
         else:
             super().setData(column, role, value)
-            self.renamed.emit(self._course, value)
+            self._owner.course_renamed.emit(self._course, value)
 
 
 class CourseTree(ContentTree[Sequence[db.Term]]):
@@ -63,6 +61,7 @@ class CourseTree(ContentTree[Sequence[db.Term]]):
 
             for course in term.courses:
                 course_widget = self._create_course_widget(course, sync_receipt)
+                # course_widget.renamed.connect(self._on_course_renamed)
                 term_widget.addChild(course_widget)
 
             widgets.append(term_widget)
@@ -71,9 +70,8 @@ class CourseTree(ContentTree[Sequence[db.Term]]):
 
     def _create_course_widget(
         self, course: db.Course, sync_receipt: Optional[SyncReceipt]
-    ) -> MemoryTreeWidgetItem:
-        course_widget = _CourseTreeItem(course)
-        course_widget.renamed.connect(self._on_course_renamed)
+    ) -> _CourseTreeItem:
+        course_widget = _CourseTreeItem(course, self)
 
         is_new = sync_receipt is not None and course.id in sync_receipt.updated_courses
 
@@ -88,6 +86,6 @@ class CourseTree(ContentTree[Sequence[db.Term]]):
 
         return term_widget
 
-    @Slot()
-    def _on_course_renamed(self, course: db.Course, new_name: str) -> None:
-        self.course_renamed.emit(course, new_name)
+    # @Slot(db.Course, str)
+    # def _on_course_renamed(self, course: db.Course, new_name: str) -> None:
+    #     self.course_renamed.emit(course, new_name)

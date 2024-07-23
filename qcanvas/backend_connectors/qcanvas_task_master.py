@@ -14,7 +14,7 @@ class _TaskMaster(TaskMaster, QObject, metaclass=_Meta):
     task_progress = Signal(TaskID, int, int)
     task_failed = Signal(TaskID, object)
 
-    def report_failed(self, _task_id: TaskID, context: str | Exception) -> None:
+    def report_failed(self, _task_id: TaskID, context: object) -> None:
         self.task_failed.emit(_task_id, context)
 
     def report_progress(self, _task_id: TaskID, current: int, total: int) -> None:

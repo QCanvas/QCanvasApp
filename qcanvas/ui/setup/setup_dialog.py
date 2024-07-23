@@ -6,7 +6,8 @@ from qcanvas_api_clients.canvas import CanvasClient, CanvasClientConfig
 from qcanvas_api_clients.panopto import PanoptoClient, PanoptoClientConfig
 from qcanvas_api_clients.util.request_exceptions import ConfigInvalidError
 from qtpy.QtCore import QUrl, Signal, Slot
-from qtpy.QtGui import QDesktopServices, QPixmap
+from qtpy.QtGui import QDesktopServices
+from qtpy.QtGui import QIcon
 from qtpy.QtWidgets import *
 
 import qcanvas.util.settings as settings
@@ -30,7 +31,7 @@ class SetupDialog(QDialog):
         self.setWindowTitle("Configure QCanvas")
         self.setMinimumSize(550, 200)
         self.resize(550, 200)
-        self.setWindowIcon(QPixmap(icons.main_icon))
+        self.setWindowIcon(QIcon(icons.main_icon))
 
         self._semaphore = Semaphore()
         self._canvas_url_box = QLineEdit(settings.client.canvas_url)
@@ -76,7 +77,6 @@ class SetupDialog(QDialog):
         size_policy.setRetainSizeWhenHidden(True)
         widget.setSizePolicy(size_policy)
 
-    # @Slot()
     @asyncSlot()
     async def _accepted(self) -> None:
         if self._semaphore.acquire(False):
@@ -208,5 +208,9 @@ class SetupDialog(QDialog):
             "Don't share this key. You can revoke it at any time.",
             parent=self,
         )
-        msg.accepted.connect(lambda: QDesktopServices.openUrl(_tutorial_url))
+        msg.accepted.connect(self._open_tutorial)
         msg.show()
+
+    @Slot()
+    def _open_tutorial(self) -> None:
+        QDesktopServices.openUrl(QUrl(_tutorial_url))

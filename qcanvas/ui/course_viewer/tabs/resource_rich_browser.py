@@ -14,6 +14,7 @@ from qtpy.QtWidgets import QTextBrowser
 from qcanvas import icons
 from qcanvas.backend_connectors import FrontendResourceManager
 from qcanvas.util.html_cleaner import clean_up_html
+from qcanvas.util.qurl_util import file_url
 
 _logger = logging.getLogger(__name__)
 
@@ -148,7 +149,7 @@ class ResourceRichBrowser(QTextBrowser):
             case _:
                 raise ValueError()
 
-    @asyncSlot()
+    @asyncSlot(QUrl)
     async def _open_url(self, url: QUrl) -> None:
         if url.scheme() == "data":
             await self._open_resource_from_link(url)
@@ -167,10 +168,10 @@ class ResourceRichBrowser(QTextBrowser):
             )
             return
 
-        resource_path = self._downloader.resource_download_location(resource)
-        QDesktopServices.openUrl(QUrl.fromLocalFile(resource_path.absolute()))
+        resource_path = file_url(self._downloader.resource_download_location(resource))
+        QDesktopServices.openUrl(resource_path)
 
-    @Slot()
+    @Slot(db.Resource)
     def _download_updated(self, resource: db.Resource) -> None:
         if self._content is not None and resource.id in self._current_content_resources:
             self._show_page_content(self._content)

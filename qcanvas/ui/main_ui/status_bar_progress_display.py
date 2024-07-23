@@ -38,7 +38,7 @@ class StatusBarProgressDisplay(QStatusBar):
         bar.hide()
         return bar
 
-    @asyncSlot()
+    @asyncSlot(TaskID, int, int)
     async def _on_task_progress(
         self, task_id: TaskID, current: int, total: int
     ) -> None:
@@ -60,8 +60,8 @@ class StatusBarProgressDisplay(QStatusBar):
         task.current = current
         task.total = total
 
-    @asyncSlot()
-    async def _on_task_failed(self, task_id: TaskID, context: str | Exception) -> None:
+    @asyncSlot(TaskID, object)
+    async def _on_task_failed(self, task_id: TaskID, context: object) -> None:
         _logger.debug("%s failed", task_id)
 
         async with self._lock:

@@ -3,7 +3,7 @@ from typing import Optional, Sequence
 
 import qcanvas_backend.database.types as db
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
-from qtpy.QtGui import Qt
+from qtpy.QtCore import Qt
 from qtpy.QtWidgets import QHeaderView
 
 from qcanvas.ui.course_viewer.content_tree import ContentTree

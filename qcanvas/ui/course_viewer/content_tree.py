@@ -2,6 +2,7 @@ import logging
 from abc import abstractmethod
 from typing import *
 
+from PyQt6.QtCore import QItemSelection
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qtpy.QtCore import Signal, Slot
 from qtpy.QtWidgets import *
@@ -69,8 +70,8 @@ class ContentTree(MemoryTreeWidget, Generic[T]):
         self, data: T, sync_receipt: Optional[SyncReceipt]
     ) -> Sequence[MemoryTreeWidgetItem]: ...
 
-    @Slot()
-    def _selection_changed(self) -> None:
+    @Slot(QItemSelection, QItemSelection)
+    def _selection_changed(self, _0: QItemSelection, _1: QItemSelection) -> None:
         if self._reloading:
             return
 

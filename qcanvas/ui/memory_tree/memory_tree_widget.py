@@ -114,7 +114,7 @@ class MemoryTreeWidget(QTreeWidget):
 
         self._id_map.update(map_updates.items())
 
-    @Slot()
+    @Slot(QTreeWidgetItem)
     def _expanded(self, item: QTreeWidgetItem):
         if self._suppress_expansion_signals:
             return
@@ -123,7 +123,7 @@ class MemoryTreeWidget(QTreeWidget):
             _logger.debug("Expanded %s", item.id)
             self._memory.expanded(item.id)
 
-    @Slot()
+    @Slot(QTreeWidgetItem)
     def _collapsed(self, item: QTreeWidgetItem):
         if self._suppress_expansion_signals:
             return

@@ -4,6 +4,7 @@ from typing import *
 import qcanvas_backend.database.types as db
 from qcanvas_backend.net.resources.download.resource_manager import ResourceManager
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
+from qtpy.QtCore import Slot
 from qtpy.QtWidgets import *
 
 from qcanvas.ui.course_viewer.content_tree import ContentTree
@@ -70,6 +71,7 @@ class ContentTab(QWidget):
     def reload(self, course: db.Course, *, sync_receipt: Optional[SyncReceipt]) -> None:
         self._explorer.reload(course, sync_receipt=sync_receipt)
 
+    @Slot(object)
     def _item_selected(self, item: object) -> None:
         if isinstance(item, db.CourseContentItem):
             _logger.debug("Show %s", item.name)

@@ -3,12 +3,13 @@ from threading import Semaphore
 from typing import *
 
 import qcanvas_backend.database.types as db
+from PyQt6.QtGui import QIcon
 from qasync import asyncSlot
 from qcanvas_backend.database.data_monolith import DataMonolith
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qcanvas_backend.qcanvas import QCanvas
 from qtpy.QtCore import QUrl, Signal, Slot
-from qtpy.QtGui import QDesktopServices, QKeySequence, QPixmap
+from qtpy.QtGui import QDesktopServices, QKeySequence
 from qtpy.QtWidgets import *
 
 from qcanvas import icons
@@ -19,6 +20,7 @@ from qcanvas.ui.main_ui.options.quick_sync_option import QuickSyncOption
 from qcanvas.ui.main_ui.options.sync_on_start_option import SyncOnStartOption
 from qcanvas.ui.main_ui.status_bar_progress_display import StatusBarProgressDisplay
 from qcanvas.util import paths, settings
+from qcanvas.util.qurl_util import file_url
 from qcanvas.util.ui_tools import create_qaction
 
 _logger = logging.getLogger(__name__)
@@ -31,7 +33,7 @@ class QCanvasWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("QCanvas")
-        self.setWindowIcon(QPixmap(icons.main_icon))
+        self.setWindowIcon(QIcon(icons.main_icon))
 
         self._operation_semaphore = Semaphore()
         self._data: Optional[DataMonolith] = None
@@ -101,8 +103,11 @@ class QCanvasWindow(QMainWindow):
         options_menu.addAction(SyncOnStartOption(options_menu))
 
     def _restore_window_position(self):
-        self.restoreGeometry(settings.ui.last_geometry)
-        self.restoreState(settings.ui.last_window_state)
+        if settings.ui.last_geometry is not None:
+            self.restoreGeometry(settings.ui.last_geometry)
+
+        if settings.ui.last_window_state is not None:
+            self.restoreState(settings.ui.last_window_state)
 
     def closeEvent(self, event):
         settings.ui.last_geometry = self.saveGeometry()
@@ -170,14 +175,14 @@ class QCanvasWindow(QMainWindow):
     async def _get_courses(self) -> Sequence[db.Course]:
         return (await self._qcanvas.get_data()).courses
 
-    @Slot()
+    @Slot(db.Course)
     def _on_course_selected(self, course: Optional[db.Course]) -> None:
         if course is not None:
             self._course_viewer_container.load_course(course)
         else:
             self._course_viewer_container.show_blank()
 
-    @asyncSlot()
+    @asyncSlot(db.Course, str)
     async def _on_course_renamed(self, course: db.Course, new_name: str) -> None:
         _logger.debug("Rename %s -> %s", course.name, new_name)
 
@@ -191,7 +196,7 @@ class QCanvasWindow(QMainWindow):
         opening_progress_dialog.setWindowTitle("Please wait")
         opening_progress_dialog.show()
         QDesktopServices.openUrl(
-            await self._qcanvas.canvas_client.get_temporary_session_url()
+            QUrl(await self._qcanvas.canvas_client.get_temporary_session_url())
         )
         opening_progress_dialog.close()
 
