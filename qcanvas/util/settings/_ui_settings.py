@@ -3,22 +3,14 @@ import logging
 from qtpy.QtCore import QByteArray, QSettings
 
 from qcanvas.util.settings._mapped_setting import MappedSetting
+from qcanvas.util.themes import ensure_theme_is_valid, default_theme
 
 _logger = logging.getLogger(__name__)
-
-_default_theme = "auto"
-
-
-def ensure_theme_is_valid(theme: str) -> str:
-    if theme not in ["auto", "light", "dark", "native"]:
-        return _default_theme
-    else:
-        return theme
 
 
 class ThemeSetting(MappedSetting):
     def __init__(self):
-        super().__init__(default=_default_theme)
+        super().__init__(default=default_theme)
 
     def __get__(self, instance, owner):
         return ensure_theme_is_valid(super().__get__(instance, owner))

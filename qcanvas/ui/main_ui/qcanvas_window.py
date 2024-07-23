@@ -17,6 +17,7 @@ from qcanvas.ui.course_viewer import CourseTree
 from qcanvas.ui.main_ui.course_viewer_container import CourseViewerContainer
 from qcanvas.ui.main_ui.options.quick_sync_option import QuickSyncOption
 from qcanvas.ui.main_ui.options.sync_on_start_option import SyncOnStartOption
+from qcanvas.ui.main_ui.options.theme_selection_menu import ThemeSelectionMenu
 from qcanvas.ui.main_ui.status_bar_progress_display import StatusBarProgressDisplay
 from qcanvas.util import paths, settings
 from qcanvas.util.qurl_util import file_url
@@ -100,6 +101,7 @@ class QCanvasWindow(QMainWindow):
 
         options_menu.addAction(QuickSyncOption(options_menu))
         options_menu.addAction(SyncOnStartOption(options_menu))
+        options_menu.addMenu(ThemeSelectionMenu(self))
 
     def _restore_window_position(self):
         if settings.ui.last_geometry is not None:
