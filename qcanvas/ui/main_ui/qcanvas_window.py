@@ -202,10 +202,10 @@ class QCanvasWindow(QMainWindow):
 
     @Slot()
     def _open_downloads_folder(self) -> None:
-        # fixme hard coded path! >:(
-        QDesktopServices.openUrl(
-            QUrl(f"file://{(paths.data_storage() / 'downloads').absolute()}")
-        )
+        directory = self._qcanvas.resource_manager.downloads_folder
+        directory.mkdir(parents=True, exist_ok=True)
+
+        QDesktopServices.openUrl(file_url(directory))
 
     @asyncSlot()
     async def _clear_new_items(self) -> None:
