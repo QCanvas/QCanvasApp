@@ -4,6 +4,9 @@ version = "1.0.6a0"
 description = "QCanvas is a desktop client for Canvas LMS."
 authors = ["QCanvas <QCanvas@noreply.codeberg.org>"]
 readme = "README.md"
+exclude = [
+    "images"
+]
 
 [tool.poetry.scripts]
 qcanvas = "qcanvas.run:main"
