@@ -62,7 +62,7 @@ class StatusBarProgressDisplay(QStatusBar):
 
     @asyncSlot(TaskID, object)
     async def _on_task_failed(self, task_id: TaskID, context: object) -> None:
-        _logger.debug("%s failed", task_id)
+        _logger.info("%s failed", task_id)
 
         async with self._lock:
             self._remove_task(task_id)
@@ -83,7 +83,7 @@ class StatusBarProgressDisplay(QStatusBar):
                 self._show_multiple_tasks_progress(list(self._tasks.values()))
 
     def _show_done(self) -> None:
-        _logger.debug("Finished tasks. Tasks: %s", self._tasks)
+        _logger.info("Finished tasks. Tasks: %s", self._tasks)
         self.showMessage("All tasks finished", 5000)
         self._progress_bar.hide()
 
@@ -132,12 +132,12 @@ class StatusBarProgressDisplay(QStatusBar):
 
     def _add_task(self, task: TaskID, current: int, total: int) -> None:
         self._tasks[task] = _TaskProgress(current, total)
-        _logger.debug("Added task %s", task)
+        _logger.info("Added task %s", task)
         _logger.debug("Tasks: %s", self._tasks)
 
     def _remove_task(self, task: TaskID) -> None:
         self._tasks.pop(task, None)
-        _logger.debug("Removed task %s", task)
+        _logger.info("Removed task %s", task)
         _logger.debug("Tasks: %s", self._tasks)
 
     @property

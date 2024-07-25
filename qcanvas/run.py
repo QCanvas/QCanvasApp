@@ -1,5 +1,5 @@
 import logging
-from logging import DEBUG, INFO, WARNING
+from logging import INFO, WARNING
 
 import qcanvas.app_start
 from qcanvas.util import logs, paths
@@ -17,7 +17,7 @@ logs.set_levels(
         "qcanvas": INFO,
         "qcanvas.ui": WARNING,
         "qcanvas_backend": INFO,
-        "qcanvas.ui.main_ui.status_bar_progress_display": DEBUG,
+        "qcanvas.ui.main_ui.status_bar_progress_display": INFO,
     }
 )
 
