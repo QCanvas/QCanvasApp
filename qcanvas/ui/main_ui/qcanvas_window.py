@@ -2,6 +2,7 @@ import logging
 from threading import Semaphore
 from typing import *
 
+import httpx
 import qcanvas_backend.database.types as db
 from qasync import asyncSlot
 from qcanvas_backend.database.data_monolith import DataMonolith
@@ -151,20 +152,23 @@ class QCanvasWindow(QMainWindow):
             return
 
         try:
-            # todo handle exceptions and PROGRESS!! better
             self._sync_button.setText("Sync in progress...")
             receipt = await self._qcanvas.synchronise_canvas(
                 quick_sync=settings.client.quick_sync_enabled
             )
             await self._reload(receipt)
-            self._sync_button.setText("Synchronise")
         except Exception as e:
+            _logger.warning("Sync failed", exc_info=e)
             error = QErrorMessage(self)
-            error.showMessage(str(e))
+            msg = str(e)
 
-            raise e
+            if isinstance(e, httpx.ConnectError):
+                msg = "You may not be connected to the internet\n - " + msg
+
+            error.showMessage(msg)
         finally:
             self._operation_semaphore.release()
+            self._sync_button.setText("Synchronise")
 
     async def _reload(self, receipt: Optional[SyncReceipt]) -> None:
         self._course_tree.reload(await self._get_terms(), sync_receipt=receipt)
