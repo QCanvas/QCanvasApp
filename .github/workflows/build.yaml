@@ -109,4 +109,23 @@ jobs:
             -   name: Build and publish to pypi
                 uses: JRubics/poetry-publish@v2.0
                 with:
+                    python_version: 3.11
                     pypi_token: ${{ secrets.PYPI_TOKEN }}
+    update-metainfo:
+        needs: check-version
+        if: ${{ needs.check-version.outputs.needs-build == 'true' }}
+        name: Update metainfo file
+        runs-on: ubuntu-22.04
+        steps:
+            -   uses: actions/setup-python@v5
+                with:
+                    python-version: 3.12
+            -   run: python -m pip install xmltodict httpx
+            -   name: Update metainfo releases
+                run: python flatpak/utils/metainfo-version-updater.py "${{ needs.check-version.outputs.new-version }}" "flatpak/io.github.qcanvas.QCanvasApp.metainfo.xml"
+            -   uses: EndBug/add-and-commit@v9
+                with:
+                    add: "flatpak/io.github.qcanvas.QCanvasApp.metainfo.xml"
+                    default_author: github_actions
+                    message: Update metainfo file
+

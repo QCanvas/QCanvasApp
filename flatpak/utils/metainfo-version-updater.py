@@ -4,38 +4,37 @@
 # /// script
 # requires-python = ">=3.11"
 # dependencies = [
-#   "httpx",
 #   "xmltodict",
 # ]
 # ///
 
-import json
 import sys
+from datetime import UTC
 from datetime import datetime
 from pathlib import Path
-from typing import Tuple
 
-import httpx
 import xmltodict
 
 try:
-    package_name = sys.argv[1]
+    latest_version = sys.argv[1]
     metainfo_file_path = Path(sys.argv[2])
 except IndexError:
-    print("Expected args: <package name> <path to .metainfo.xml file>", file=sys.stderr)
+    print(
+        "Expected args: <latest version> <path to .metainfo.xml file>", file=sys.stderr
+    )
     exit(1)
 
 
-def get_latest_version(package_name: str) -> Tuple[str, datetime]:
-    with httpx.Client() as client:
-        data = json.loads(
-            (client.get(f"https://pypi.org/pypi/{package_name}/json")).text
-        )
-        latest_version = data["info"]["version"]
-        release_date = datetime.fromisoformat(
-            data["releases"][latest_version][0]["upload_time"]
-        )
-        return latest_version, release_date
+# def get_latest_version(package_name: str) -> Tuple[str, datetime]:
+#     with httpx.Client() as client:
+#         data = json.loads(
+#             (client.get(f"https://pypi.org/pypi/{package_name}/json")).text
+#         )
+#         latest_version = data["info"]["version"]
+#         release_date = datetime.fromisoformat(
+#             data["releases"][latest_version][0]["upload_time"]
+#         )
+#         return latest_version, release_date
 
 
 def read_file(path: Path) -> str:
@@ -63,7 +62,7 @@ def get_releases(xml: dict[str, str]) -> list[dict[str, str]]:
 
 
 def update_releases() -> None:
-    latest_version, latest_version_time = get_latest_version(package_name)
+    # latest_version, latest_version_time = get_latest_version(package_name)
     xml = xmltodict.parse(read_file(metainfo_file_path))
     releases: list[dict[str, str]] = get_releases(xml)
 
@@ -71,7 +70,7 @@ def update_releases() -> None:
         exit(2)
 
     releases.insert(
-        0, {"@version": latest_version, "@date": str(latest_version_time.date())}
+        0, {"@version": latest_version, "@date": str(datetime.now(UTC).date())}
     )
 
     write_file(metainfo_file_path, xmltodict.unparse(xml, pretty=True))
