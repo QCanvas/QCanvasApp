@@ -1,5 +1,5 @@
 # Creates a new version entry in the metainfo.xml for the latest version of the package
-# Assumes there is already one manually aded <release> element in the manifest
+# Assumes there is already one manually added <release> element in the manifest
 
 # /// script
 # requires-python = ">=3.11"
