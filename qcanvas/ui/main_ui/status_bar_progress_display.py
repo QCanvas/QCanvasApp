@@ -84,7 +84,7 @@ class StatusBarProgressDisplay(QStatusBar):
 
     def _show_done(self) -> None:
         _logger.info("Finished tasks. Tasks: %s", self._tasks)
-        self.showMessage("All tasks finished", 5000)
+        self.showMessage("Done", 5000)
         self._progress_bar.hide()
 
     def _show_single_task_progress(self, task: Tuple[TaskID, _TaskProgress]) -> None:
