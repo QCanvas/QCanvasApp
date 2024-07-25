@@ -106,6 +106,8 @@ class QCanvasWindow(QMainWindow):
     def _restore_window_position(self):
         if settings.ui.last_geometry is not None:
             self.restoreGeometry(settings.ui.last_geometry)
+        else:
+            self.resize(1000, 600)
 
         if settings.ui.last_window_state is not None:
             self.restoreState(settings.ui.last_window_state)
