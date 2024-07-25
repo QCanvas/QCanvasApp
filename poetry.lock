@@ -1274,13 +1274,13 @@ tenacity = ">=8.2.3,<9.0.0"
 
 [[package]]
 name = "qcanvas-backend"
-version = "0.1.10a3"
+version = "0.1.10a4"
 description = ""
 optional = false
 python-versions = "<4.0,>=3.10"
 files = [
-    { file = "qcanvas_backend-0.1.10a3-py3-none-any.whl", hash = "sha256:594b31bb78c4878abb75f0c8aefad09b7e8dccee6f8fa5eec37140d54cac2a50" },
-    { file = "qcanvas_backend-0.1.10a3.tar.gz", hash = "sha256:bc8d7e8836122dea68fbadfe8c2133866043ed0f0766f1cad3a5f554ca078574" },
+    { file = "qcanvas_backend-0.1.10a4-py3-none-any.whl", hash = "sha256:2801daf0ded21e3453d0362693ec2d6ea1db3b156ecc002acc4a9da572542254" },
+    { file = "qcanvas_backend-0.1.10a4.tar.gz", hash = "sha256:ed1f664d018aca2e624c88d597d18337fda97053ace360248fbc40f01bd2377d" },
 ]
 
 [package.dependencies]
@@ -1732,13 +1732,13 @@ multidict = ">=4.0"
 
 [[package]]
 name = "yt-dlp"
-version = "2024.7.16"
+version = "2024.7.25"
 description = "A feature-rich command-line audio/video downloader"
 optional = false
 python-versions = ">=3.8"
 files = [
-    { file = "yt_dlp-2024.7.16-py3-none-any.whl", hash = "sha256:424805a112e757b141e767bc938d49db56d13d6415a92fa4cd8acadd55790be0" },
-    { file = "yt_dlp-2024.7.16.tar.gz", hash = "sha256:c5bd517a49dea1923ec8e14f51858f10fd89dfece14cb701392b480b41b2f516" },
+    { file = "yt_dlp-2024.7.25-py3-none-any.whl", hash = "sha256:f44b5f33776b4f718900c670fe6e4698fb6fcd426455cd837cf25a1d6d4d9560" },
+    { file = "yt_dlp-2024.7.25.tar.gz", hash = "sha256:7587aa25e236cf7b14bdb9378bbffff51202d901b04202be0cf62cbb56d3b52c" },
 ]
 
 [package.dependencies]
@@ -1752,7 +1752,7 @@ urllib3 = ">=1.26.17,<3"
 websockets = ">=12.0"
 
 [package.extras]
-build = ["build", "hatchling", "pip", "setuptools", "wheel"]
+build = ["build", "hatchling", "pip", "setuptools (>=71.0.2)", "wheel"]
 curl-cffi = ["curl-cffi (==0.5.10)", "curl-cffi (>=0.5.10,<0.6.dev0 || ==0.7.*)"]
 dev = ["autopep8 (>=2.0,<3.0)", "pre-commit", "pytest (>=8.1,<9.0)", "ruff (>=0.5.0,<0.6.0)"]
 py2exe = ["py2exe (>=0.12)"]
@@ -1764,4 +1764,4 @@ test = ["pytest (>=8.1,<9.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "ef7c770871878e8c18e57a09406216899a508eaf8e32646da3ece36b786099c5"
+content-hash = "65311bc49c43663c0c88025f89d2370f32df62c7e3856821ad7cab23b3def5ef"
