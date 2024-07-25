@@ -23,6 +23,7 @@ pyqtdarktheme-fork = "^2.3.2"
 qasync = "^0.27.1"
 lightdb = "^2.0"
 platformdirs = "^4.2.2"
+validators = "^0.33.0"
 
 [tool.poetry.group.flatpak-exclude.dependencies]
 pyside6 = "^6.7.2"
