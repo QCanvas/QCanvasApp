@@ -34,13 +34,16 @@ class SetupDialog(QDialog):
 
         self._semaphore = Semaphore()
         self._canvas_url_box = QLineEdit(settings.client.canvas_url)
+        self._canvas_url_box.setPlaceholderText("https://instance.canvas.com")
         self._canvas_api_key_box = QLineEdit(settings.client.canvas_api_key)
         self._canvas_api_key_box.setEchoMode(QLineEdit.EchoMode.Password)
         self._panopto_url_box = QLineEdit(settings.client.panopto_url)
+        self._panopto_url_box.setPlaceholderText("https://instance.panopto.com")
         self._button_box = self._setup_button_box()
         self._button_box.accepted.connect(self._accepted)
         self._button_box.helpRequested.connect(self._help_requested)
         self._waiting_indicator = self._setup_progress_bar()
+        self._status_bar = QStatusBar()
 
         self.setLayout(
             layout(
@@ -54,13 +57,14 @@ class SetupDialog(QDialog):
                 ),
                 self._waiting_indicator,
                 self._button_box,
+                self._status_bar,
             )
         )
 
     def _setup_button_box(self) -> QDialogButtonBox:
         box = QDialogButtonBox()
         box.addButton(QDialogButtonBox.StandardButton.Ok)
-        box.addButton("Get a canvas API key", QDialogButtonBox.ButtonRole.HelpRole)
+        box.addButton("Get a Canvas API key", QDialogButtonBox.ButtonRole.HelpRole)
         return box
 
     def _setup_progress_bar(self) -> QProgressBar:
@@ -81,10 +85,13 @@ class SetupDialog(QDialog):
         if self._semaphore.acquire(False):
             try:
                 self._clear_errors()
-                if self._check_inputs():
+
+                if not self._all_inputs_valid():
+                    self._status_bar.showMessage("Invalid input!", 5000)
                     return
 
                 self._waiting_indicator.setVisible(True)
+                self._status_bar.showMessage("Checking configuration...")
 
                 canvas_config = CanvasClientConfig(
                     api_token=self._canvas_api_key_box.text().strip(),
@@ -97,7 +104,9 @@ class SetupDialog(QDialog):
                 if not await self._check_panopto_config(canvas_config):
                     self._show_panopto_help()
                     return
-
+            except Exception as e:
+                self._status_bar.showMessage(f"An error occurred: {e}", 5000)
+                _logger.warning("Checking config failed", exc_info=e)
             finally:
                 self._waiting_indicator.setVisible(False)
                 self._semaphore.release()
@@ -113,23 +122,24 @@ class SetupDialog(QDialog):
             self._panopto_url_box,
             self._canvas_api_key_box,
         ]:
+            self._status_bar.clearMessage()
             line_edit.setStyleSheet(None)
             line_edit.setToolTip(None)
 
-    def _check_inputs(self) -> bool:
-        had_error = False
+    def _all_inputs_valid(self) -> bool:
+        all_valid = True
 
         if not is_url(self._get_url(self._canvas_url_box)):
-            had_error = True
+            all_valid = False
             self._show_error(self._canvas_url_box, "Canvas URL is invalid")
         if len(self._canvas_api_key_box.text().strip()) == 0:
-            had_error = True
+            all_valid = False
             self._show_error(self._canvas_api_key_box, "Canvas API key is empty")
         if not is_url(self._get_url(self._panopto_url_box)):
-            had_error = True
+            all_valid = False
             self._show_error(self._panopto_url_box, "Panopto URL is invalid")
 
-        return had_error
+        return all_valid
 
     def _get_url(self, line_edit: QLineEdit) -> str:
         url = line_edit.text().strip()
@@ -172,8 +182,8 @@ class SetupDialog(QDialog):
         msg = QMessageBox(
             QMessageBox.Icon.Information,
             "Panopto Authentication",
-            "In order for QCanvas to use panopto, you need to link your panopto account to your canvas account. "
-            "A page will open in your web browser to do this when you click OK. It may ask you to sign into canvas.\n\n"
+            "In order for QCanvas to use Panopto, you need to link your Panopto account to your Canvas account. "
+            "A page will open in your web browser to do this when you click OK. It may ask you to sign into Canvas.\n\n"
             'Please tick "Remember my authorisation for this service" or QCanvas may not function correctly.\n\n'
             "QCanvas can't access anything entered in your browser.",
             QMessageBox.StandardButton.Ok,
