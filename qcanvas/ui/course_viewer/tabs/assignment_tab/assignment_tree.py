@@ -13,14 +13,6 @@ _logger = logging.getLogger(__name__)
 
 
 class AssignmentTree(ContentTree[db.Course]):
-    @staticmethod
-    def create_from_receipt(
-        course: db.Course, *, sync_receipt: Optional[SyncReceipt]
-    ) -> "AssignmentTree":
-        tree = AssignmentTree(course.id)
-        tree.reload(course, sync_receipt=sync_receipt)
-        return tree
-
     def __init__(self, course_id: str):
         super().__init__(
             tree_name=f"course.{course_id}.assignment_groups",

@@ -2,6 +2,7 @@ import logging
 from abc import abstractmethod
 from typing import *
 
+import qcanvas_backend.database.types as db
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qtpy.QtCore import QItemSelection, Signal, Slot
 from qtpy.QtWidgets import *
@@ -12,10 +13,19 @@ from qcanvas.util.basic_fonts import bold_font, normal_font
 _logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
+U = TypeVar("U", bound=Type["ContentTree"])
 
 
 class ContentTree(MemoryTreeWidget, Generic[T]):
     item_selected = Signal(object)
+
+    @classmethod
+    def create_from_receipt(
+        cls: U, course: db.Course, *, sync_receipt: Optional[SyncReceipt]
+    ) -> Type[U]:
+        tree = cls(course.id)
+        tree.reload(course, sync_receipt=sync_receipt)
+        return tree
 
     def __init__(
         self,

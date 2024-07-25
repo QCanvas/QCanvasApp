@@ -17,15 +17,6 @@ _logger = logging.getLogger(__name__)
 
 # todo maybe update has_been_read? probably not the responsibility of this class though
 class MailTab(ContentTab):
-    @staticmethod
-    def create_from_receipt(
-        *,
-        course: db.Course,
-        sync_receipt: Optional[SyncReceipt],
-        downloader: ResourceManager,
-    ) -> "MailTab":
-        return MailTab(course=course, sync_receipt=sync_receipt, downloader=downloader)
-
     def __init__(
         self,
         *,

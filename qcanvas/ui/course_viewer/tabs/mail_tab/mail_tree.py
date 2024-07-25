@@ -12,13 +12,6 @@ _logger = logging.getLogger(__name__)
 
 
 class MailTree(ContentTree[db.Course]):
-    @staticmethod
-    def create_from_receipt(
-        course: db.Course, *, sync_receipt: Optional[SyncReceipt]
-    ) -> "MailTree":
-        tree = MailTree(course.id)
-        tree.reload(course, sync_receipt=sync_receipt)
-        return tree
 
     def __init__(self, course_id: str):
         super().__init__(

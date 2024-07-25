@@ -14,8 +14,20 @@ from qcanvas.util.ui_tools import make_truncatable
 
 _logger = logging.getLogger(__name__)
 
+T = TypeVar("T", bound=Type["ContentTab"])
+
 
 class ContentTab(QWidget):
+    @classmethod
+    def create_from_receipt(
+        cls: T,
+        *,
+        course: db.Course,
+        sync_receipt: Optional[SyncReceipt],
+        downloader: ResourceManager,
+    ) -> Type[T]:
+        return cls(course=course, sync_receipt=sync_receipt, downloader=downloader)
+
     def __init__(
         self,
         *,

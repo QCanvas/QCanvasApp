@@ -16,16 +16,6 @@ _logger = logging.getLogger(__name__)
 
 
 class AssignmentTab(ContentTab):
-    @staticmethod
-    def create_from_receipt(
-        *,
-        course: db.Course,
-        sync_receipt: Optional[SyncReceipt],
-        downloader: ResourceManager,
-    ) -> "AssignmentTab":
-        return AssignmentTab(
-            course=course, sync_receipt=sync_receipt, downloader=downloader
-        )
 
     def __init__(
         self,

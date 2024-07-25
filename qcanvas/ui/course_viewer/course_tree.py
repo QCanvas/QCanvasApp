@@ -85,7 +85,3 @@ class CourseTree(ContentTree[Sequence[db.Term]]):
         term_widget.setFlags(Qt.ItemFlag.ItemIsEnabled)
 
         return term_widget
-
-    # @Slot(db.Course, str)
-    # def _on_course_renamed(self, course: db.Course, new_name: str) -> None:
-    #     self.course_renamed.emit(course, new_name)
