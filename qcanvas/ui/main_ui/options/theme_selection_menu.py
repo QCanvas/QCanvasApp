@@ -1,11 +1,10 @@
 import logging
 
 from qtpy.QtCore import Slot
-from qtpy.QtGui import QAction
-from qtpy.QtGui import QActionGroup
+from qtpy.QtGui import QAction, QActionGroup
 from qtpy.QtWidgets import QMenu
 
-from qcanvas.util import themes, settings
+from qcanvas.util import settings, themes
 
 _logger = logging.getLogger(__name__)
 

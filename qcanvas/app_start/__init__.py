@@ -9,7 +9,7 @@ from qtpy.QtWidgets import QApplication
 import qcanvas.backend_connectors.qcanvas_task_master as task_master
 from qcanvas.ui.main_ui.qcanvas_window import QCanvasWindow
 from qcanvas.ui.setup import SetupDialog, setup_checker
-from qcanvas.util import themes, settings
+from qcanvas.util import settings, themes
 
 main_window = None
 setup_window = None
