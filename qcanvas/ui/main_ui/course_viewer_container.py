@@ -32,7 +32,7 @@ class CourseViewerContainer(QStackedWidget):
             viewer = CourseViewer(
                 course=course,
                 downloader=self._downloader,
-                initial_sync_receipt=self._last_sync_receipt,
+                sync_receipt=self._last_sync_receipt,
             )
             self._course_viewers[course.id] = viewer
             self.addWidget(viewer)
