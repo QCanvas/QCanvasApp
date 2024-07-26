@@ -66,15 +66,15 @@ jobs:
             -   name: Build pyinstaller
                 run: poetry run pyinstaller --hidden-import aiosqlite --onedir -n AppRun qcanvas/run.py
             -   name: Move files
-                run: mv dist/*/* appimage/
+                run: mv dist/*/* distributions/appimage/
             -   name: Set version
                 uses: richardrigutins/replace-in-files@v2
                 with:
-                    files: "appimage/qcanvas.desktop"
+                    files: "distributions/appimage/qcanvas.desktop"
                     search-text: "#VERSION#"
                     replacement-text: ${{ needs.check-version.outputs.new-version }}
             -   name: Package AppImage
-                run: ./appimagetool appimage -u "gh-releases-zsync|QCanvas|QCanvasApp|latest|QCanvas-x86_64.AppImage.zsync"
+                run: ./appimagetool distributions/appimage -u "gh-releases-zsync|QCanvas|QCanvasApp|latest|QCanvas-x86_64.AppImage.zsync"
             -   name: Upload binaries
                 run: gh release upload ${{ needs.check-version.outputs.new-version }} QCanvas-* --clobber
                 env:
@@ -94,7 +94,7 @@ jobs:
                 run: poetry install --with flatpak-exclude
             -   run: poetry update qcanvas-backend
             -   name: Build pyinstaller
-                run: poetry run pyinstaller --hidden-import aiosqlite --onefile -n QCanvas --icon windows/qcanvas.ico qcanvas/run.py --windowed
+                run: poetry run pyinstaller --hidden-import aiosqlite --onefile -n QCanvas --icon distributions/windows/qcanvas.ico qcanvas/run.py --windowed
             -   name: Upload binaries
                 run: gh release upload ${{ needs.check-version.outputs.new-version }} dist/QCanvas.exe --clobber
                 env:
