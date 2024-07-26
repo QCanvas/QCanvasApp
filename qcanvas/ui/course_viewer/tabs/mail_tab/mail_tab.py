@@ -21,7 +21,7 @@ class MailTab(ContentTab):
         self,
         *,
         course: db.Course,
-        sync_receipt: Optional[SyncReceipt],
+        sync_receipt: SyncReceipt,
         downloader: ResourceManager,
     ):
         super().__init__(

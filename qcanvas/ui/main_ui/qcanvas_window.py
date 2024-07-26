@@ -6,7 +6,7 @@ import httpx
 import qcanvas_backend.database.types as db
 from qasync import asyncSlot
 from qcanvas_backend.database.data_monolith import DataMonolith
-from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
+from qcanvas_backend.net.sync.sync_receipt import SyncReceipt, empty_receipt
 from qcanvas_backend.qcanvas import QCanvas
 from qtpy.QtCore import QUrl, Signal, Slot
 from qtpy.QtGui import QDesktopServices, QIcon, QKeySequence
@@ -137,7 +137,7 @@ class QCanvasWindow(QMainWindow):
     @asyncSlot()
     async def _on_app_loaded(self) -> None:
         await self._qcanvas.init()
-        self._course_tree.reload(await self._get_terms(), sync_receipt=None)
+        self._course_tree.reload(await self._get_terms(), sync_receipt=empty_receipt())
 
         if settings.client.sync_on_start:
             await self._synchronise()
@@ -170,7 +170,7 @@ class QCanvasWindow(QMainWindow):
             self._operation_semaphore.release()
             self._sync_button.setText("Synchronise")
 
-    async def _reload(self, receipt: Optional[SyncReceipt]) -> None:
+    async def _reload(self, receipt: SyncReceipt) -> None:
         self._course_tree.reload(await self._get_terms(), sync_receipt=receipt)
         await self._course_viewer_container.reload_all(
             await self._get_courses(), sync_receipt=receipt

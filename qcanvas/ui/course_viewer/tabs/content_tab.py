@@ -23,7 +23,7 @@ class ContentTab(QWidget):
         cls: T,
         *,
         course: db.Course,
-        sync_receipt: Optional[SyncReceipt],
+        sync_receipt: SyncReceipt,
         downloader: ResourceManager,
     ) -> Type[T]:
         return cls(course=course, sync_receipt=sync_receipt, downloader=downloader)
@@ -80,7 +80,7 @@ class ContentTab(QWidget):
 
         self.setLayout(parent_layout)
 
-    def reload(self, course: db.Course, *, sync_receipt: Optional[SyncReceipt]) -> None:
+    def reload(self, course: db.Course, *, sync_receipt: SyncReceipt) -> None:
         self._explorer.reload(course, sync_receipt=sync_receipt)
 
     @Slot(object)

@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Sequence
+from typing import Sequence
 
 import qcanvas_backend.database.types as db
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
@@ -34,7 +34,7 @@ class AssignmentTree(ContentTree[db.Course]):
         header.setStretchLastSection(False)
 
     def create_tree_items(
-        self, course: db.Course, sync_receipt: Optional[SyncReceipt]
+        self, course: db.Course, sync_receipt: SyncReceipt
     ) -> Sequence[MemoryTreeWidgetItem]:
         widgets = []
 
@@ -64,12 +64,7 @@ class AssignmentTree(ContentTree[db.Course]):
 
         assignment_group_widget.setFlags(Qt.ItemFlag.ItemIsEnabled)
 
-        is_new = (
-            sync_receipt is not None
-            and assignment_group.id in sync_receipt.updated_assignment_groups
-        )
-
-        if is_new:
+        if sync_receipt.was_updated(assignment_group):
             self.mark_as_unseen(assignment_group_widget)
 
         return assignment_group_widget
@@ -85,12 +80,7 @@ class AssignmentTree(ContentTree[db.Course]):
             Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
         )
 
-        is_new = (
-            sync_receipt is not None
-            and assignment.id in sync_receipt.updated_assignments
-        )
-
-        if is_new:
+        if sync_receipt.was_updated(assignment):
             self.mark_as_unseen(assignment_widget)
 
         return assignment_widget

@@ -21,7 +21,7 @@ class ContentTree(MemoryTreeWidget, Generic[T]):
 
     @classmethod
     def create_from_receipt(
-        cls: U, course: db.Course, *, sync_receipt: Optional[SyncReceipt]
+        cls: U, course: db.Course, *, sync_receipt: SyncReceipt
     ) -> Type[U]:
         tree = cls(course.id)
         tree.reload(course, sync_receipt=sync_receipt)
@@ -57,7 +57,7 @@ class ContentTree(MemoryTreeWidget, Generic[T]):
         self.setMaximumWidth(max_width)
         self.setMinimumWidth(min_width)
 
-    def reload(self, data: T, *, sync_receipt: Optional[SyncReceipt]) -> None:
+    def reload(self, data: T, *, sync_receipt: SyncReceipt) -> None:
         self._reloading = True
 
         try:
@@ -76,7 +76,7 @@ class ContentTree(MemoryTreeWidget, Generic[T]):
 
     @abstractmethod
     def create_tree_items(
-        self, data: T, sync_receipt: Optional[SyncReceipt]
+        self, data: T, sync_receipt: SyncReceipt
     ) -> Sequence[MemoryTreeWidgetItem]: ...
 
     @Slot(QItemSelection, QItemSelection)

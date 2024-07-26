@@ -22,7 +22,7 @@ class CourseViewer(QWidget):
         course: db.Course,
         downloader: ResourceManager,
         *,
-        initial_sync_receipt: Optional[SyncReceipt] = None
+        sync_receipt: SyncReceipt
     ):
         super().__init__()
         # todo this is a mess. there are several other messes like this too, do they all have to be a mess?
@@ -55,8 +55,7 @@ class CourseViewer(QWidget):
 
         self.setLayout(layout(QVBoxLayout, self._course_label, self._tabs))
 
-    def reload(self, course: db.Course, *, sync_receipt: Optional[SyncReceipt]) -> None:
-        # self._tabs.setTabText(1, "*Pages")
+    def reload(self, course: db.Course, *, sync_receipt: SyncReceipt) -> None:
         self._pages_tab.reload(course, sync_receipt=sync_receipt)
         self._assignments_tab.reload(course, sync_receipt=sync_receipt)
         self._mail_tab.reload(course, sync_receipt=sync_receipt)

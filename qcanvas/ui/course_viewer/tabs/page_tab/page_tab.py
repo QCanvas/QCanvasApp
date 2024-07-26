@@ -1,5 +1,4 @@
 import logging
-from typing import *
 
 import qcanvas_backend.database.types as db
 from qcanvas_backend.net.resources.download.resource_manager import ResourceManager
@@ -16,7 +15,7 @@ class PageTab(ContentTab):
         self,
         *,
         course: db.Course,
-        sync_receipt: Optional[SyncReceipt],
+        sync_receipt: SyncReceipt,
         downloader: ResourceManager,
     ):
         super().__init__(

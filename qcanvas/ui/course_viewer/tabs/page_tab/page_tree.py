@@ -22,7 +22,7 @@ class PageTree(ContentTree[db.Course]):
         )
 
     def create_tree_items(
-        self, course: db.Course, sync_receipt: Optional[SyncReceipt]
+        self, course: db.Course, sync_receipt: SyncReceipt
     ) -> Sequence[MemoryTreeWidgetItem]:
         widgets = []
 
@@ -37,30 +37,26 @@ class PageTree(ContentTree[db.Course]):
         return widgets
 
     def _create_module_widget(
-        self, module: db.Module, sync_receipt: Optional[SyncReceipt]
+        self, module: db.Module, sync_receipt: SyncReceipt
     ) -> MemoryTreeWidgetItem:
         module_widget = MemoryTreeWidgetItem(
             id=module.id, data=module, strings=[module.name]
         )
         module_widget.setFlags(Qt.ItemFlag.ItemIsEnabled)
 
-        # todo add some helpers to SyncReceipt to make this less shit, and maybe use an empty syncreceipt instead of None
-        is_new = sync_receipt is not None and module.id in sync_receipt.updated_modules
-
-        if is_new:
+        # Todo not sure if modules should get highlighted since they can't be unhighlighted by selecting them...
+        if sync_receipt.was_updated(module):
             self.mark_as_unseen(module_widget)
 
         return module_widget
 
     def _create_page_widget(
-        self, page: db.ModulePage, sync_receipt: Optional[SyncReceipt]
+        self, page: db.ModulePage, sync_receipt: SyncReceipt
     ) -> MemoryTreeWidgetItem:
         page_widget = MemoryTreeWidgetItem(id=page.id, data=page, strings=[page.name])
         page_widget.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
 
-        is_new = sync_receipt is not None and page.id in sync_receipt.updated_pages
-
-        if is_new:
+        if sync_receipt.was_updated(page):
             self.mark_as_unseen(page_widget)
 
         return page_widget

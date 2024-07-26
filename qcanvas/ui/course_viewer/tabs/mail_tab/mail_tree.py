@@ -34,7 +34,7 @@ class MailTree(ContentTree[db.Course]):
         header.setStretchLastSection(False)
 
     def create_tree_items(
-        self, course: db.Course, sync_receipt: Optional[SyncReceipt]
+        self, course: db.Course, sync_receipt: SyncReceipt
     ) -> Sequence[MemoryTreeWidgetItem]:
         widgets = []
 
@@ -45,7 +45,7 @@ class MailTree(ContentTree[db.Course]):
         return widgets
 
     def _create_mail_widget(
-        self, message: db.CourseMessage, sync_receipt: Optional[SyncReceipt]
+        self, message: db.CourseMessage, sync_receipt: SyncReceipt
     ) -> MemoryTreeWidgetItem:
         message_widget = MemoryTreeWidgetItem(
             id=message.id,
@@ -53,11 +53,7 @@ class MailTree(ContentTree[db.Course]):
             strings=[message.name, message.sender_name],
         )
 
-        is_new = (
-            sync_receipt is not None and message.id in sync_receipt.updated_messages
-        )
-
-        if is_new:
+        if sync_receipt.was_updated(message):
             self.mark_as_unseen(message_widget)
 
         return message_widget

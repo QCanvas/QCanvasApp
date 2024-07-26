@@ -3,7 +3,7 @@ from typing import *
 
 import qcanvas_backend.database.types as db
 from qcanvas_backend.net.resources.download.resource_manager import ResourceManager
-from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
+from qcanvas_backend.net.sync.sync_receipt import SyncReceipt, empty_receipt
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import *
 
@@ -18,7 +18,7 @@ class CourseViewerContainer(QStackedWidget):
         self._course_viewers: dict[str, CourseViewer] = {}
         self._downloader = downloader
         self._last_course_id: Optional[str] = None
-        self._last_sync_receipt: Optional[SyncReceipt] = None
+        self._last_sync_receipt: SyncReceipt = empty_receipt()
         self._placeholder = QLabel("No Course Selected")
         self._placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.addWidget(self._placeholder)
@@ -43,7 +43,7 @@ class CourseViewerContainer(QStackedWidget):
         self._last_course_id = course.id
 
     async def reload_all(
-        self, courses: Sequence[db.Course], *, sync_receipt: Optional[SyncReceipt]
+        self, courses: Sequence[db.Course], *, sync_receipt: SyncReceipt
     ) -> None:
         self._last_sync_receipt = sync_receipt
         for course in courses:

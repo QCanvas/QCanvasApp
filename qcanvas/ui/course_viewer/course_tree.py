@@ -52,7 +52,7 @@ class CourseTree(ContentTree[Sequence[db.Term]]):
         self.ui_setup(max_width=250, min_width=150, header_text="Courses")
 
     def create_tree_items(
-        self, terms: List[db.Term], sync_receipt: Optional[SyncReceipt]
+        self, terms: List[db.Term], sync_receipt: SyncReceipt
     ) -> Sequence[MemoryTreeWidgetItem]:
         widgets = []
 
@@ -69,13 +69,11 @@ class CourseTree(ContentTree[Sequence[db.Term]]):
         return widgets
 
     def _create_course_widget(
-        self, course: db.Course, sync_receipt: Optional[SyncReceipt]
+        self, course: db.Course, sync_receipt: SyncReceipt
     ) -> _CourseTreeItem:
         course_widget = _CourseTreeItem(course, self)
 
-        is_new = sync_receipt is not None and course.id in sync_receipt.updated_courses
-
-        if is_new:
+        if sync_receipt.was_updated(course):
             self.mark_as_unseen(course_widget)
 
         return course_widget
