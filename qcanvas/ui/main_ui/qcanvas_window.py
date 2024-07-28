@@ -1,5 +1,5 @@
 import logging
-from threading import Semaphore
+from threading import BoundedSemaphore
 from typing import *
 
 import httpx
@@ -16,6 +16,9 @@ from qcanvas import icons
 from qcanvas.backend_connectors import FrontendResourceManager
 from qcanvas.ui.course_viewer import CourseTree
 from qcanvas.ui.main_ui.course_viewer_container import CourseViewerContainer
+from qcanvas.ui.main_ui.options.auto_download_resources_option import (
+    AutoDownloadResourcesMenu,
+)
 from qcanvas.ui.main_ui.options.quick_sync_option import QuickSyncOption
 from qcanvas.ui.main_ui.options.sync_on_start_option import SyncOnStartOption
 from qcanvas.ui.main_ui.options.theme_selection_menu import ThemeSelectionMenu
@@ -36,7 +39,7 @@ class QCanvasWindow(QMainWindow):
         self.setWindowTitle("QCanvas")
         self.setWindowIcon(QIcon(icons.main_icon))
 
-        self._operation_semaphore = Semaphore()
+        self._operation_semaphore = BoundedSemaphore()
         self._data: Optional[DataMonolith] = None
         self._qcanvas = QCanvas[FrontendResourceManager](
             canvas_config=settings.client.canvas_config,
