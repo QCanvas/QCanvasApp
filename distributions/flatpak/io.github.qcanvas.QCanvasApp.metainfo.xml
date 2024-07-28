@@ -20,6 +20,8 @@
             <li>Viewing course mail/announcements</li>
             <li>Highlighting new content</li>
         </ul>
+        <p>To use the Breeze theme on KDE, go to <i>Options</i> > <i>Theme</i> and select "<i>Native</i>"
+        </p>
     </description>
     <launchable type="desktop-id">io.github.qcanvas.QCanvasApp.desktop</launchable>
     <screenshots>
