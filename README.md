@@ -1,6 +1,6 @@
 # QCanvas
 
-QCanvas is a desktop client for Canvas LMS.
+QCanvas is an **unofficial** desktop client for Canvas LMS.
 
 # Downloads
 
