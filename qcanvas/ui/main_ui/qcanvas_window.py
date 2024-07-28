@@ -23,7 +23,7 @@ from qcanvas.ui.main_ui.options.quick_sync_option import QuickSyncOption
 from qcanvas.ui.main_ui.options.sync_on_start_option import SyncOnStartOption
 from qcanvas.ui.main_ui.options.theme_selection_menu import ThemeSelectionMenu
 from qcanvas.ui.main_ui.status_bar_progress_display import StatusBarProgressDisplay
-from qcanvas.util import paths, settings
+from qcanvas.util import paths, settings, auto_downloader
 from qcanvas.util.qurl_util import file_url
 from qcanvas.util.ui_tools import create_qaction
 
@@ -105,7 +105,8 @@ class QCanvasWindow(QMainWindow):
 
         options_menu.addAction(QuickSyncOption(options_menu))
         options_menu.addAction(SyncOnStartOption(options_menu))
-        options_menu.addMenu(ThemeSelectionMenu(self))
+        options_menu.addMenu(AutoDownloadResourcesMenu(options_menu))
+        options_menu.addMenu(ThemeSelectionMenu(options_menu))
 
     def _restore_window_position(self):
         if settings.ui.last_geometry is not None:
@@ -173,11 +174,26 @@ class QCanvasWindow(QMainWindow):
             self._operation_semaphore.release()
             self._sync_button.setText("Synchronise")
 
+        try:
+            if settings.client.download_new_resources:
+                # noinspection PyUnboundLocalVariable
+                await auto_downloader.download_new_resources(
+                    all_resources=await self._get_resources(),
+                    receipt=receipt,
+                    downloader=self._qcanvas.resource_manager,
+                    parent_window=self,
+                )
+        except NameError:
+            pass
+
     async def _reload(self, receipt: SyncReceipt) -> None:
         self._course_tree.reload(await self._get_terms(), sync_receipt=receipt)
         await self._course_viewer_container.reload_all(
             await self._get_courses(), sync_receipt=receipt
         )
+
+    async def _get_resources(self) -> Dict[str, db.Resource]:
+        return (await self._qcanvas.get_data()).resources
 
     async def _get_terms(self) -> Sequence[db.Term]:
         return (await self._qcanvas.get_data()).terms

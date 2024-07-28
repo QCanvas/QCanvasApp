@@ -15,8 +15,10 @@ class _ClientSettings:
     canvas_url: MappedSetting[Optional[str]] = MappedSetting(default=None)
     canvas_api_key: MappedSetting[Optional[str]] = MappedSetting(default=None)
     panopto_url: MappedSetting[Optional[str]] = MappedSetting(default=None)
-    quick_sync_enabled: BoolSetting = BoolSetting(default=False)
-    sync_on_start: BoolSetting = BoolSetting(default=False)
+    quick_sync_enabled = BoolSetting(default=False)
+    sync_on_start = BoolSetting(default=False)
+    download_new_resources = BoolSetting(default=False)
+    download_new_videos = BoolSetting(default=False)
 
     @property
     def canvas_config(self) -> CanvasClientConfig:
