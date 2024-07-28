@@ -1,48 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component type="desktop-application">
-	<id>io.github.qcanvas.QCanvasApp</id>
-	<name>QCanvas</name>
-	<summary>A desktop client for Canvas LMS</summary>
-	<content_rating type="oars-1.1"></content_rating>
-	<metadata_license>FSFAP</metadata_license>
-	<project_license>AGPL-3.0-only</project_license>
-	<url type="homepage">https://github.com/QCanvas/QCanvasApp/</url>
-	<url type="bugtracker">https://codeberg.org/QCanvas/QCanvas/issues</url>
-	<developer id="io.github.qcanvas">
-		<name>QCanvas</name>
-	</developer>
-	<description>
-		<p>
-			<b>unofficial</b>
-An  desktop client for Canvas LMS, including features such as:		</p>
-		<p>
-			<i>Options</i>
-			<i>Theme</i>
-			<i>Native</i>
-To use the Breeze theme on KDE, go to  &gt;  and select ""		</p>
-		<ul>
-			<li>Downloading course content, files and videos</li>
-			<li>Viewing content while offline</li>
-			<li>Viewing course mail/announcements</li>
-			<li>Highlighting new content</li>
-		</ul>
-	</description>
-	<launchable type="desktop-id">io.github.qcanvas.QCanvasApp.desktop</launchable>
-	<screenshots>
-		<screenshot type="default">
-			<image>https://raw.githubusercontent.com/QCanvas/QCanvasApp/reborn/images/1.png</image>
-			<caption>Screenshot of the main user interface</caption>
-		</screenshot>
-	</screenshots>
-	<releases>
-		<release version="v1.0.10.post2" date="2024-07-28"></release>
+    <id>io.github.qcanvas.QCanvasApp</id>
+    <name>QCanvas</name>
+    <summary>A desktop client for Canvas LMS</summary>
+    <content_rating type="oars-1.1"></content_rating>
+    <metadata_license>FSFAP</metadata_license>
+    <project_license>AGPL-3.0-only</project_license>
+    <url type="homepage">https://github.com/QCanvas/QCanvasApp/</url>
+    <url type="bugtracker">https://codeberg.org/QCanvas/QCanvas/issues</url>
+    <developer id="io.github.qcanvas">
+        <name>QCanvas</name>
+    </developer>
+    <description>
+        <p>An <b>unofficial</b> desktop client for Canvas LMS, including features such as:
+        </p>
+        <ul>
+            <li>Downloading course content, files and videos</li>
+            <li>Viewing content while offline</li>
+            <li>Viewing course mail/announcements</li>
+            <li>Highlighting new content</li>
+        </ul>
+        <p>To use the Breeze theme on KDE, go to <i>Options</i> &gt; <i>Theme</i> and select "<i>Native</i>"
+        </p>
+    </description>
+    <launchable type="desktop-id">io.github.qcanvas.QCanvasApp.desktop</launchable>
+    <screenshots>
+        <screenshot type="default">
+            <image>https://raw.githubusercontent.com/QCanvas/QCanvasApp/reborn/images/1.png</image>
+            <caption>Screenshot of the main user interface</caption>
+        </screenshot>
+    </screenshots>
+    <releases>
+        <release version="v1.0.10.post2" date="2024-07-28"></release>
 		<release version="v1.0.10.post1" date="2024-07-28"></release>
-		<release version="v1.0.9.dev1" date="2024-07-25"></release>
-		<release version="v1.0.9.dev0" date="2024-07-25"></release>
-		<release version="1.0.8" date="2024-07-25"></release>
-		<release version="1.0.7" date="2024-07-23"></release>
-		<release version="1.0.6.post0" date="2024-07-23"></release>
-		<release version="1.0.3.post5" date="2024-07-22"></release>
-		<release version="1.0.0" date="2024-07-21"></release>
-	</releases>
+        <release version="v1.0.9.dev1" date="2024-07-25"></release>
+        <release version="v1.0.9.dev0" date="2024-07-25"></release>
+        <release version="1.0.8" date="2024-07-25"></release>
+        <release version="1.0.7" date="2024-07-23"></release>
+        <release version="1.0.6.post0" date="2024-07-23"></release>
+        <release version="1.0.3.post5" date="2024-07-22"></release>
+        <release version="1.0.0" date="2024-07-21"></release>
+    </releases>
 </component>
