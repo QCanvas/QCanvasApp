@@ -12,7 +12,8 @@
         <name>QCanvas</name>
     </developer>
     <description>
-        <p>A desktop client for Canvas LMS, including features such as:</p>
+        <p>An <b>unofficial</b> desktop client for Canvas LMS, including features such as:
+        </p>
         <ul>
             <li>Downloading course content, files and videos</li>
             <li>Viewing content while offline</li>
