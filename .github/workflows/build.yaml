@@ -126,7 +126,7 @@ jobs:
                 run: python flatpak/utils/metainfo-version-updater.py "${{ needs.check-version.outputs.new-version }}" "deploy/flatpak/io.github.qcanvas.QCanvasApp.metainfo.xml"
             -   uses: EndBug/add-and-commit@v9
                 with:
-                    add: "flatpak/io.github.qcanvas.QCanvasApp.metainfo.xml"
+                    add: "deploy/flatpak/io.github.qcanvas.QCanvasApp.metainfo.xml"
                     default_author: github_actions
                     message: Update metainfo file
 
