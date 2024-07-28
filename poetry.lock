@@ -1274,13 +1274,13 @@ tenacity = ">=8.2.3,<9.0.0"
 
 [[package]]
 name = "qcanvas-backend"
-version = "0.1.10a5"
+version = "0.1.10"
 description = ""
 optional = false
 python-versions = "<4.0,>=3.10"
 files = [
-    { file = "qcanvas_backend-0.1.10a5-py3-none-any.whl", hash = "sha256:ceb04814ccbd96e4e0a790292debe41592f4519b7af78f8e110d956ed44e9a10" },
-    { file = "qcanvas_backend-0.1.10a5.tar.gz", hash = "sha256:f0dc3e07608f1d2b926e123f0fd958420520e1c190cf31ef5fecd4ce018d0910" },
+    { file = "qcanvas_backend-0.1.10-py3-none-any.whl", hash = "sha256:2ae972617ff324c0e4298b057d2acfd7a7516e6efd599c530527a1406c3a6ae2" },
+    { file = "qcanvas_backend-0.1.10.tar.gz", hash = "sha256:bb0a73e29c5fe6c0dd7344345fd6290818eabc069be6c038b61f0370655252eb" },
 ]
 
 [package.dependencies]
@@ -1294,7 +1294,7 @@ pydantic = ">=2.7.0,<3.0.0"
 qcanvas-api-clients = ">=0.2.0,<0.3.0"
 rich = ">=13.7.1,<14.0.0"
 SQLAlchemy = ">=2.0.29,<3.0.0"
-yt-dlp = ">=2024.4.9,<2025.0.0"
+yt-dlp = ">=2024.4.9"
 
 [[package]]
 name = "qtpy"
@@ -1778,4 +1778,4 @@ test = ["pytest (>=8.1,<9.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "fcabdcff05c94a7a12b077198737e9280afd8ca3754c8f1729441442509296bc"
+content-hash = "ecd12070b3a712c79eca1cba183f3a12aeeeda762271c69f5f4b646e92154dcb"
