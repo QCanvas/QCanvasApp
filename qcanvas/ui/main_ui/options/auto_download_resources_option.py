@@ -24,7 +24,7 @@ class _EnableAutoDownloadOption(QAction):
 
 class _EnableVideoDownloadOption(QAction):
     def __init__(self, parent: Optional[QMenu] = None):
-        super().__init__("Include (large) videos", parent)
+        super().__init__("Include videos (slow)", parent)
         self.setCheckable(True)
         self.setChecked(settings.client.download_new_videos)
         self.triggered.connect(self._triggered)
