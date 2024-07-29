@@ -235,4 +235,4 @@ class QCanvasWindow(QMainWindow):
 
     @asyncSlot()
     async def _clear_new_items(self) -> None:
-        await self._reload(None)
+        await self._reload(empty_receipt())
