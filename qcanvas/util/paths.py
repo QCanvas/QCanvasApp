@@ -6,7 +6,7 @@ from pathlib import Path
 
 import cachetools
 import platformdirs
-from qtpy.QtCore import QDir, QSettings
+from qtpy.QtCore import QSettings
 
 _logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ _is_running_as_flatpak = os.environ.get("container", "") == "flatpak"
 def client_settings() -> QSettings:
     if _is_running_as_pyinstaller and _is_running_on_windows:
         return QSettings(
-            str(Path(QDir.homePath()) / ".config" / "QCanvasTeam" / "canvas.ini"),
+            str(platformdirs.user_documents_path() / "QCanvasTeam" / "QCanvas.ini"),
             QSettings.Format.IniFormat,
         )
     else:
