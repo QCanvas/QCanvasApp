@@ -31,6 +31,11 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="v1.0.10.post3" date="2024-07-29">
+            <ul>
+                <li>Fixed highlighting the wrong tab when there was an update</li>
+            </ul>
+        </release>
         <release version="v1.0.10.post2" date="2024-07-28"></release>
 		<release version="v1.0.10.post1" date="2024-07-28"></release>
         <release version="v1.0.9.dev1" date="2024-07-25"></release>

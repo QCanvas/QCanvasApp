@@ -84,17 +84,18 @@ class CourseViewer(QWidget):
         updates = sync_receipt.updates_by_course.get(self._course_id, None)
 
         if updates is not None:
-            if len(updates.updated_resources) > 0:
-                self._highlight_tab(0)
+            # if len(updates.updated_resources) > 0:
+            #     raise Exception("Looks like you forgot to update the other numbers??????"")
+            #     self._highlight_tab(0)
 
             if len(updates.updated_pages) > 0:
-                self._highlight_tab(1)
+                self._highlight_tab(0)
 
             if len(updates.updated_assignments) > 0:
-                self._highlight_tab(2)
+                self._highlight_tab(1)
 
             if len(updates.updated_messages) > 0:
-                self._highlight_tab(3)
+                self._highlight_tab(2)
         else:
             for index in range(0, 4):
                 self._unhighlight_tab(index)
