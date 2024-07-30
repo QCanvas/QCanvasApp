@@ -94,7 +94,7 @@ jobs:
                 run: poetry install --with flatpak-exclude
             -   run: poetry update qcanvas-backend
             -   name: Build pyinstaller
-                run: poetry run pyinstaller --hidden-import aiosqlite --onefile -n QCanvas --icon deploy/windows/qcanvas.ico qcanvas/run.py --windowed
+                run: poetry run pyinstaller --hidden-import aiosqlite --onefile -n QCanvas --icon deploy/windows/qcanvas.ico qcanvas/run.py --windowed --noupx
             -   name: Upload binaries
                 run: gh release upload ${{ needs.check-version.outputs.new-version }} dist/QCanvas.exe --clobber
                 env:
