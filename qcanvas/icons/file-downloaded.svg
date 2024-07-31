@@ -11,12 +11,12 @@
     <g id="SVGRepo_iconCarrier">
         <g transform="translate(0 -1028.4)">
             <path d="m5 1030.4c-1.1046 0-2 0.9-2 2v8 4 6c0 1.1 0.8954 2 2 2h14c1.105 0 2-0.9 2-2v-6-4-4l-6-6h-10z"
-                  fill="#2ec27e"/>
+                  fill="#1fa321"/>
             <path d="m5 1029.4c-1.1046 0-2 0.9-2 2v8 4 6c0 1.1 0.8954 2 2 2h14c1.105 0 2-0.9 2-2v-6-4-4l-6-6h-10z"
-                  fill="#33d17a"/>
-            <path d="m21 1035.4-6-6v4c0 1.1 0.895 2 2 2h4z" fill="#2ec27e"/>
+                  fill="#43db45"/>
+            <path d="m21 1035.4-6-6v4c0 1.1 0.895 2 2 2h4z" fill="#1fa321"/>
             <path d="m6 8v1h12v-1h-12zm0 3v1h12v-1h-12zm0 3v1h12v-1h-12zm0 3v1h12v-1h-12z"
-                  transform="translate(0 1028.4)" fill="#2ec27e"/>
+                  transform="translate(0 1028.4)" fill="#1fa321"/>
         </g>
     </g>
 

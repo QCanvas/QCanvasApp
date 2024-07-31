@@ -6,63 +6,77 @@
 from qtpy import QtCore
 
 qt_resource_data = b"\
-\x00\x00\x03i\
+\x00\x00\x04A\
 <\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22 standalone=\x22\
-no\x22?>\x0a<!-- Uploa\
-ded to: SVG Repo\
-, www.svgrepo.co\
-m, Generator: SV\
-G Repo Mixer Too\
-ls -->\x0a<svg widt\
-h=\x22800px\x22 height\
-=\x22800px\x22 viewBox\
-=\x220 0 24 24\x22 xml\
-ns:rdf=\x22http://w\
-ww.w3.org/1999/0\
-2/22-rdf-syntax-\
-ns#\x22 xmlns=\x22http\
-://www.w3.org/20\
-00/svg\x22 version=\
-\x221.1\x22 xmlns:cc=\x22\
-http://creativec\
-ommons.org/ns#\x22 \
-xmlns:dc=\x22http:/\
-/purl.org/dc/ele\
-ments/1.1/\x22>\x0a <g\
- transform=\x22tran\
-slate(0 -1028.4)\
-\x22>\x0a  <path d=\x22m5\
- 1030.4c-1.1046 \
-0-2 0.9-2 2v8 4 \
-6c0 1.1 0.8954 2\
- 2 2h14c1.105 0 \
-2-0.9 2-2v-6-4-4\
-l-6-6h-10z\x22 fill\
-=\x22#95a5a6\x22/>\x0a  <\
-path d=\x22m5 1029.\
-4c-1.1046 0-2 0.\
-9-2 2v8 4 6c0 1.\
-1 0.8954 2 2 2h1\
-4c1.105 0 2-0.9 \
-2-2v-6-4-4l-6-6h\
--10z\x22 fill=\x22#bdc\
-3c7\x22/>\x0a  <path d\
-=\x22m21 1035.4-6-6\
-v4c0 1.1 0.895 2\
- 2 2h4z\x22 fill=\x22#\
-95a5a6\x22/>\x0a  <pat\
-h d=\x22m6 8v1h12v-\
-1h-12zm0 3v1h12v\
--1h-12zm0 3v1h12\
-v-1h-12zm0 3v1h1\
-2v-1h-12z\x22 trans\
-form=\x22translate(\
-0 1028.4)\x22 fill=\
-\x22#95a5a6\x22/>\x0a </g\
->\x0a</svg>\
+!DOCTYPE svg PUB\
+LIC \x22-//W3C//DTD\
+ SVG 1.1//EN\x22 \x22h\
+ttp://www.w3.org\
+/Graphics/SVG/1.\
+1/DTD/svg11.dtd\x22\
+>\x0a<!-- Uploaded \
+to: SVG Repo, ww\
+w.svgrepo.com, T\
+ransformed by: S\
+VG Repo Mixer To\
+ols -->\x0a<svg wid\
+th=\x22800px\x22 heigh\
+t=\x22800px\x22 viewBo\
+x=\x220 0 24 24\x22 xm\
+lns:rdf=\x22http://\
+www.w3.org/1999/\
+02/22-rdf-syntax\
+-ns#\x22 xmlns=\x22htt\
+p://www.w3.org/2\
+000/svg\x22 version\
+=\x221.1\x22 xmlns:cc=\
+\x22http://creative\
+commons.org/ns#\x22\
+ xmlns:dc=\x22http:\
+//purl.org/dc/el\
+ements/1.1/\x22 fil\
+l=\x22#000000\x22>\x0a\x0d<g\
+ id=\x22SVGRepo_bgC\
+arrier\x22 stroke-w\
+idth=\x220\x22/>\x0a\x0d<g i\
+d=\x22SVGRepo_trace\
+rCarrier\x22 stroke\
+-linecap=\x22round\x22\
+ stroke-linejoin\
+=\x22round\x22/>\x0a\x0d<g i\
+d=\x22SVGRepo_iconC\
+arrier\x22> <g tran\
+sform=\x22translate\
+(0 -1028.4)\x22> <p\
+ath d=\x22m5 1030.4\
+c-1.1046 0-2 0.9\
+-2 2v8 4 6c0 1.1\
+ 0.8954 2 2 2h14\
+c1.105 0 2-0.9 2\
+-2v-6-4-4l-6-6h-\
+10z\x22 fill=\x22#7489\
+8b\x22/> <path d=\x22m\
+5 1029.4c-1.1046\
+ 0-2 0.9-2 2v8 4\
+ 6c0 1.1 0.8954 \
+2 2 2h14c1.105 0\
+ 2-0.9 2-2v-6-4-\
+4l-6-6h-10z\x22 fil\
+l=\x22#bdc3c7\x22/> <p\
+ath d=\x22m21 1035.\
+4-6-6v4c0 1.1 0.\
+895 2 2 2h4z\x22 fi\
+ll=\x22#74898b\x22/> <\
+path d=\x22m6 8v1h1\
+2v-1h-12zm0 3v1h\
+12v-1h-12zm0 3v1\
+h12v-1h-12zm0 3v\
+1h12v-1h-12z\x22 tr\
+ansform=\x22transla\
+te(0 1028.4)\x22 fi\
+ll=\x22#74898b\x22/> <\
+/g> </g>\x0a\x0d</svg>\
+\
 \x00\x00\x06\xc1\
 <\
 ?xml version=\x221.\
@@ -222,19 +236,19 @@ c-1.1046 0-2 0.9\
  0.8954 2 2 2h14\
 c1.105 0 2-0.9 2\
 -2v-6-4-4l-6-6h-\
-10z\x22 fill=\x22#2ec2\
-7e\x22/> <path d=\x22m\
+10z\x22 fill=\x22#1fa3\
+21\x22/> <path d=\x22m\
 5 1029.4c-1.1046\
  0-2 0.9-2 2v8 4\
  6c0 1.1 0.8954 \
 2 2 2h14c1.105 0\
  2-0.9 2-2v-6-4-\
 4l-6-6h-10z\x22 fil\
-l=\x22#33d17a\x22/> <p\
+l=\x22#43db45\x22/> <p\
 ath d=\x22m21 1035.\
 4-6-6v4c0 1.1 0.\
 895 2 2 2h4z\x22 fi\
-ll=\x22#2ec27e\x22/> <\
+ll=\x22#1fa321\x22/> <\
 path d=\x22m6 8v1h1\
 2v-1h-12zm0 3v1h\
 12v-1h-12zm0 3v1\
@@ -242,7 +256,7 @@ h12v-1h-12zm0 3v\
 1h12v-1h-12z\x22 tr\
 ansform=\x22transla\
 te(0 1028.4)\x22 fi\
-ll=\x22#2ec27e\x22/> <\
+ll=\x22#1fa321\x22/> <\
 /g> </g>\x0a\x0d</svg>\
 \
 \x00\x00\x04A\
@@ -293,19 +307,19 @@ c-1.1046 0-2 0.9\
  0.8954 2 2 2h14\
 c1.105 0 2-0.9 2\
 -2v-6-4-4l-6-6h-\
-10z\x22 fill=\x22#c01c\
-28\x22/> <path d=\x22m\
+10z\x22 fill=\x22#a31f\
+1f\x22/> <path d=\x22m\
 5 1029.4c-1.1046\
  0-2 0.9-2 2v8 4\
  6c0 1.1 0.8954 \
 2 2 2h14c1.105 0\
  2-0.9 2-2v-6-4-\
 4l-6-6h-10z\x22 fil\
-l=\x22#e01b24\x22/> <p\
+l=\x22#db4343\x22/> <p\
 ath d=\x22m21 1035.\
 4-6-6v4c0 1.1 0.\
 895 2 2 2h4z\x22 fi\
-ll=\x22#c01c28\x22/> <\
+ll=\x22#a31f1f\x22/> <\
 path d=\x22m6 8v1h1\
 2v-1h-12zm0 3v1h\
 12v-1h-12zm0 3v1\
@@ -313,7 +327,7 @@ h12v-1h-12zm0 3v\
 1h12v-1h-12z\x22 tr\
 ansform=\x22transla\
 te(0 1028.4)\x22 fi\
-ll=\x22#c01c28\x22/> <\
+ll=\x22#a31f1f\x22/> <\
 /g> </g>\x0a\x0d</svg>\
 \
 \x00\x00\x0d7\
@@ -561,16 +575,16 @@ qt_resource_name = b"\
 qt_resource_struct = b"\
 \x00\x00\x00\x00\x00\x02\x00\x00\x00\x05\x00\x00\x00\x01\
 \x00\x00\x00\x00\x00\x00\x00\x00\
-\x00\x00\x00\xbc\x00\x01\x00\x00\x00\x01\x00\x00\x12\xbc\
+\x00\x00\x00\xbc\x00\x01\x00\x00\x00\x01\x00\x00\x13\x94\
 \x00\x00\x01\x90\xe9\x06O\xda\
-\x00\x00\x00Z\x00\x00\x00\x00\x00\x01\x00\x00\x0a2\
-\x00\x00\x01\x91\x08\xdf N\
+\x00\x00\x00Z\x00\x00\x00\x00\x00\x01\x00\x00\x0b\x0a\
+\x00\x00\x01\x91\x0a\xd7b>\
 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\
-\x00\x00\x01\x91\x08\xdf\xaa\x03\
-\x00\x00\x004\x00\x00\x00\x00\x00\x01\x00\x00\x03m\
+\x00\x00\x01\x91\x0a\xdehx\
+\x00\x00\x004\x00\x00\x00\x00\x00\x01\x00\x00\x04E\
 \x00\x00\x01\x90\xe9\x06O\xda\
-\x00\x00\x00\x86\x00\x00\x00\x00\x00\x01\x00\x00\x0ew\
-\x00\x00\x01\x91\x08\xdff\xaa\
+\x00\x00\x00\x86\x00\x00\x00\x00\x00\x01\x00\x00\x0fO\
+\x00\x00\x01\x91\x0a\xdbPx\
 "
 
 
