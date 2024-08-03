@@ -45,8 +45,8 @@ class ContentTree(MemoryTreeWidget, Generic[T]):
         *,
         header_text: str | Sequence[str],
         indentation: int = 20,
-        max_width: int,
-        min_width: int,
+        max_width: Optional[int] = None,
+        min_width: Optional[int] = None,
     ) -> None:
         if not isinstance(header_text, str) and isinstance(header_text, Sequence):
             self.setHeaderLabels(header_text)
@@ -54,8 +54,12 @@ class ContentTree(MemoryTreeWidget, Generic[T]):
             self.setHeaderLabel(header_text)
 
         self.setIndentation(indentation)
-        self.setMaximumWidth(max_width)
-        self.setMinimumWidth(min_width)
+
+        if max_width is not None:
+            self.setMaximumWidth(max_width)
+
+        if min_width is not None:
+            self.setMinimumWidth(min_width)
 
     def reload(self, data: T, *, sync_receipt: SyncReceipt) -> None:
         self._reloading = True
