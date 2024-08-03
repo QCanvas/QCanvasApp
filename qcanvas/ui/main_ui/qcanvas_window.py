@@ -23,7 +23,7 @@ from qcanvas.ui.main_ui.options.quick_sync_option import QuickSyncOption
 from qcanvas.ui.main_ui.options.sync_on_start_option import SyncOnStartOption
 from qcanvas.ui.main_ui.options.theme_selection_menu import ThemeSelectionMenu
 from qcanvas.ui.main_ui.status_bar_progress_display import StatusBarProgressDisplay
-from qcanvas.util import paths, settings, auto_downloader
+from qcanvas.util import auto_downloader, paths, settings
 from qcanvas.util.qurl_util import file_url
 from qcanvas.util.ui_tools import create_qaction
 
