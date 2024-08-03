@@ -11,8 +11,8 @@ from qtpy.QtWidgets import *
 
 import qcanvas.util.settings as settings
 from qcanvas import icons
-from qcanvas.util import is_url
 from qcanvas.util.layouts import grid_layout_widget, layout
+from qcanvas.util.url_checker import is_url
 
 _logger = logging.getLogger(__name__)
 
