@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "qcanvas"
-version = "1.0.12.dev3"
+version = "1.0.12"
 description = "QCanvas is a desktop client for Canvas LMS."
 authors = ["QCanvas <QCanvas@noreply.codeberg.org>"]
 readme = "README.md"
@@ -33,13 +33,6 @@ pyside6-essentials = "^6.7.2"
 #2024-07-18: Latest version causes error with pyinstaller
 setuptools = "70.3.0"
 pyinstaller = "^6.9.0"
-
-[tool.poetry.group.dev-tools]
-optional = true
-
-[tool.poetry.group.dev-tools.dependencies]
-black = "^24.4.2"
-isort = "^5.13.2"
 
 [tool.poetry.group.local-deps]
 optional = true
