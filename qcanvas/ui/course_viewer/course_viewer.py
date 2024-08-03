@@ -47,18 +47,12 @@ class CourseViewer(QWidget):
             downloader=downloader,
             sync_receipt=sync_receipt,
         )
-        # self._files_tab = FileTab.create_from_receipt(
-        #     course=course,
-        #     downloader=downloader,
-        #     sync_receipt=sync_receipt,
-        # )
 
         self._tabs = QTabWidget()
         self._tabs.addTab(self._pages_tab, "Pages")
         self._tabs.addTab(self._assignments_tab, "Assignments")
         self._tabs.addTab(self._mail_tab, "Mail")
         self._tabs.addTab(QLabel("Not implemented"), "Files")
-        # self._tabs.addTab(self._files_tab, "Files")
         # self._tabs.addTab(QLabel("Not implemented"), "Panopto")  # The meme lives on!
 
         self.setLayout(layout(QVBoxLayout, self._course_label, self._tabs))
@@ -84,10 +78,6 @@ class CourseViewer(QWidget):
         updates = sync_receipt.updates_by_course.get(self._course_id, None)
 
         if updates is not None:
-            # if len(updates.updated_resources) > 0:
-            #     raise Exception("Looks like you forgot to update the other numbers??????"")
-            #     self._highlight_tab(0)
-
             if len(updates.updated_pages) > 0:
                 self._highlight_tab(0)
 
