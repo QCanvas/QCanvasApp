@@ -7,6 +7,7 @@ from qtpy.QtCore import Slot
 from qtpy.QtWidgets import *
 
 from qcanvas.ui.course_viewer.tabs.assignment_tab import AssignmentTab
+from qcanvas.ui.course_viewer.tabs.file_tab import FileTab
 from qcanvas.ui.course_viewer.tabs.mail_tab import MailTab
 from qcanvas.ui.course_viewer.tabs.page_tab import PageTab
 from qcanvas.util.basic_fonts import bold_font
@@ -47,11 +48,11 @@ class CourseViewer(QWidget):
             downloader=downloader,
             sync_receipt=sync_receipt,
         )
-        # self._files_tab = FileTab.create_from_receipt(
-        #     course=course,
-        #     downloader=downloader,
-        #     sync_receipt=sync_receipt,
-        # )
+        self._files_tab = FileTab.create_from_receipt(
+            course=course,
+            downloader=downloader,
+            sync_receipt=sync_receipt,
+        )
 
         self._tabs = QTabWidget()
         self._tabs.addTab(self._pages_tab, "Pages")
