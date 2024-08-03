@@ -50,12 +50,6 @@ class ResourceRichBrowser(QTextBrowser):
             self._downloader.download_finished.connect(self._download_updated)
             self._downloader.download_failed.connect(self._download_updated)
 
-        # _dark_listener.theme_changed.connect(self._theme_changed)
-
-    # @Slot()
-    # def _theme_changed(self, theme: str) -> None:
-    #     print(theme)
-
     def show_blank(self, completely_blank: bool = False) -> None:
         if completely_blank:
             self.clear()
@@ -102,16 +96,31 @@ class ResourceRichBrowser(QTextBrowser):
                     )
                     continue
 
-                file_link_tag = self._create_resource_link_tag(doc, resource_id)
+                file_link_tag = self._create_resource_link_tag(
+                    doc, resource_id, resource_link.name == "img"
+                )
                 resource_link.replace_with(file_link_tag)
             except NoExtractorError:
                 pass
 
         return str(doc)
 
-    def _create_resource_link_tag(self, doc: BeautifulSoup, resource_id: str) -> Tag:
+    def _create_resource_link_tag(
+        self, doc: BeautifulSoup, resource_id: str, is_image: bool
+    ) -> Tag:
         resource = self._current_content_resources[resource_id]
 
+        # todo not sure if this is a good idea or not
+        # if is_image and resource.download_state == db.ResourceDownloadState.DOWNLOADED:
+        #     location = self._downloader.resource_download_location(resource)
+        #
+        #     file_link_tag = doc.new_tag(
+        #         "img",
+        #         attrs={
+        #             "source": location.absolute(),
+        #         },
+        #     )
+        # else:
         file_link_tag = doc.new_tag(
             "a",
             attrs={
