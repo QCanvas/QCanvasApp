@@ -3,5 +3,7 @@
 /build/
 /qcanvas/test_drive/
 /run/
+/run.dist/
+/compilation-report.xml
 *.spec
 *.AppImage
