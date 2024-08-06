@@ -31,6 +31,10 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="v1.1.0" date="2024-08-06">
+            - Allow the application to be used without Panopto
+            - Improved icons for file links in the page viewer
+        </release>
         <release version="v1.0.10.post3" date="2024-07-29">
             - Fixed highlighting the wrong tab when there was an update
         </release>
