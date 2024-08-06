@@ -19,9 +19,9 @@ def apply(theme: str) -> None:
     theme = ensure_theme_is_valid(theme)
 
     if theme != "native":
-        QApplication.setStyle(QStyleFactory.create("Fusion"))
-
         qdarktheme.setup_theme(
             theme,
             custom_colors={"primary": "e02424"},
         )
+
+        QApplication.setStyle(QStyleFactory.create("Fusion"))
