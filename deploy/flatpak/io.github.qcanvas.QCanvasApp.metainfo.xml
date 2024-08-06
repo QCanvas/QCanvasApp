@@ -46,14 +46,14 @@
                 </ul>
             </description>
         </release>
-        <release version="v1.0.10.post2" date="2024-07-28"></release>
-		<release version="v1.0.10.post1" date="2024-07-28"></release>
-        <release version="v1.0.9.dev1" date="2024-07-25"></release>
-        <release version="v1.0.9.dev0" date="2024-07-25"></release>
-        <release version="1.0.8" date="2024-07-25"></release>
-        <release version="1.0.7" date="2024-07-23"></release>
-        <release version="1.0.6.post0" date="2024-07-23"></release>
-        <release version="1.0.3.post5" date="2024-07-22"></release>
-        <release version="1.0.0" date="2024-07-21"></release>
+        <release version="v1.0.10.post2" date="2024-07-28"/>
+        <release version="v1.0.10.post1" date="2024-07-28"/>
+        <release version="v1.0.9.dev1" date="2024-07-25"/>
+        <release version="v1.0.9.dev0" date="2024-07-25"/>
+        <release version="1.0.8" date="2024-07-25"/>
+        <release version="1.0.7" date="2024-07-23"/>
+        <release version="1.0.6.post0" date="2024-07-23"/>
+        <release version="1.0.3.post5" date="2024-07-22"/>
+        <release version="1.0.0" date="2024-07-21"/>
     </releases>
 </component>
