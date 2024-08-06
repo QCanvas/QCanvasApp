@@ -30,6 +30,15 @@ validators = "^0.33.0"
 
 [tool.poetry.group.flatpak-exclude.dependencies]
 pyside6-essentials = "^6.7.2"
+#2024-07-18: Latest version causes error with pyinstaller
+setuptools = "70.3.0"
+pyinstaller = "^6.9.0"
+
+[tool.poetry.group.nuitka]
+optional = true
+
+[tool.poetry.group.nuitka.dependencies]
+pyside6-essentials = "^6.7.2"
 nuitka = "^2.4.5"
 
 [tool.poetry.group.local-deps]
