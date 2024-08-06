@@ -643,41 +643,6 @@ files = [
 altgraph = ">=0.17"
 
 [[package]]
-name = "markdown-it-py"
-version = "3.0.0"
-description = "Python port of markdown-it. Markdown parsing, done right!"
-optional = false
-python-versions = ">=3.8"
-files = [
-    { file = "markdown-it-py-3.0.0.tar.gz", hash = "sha256:e3f60a94fa066dc52ec76661e37c851cb232d92f9886b15cb560aaada2df8feb" },
-    { file = "markdown_it_py-3.0.0-py3-none-any.whl", hash = "sha256:355216845c60bd96232cd8d8c40e8f9765cc86f46880e43a8fd22dc1a1a8cab1" },
-]
-
-[package.dependencies]
-mdurl = ">=0.1,<1.0"
-
-[package.extras]
-benchmarking = ["psutil", "pytest", "pytest-benchmark"]
-code-style = ["pre-commit (>=3.0,<4.0)"]
-compare = ["commonmark (>=0.9,<1.0)", "markdown (>=3.4,<4.0)", "mistletoe (>=1.0,<2.0)", "mistune (>=2.0,<3.0)", "panflute (>=2.3,<3.0)"]
-linkify = ["linkify-it-py (>=1,<3)"]
-plugins = ["mdit-py-plugins"]
-profiling = ["gprof2dot"]
-rtd = ["jupyter_sphinx", "mdit-py-plugins", "myst-parser", "pyyaml", "sphinx", "sphinx-copybutton", "sphinx-design", "sphinx_book_theme"]
-testing = ["coverage", "pytest", "pytest-cov", "pytest-regressions"]
-
-[[package]]
-name = "mdurl"
-version = "0.1.2"
-description = "Markdown URL utilities"
-optional = false
-python-versions = ">=3.7"
-files = [
-    { file = "mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8" },
-    { file = "mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba" },
-]
-
-[[package]]
 name = "multidict"
 version = "6.0.5"
 description = "multidict implementation"
@@ -1026,20 +991,6 @@ files = [
 typing-extensions = ">=4.6.0,<4.7.0 || >4.7.0"
 
 [[package]]
-name = "pygments"
-version = "2.18.0"
-description = "Pygments is a syntax highlighting package written in Python."
-optional = false
-python-versions = ">=3.8"
-files = [
-    { file = "pygments-2.18.0-py3-none-any.whl", hash = "sha256:b8e6aca0523f3ab76fee51799c488e38782ac06eafcf95e7ba832985c8e7b13a" },
-    { file = "pygments-2.18.0.tar.gz", hash = "sha256:786ff802f32e91311bff3889f6e9a86e81505fe99f2735bb6d60ae0c5004f199" },
-]
-
-[package.extras]
-windows-terminal = ["colorama (>=0.4.6)"]
-
-[[package]]
 name = "pyinstaller"
 version = "6.9.0"
 description = "PyInstaller bundles a Python application and all its dependencies into a single package."
@@ -1142,13 +1093,13 @@ files = [
 
 [[package]]
 name = "qcanvas-api-clients"
-version = "0.2.3"
+version = "0.3.0"
 description = ""
 optional = false
 python-versions = "<4.0,>=3.10"
 files = [
-    { file = "qcanvas_api_clients-0.2.3-py3-none-any.whl", hash = "sha256:3dd2ef222680333d0b12c6519e29c59450ef8fe052e447ad2a656243d36df19d" },
-    { file = "qcanvas_api_clients-0.2.3.tar.gz", hash = "sha256:fff009b93186acd0db0b45bbd97a829f3dca33d0e3c5d6481542500164bb0ff0" },
+    { file = "qcanvas_api_clients-0.3.0-py3-none-any.whl", hash = "sha256:ee3c1f749aca64e193b52a46598fb124edf005b64791f565f0c932419e47132f" },
+    { file = "qcanvas_api_clients-0.3.0.tar.gz", hash = "sha256:2de2638a537d80a67417fbbe6673dd4893b95b4686764302ba467fd61e07e495" },
 ]
 
 [package.dependencies]
@@ -1162,13 +1113,13 @@ tenacity = ">=8.2.3,<9.0.0"
 
 [[package]]
 name = "qcanvas-backend"
-version = "0.1.10"
+version = "0.2.0"
 description = ""
 optional = false
 python-versions = "<4.0,>=3.10"
 files = [
-    { file = "qcanvas_backend-0.1.10-py3-none-any.whl", hash = "sha256:2ae972617ff324c0e4298b057d2acfd7a7516e6efd599c530527a1406c3a6ae2" },
-    { file = "qcanvas_backend-0.1.10.tar.gz", hash = "sha256:bb0a73e29c5fe6c0dd7344345fd6290818eabc069be6c038b61f0370655252eb" },
+    { file = "qcanvas_backend-0.2.0-py3-none-any.whl", hash = "sha256:c1d476ce83ca1b4702814d5712d75a00a69834af7ecf71596212c79de7bf37c2" },
+    { file = "qcanvas_backend-0.2.0.tar.gz", hash = "sha256:62c2c372022454aceeba384fba6ec7501e254318d7e46511685eb6cf753bdfdc" },
 ]
 
 [package.dependencies]
@@ -1179,8 +1130,7 @@ gql = ">=3.5.0,<4.0.0"
 httpx = ">=0.27.0,<0.28.0"
 lightdb = ">=2.0,<3.0"
 pydantic = ">=2.7.0,<3.0.0"
-qcanvas-api-clients = ">=0.2.0,<0.3.0"
-rich = ">=13.7.1,<14.0.0"
+qcanvas-api-clients = ">=0.3.0,<0.4.0"
 SQLAlchemy = ">=2.0.29,<3.0.0"
 yt-dlp = ">=2024.4.9"
 
@@ -1221,24 +1171,6 @@ urllib3 = ">=1.21.1,<3"
 [package.extras]
 socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
-
-[[package]]
-name = "rich"
-version = "13.7.1"
-description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
-optional = false
-python-versions = ">=3.7.0"
-files = [
-    { file = "rich-13.7.1-py3-none-any.whl", hash = "sha256:4edbae314f59eb482f54e9e30bf00d33350aaa94f4bfcd4e9e3110e64d0d7222" },
-    { file = "rich-13.7.1.tar.gz", hash = "sha256:9be308cb1fe2f1f57d67ce99e95af38a1e2bc71ad9813b0e247cf7ffbcc3a432" },
-]
-
-[package.dependencies]
-markdown-it-py = ">=2.2.0"
-pygments = ">=2.13.0,<3.0.0"
-
-[package.extras]
-jupyter = ["ipywidgets (>=7.5.1,<9)"]
 
 [[package]]
 name = "setuptools"
@@ -1778,4 +1710,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "76805e12d57719ba20869b1f40fdd287854b9a160e843670e1af9f24ca736dbb"
+content-hash = "29edb6f02569457f3c36c9ed933ac0ef353ed3ecf02c239652c6dd690f5d2827"

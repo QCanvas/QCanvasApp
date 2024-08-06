@@ -7,7 +7,7 @@ _logger = logging.getLogger(__name__)
 
 
 def needs_setup() -> bool:
-    if not is_url(settings.client.panopto_url):
+    if not settings.client.panopto_disabled and not is_url(settings.client.panopto_url):
         return True
     elif not is_url(settings.client.canvas_url):
         return True
