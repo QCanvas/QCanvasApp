@@ -2,6 +2,10 @@
 
 QCanvas is an **unofficial** desktop client for Canvas LMS.
 
+https://codeberg.org/QCanvas/QCanvas
+
+https://github.com/QCanvas/QCanvasApp
+
 # Downloads
 
 Download it from [releases](https://github.com/QCanvas/QCanvasApp/releases)
