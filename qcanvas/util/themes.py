@@ -1,6 +1,7 @@
 import logging
 
 import qdarktheme
+from qtpy.QtWidgets import QApplication, QStyleFactory
 
 _logger = logging.getLogger(__name__)
 
@@ -22,3 +23,5 @@ def apply(theme: str) -> None:
             theme,
             custom_colors={"primary": "e02424"},
         )
+
+        QApplication.setStyle(QStyleFactory.create("Fusion"))

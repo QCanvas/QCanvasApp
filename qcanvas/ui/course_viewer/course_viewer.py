@@ -58,8 +58,7 @@ class CourseViewer(QWidget):
         self._tabs.addTab(self._pages_tab, "Pages")
         self._tabs.addTab(self._assignments_tab, "Assignments")
         self._tabs.addTab(self._mail_tab, "Mail")
-        self._tabs.addTab(QLabel("Not implemented"), "Files")
-        # self._tabs.addTab(self._files_tab, "Files")
+        self._tabs.addTab(self._files_tab, "Files")
         # self._tabs.addTab(QLabel("Not implemented"), "Panopto")  # The meme lives on!
 
         self.setLayout(layout(QVBoxLayout, self._course_label, self._tabs))

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "qcanvas"
-version = "1.0.12.dev3"
+version = "1.1.0"
 description = "QCanvas is a desktop client for Canvas LMS."
 authors = ["QCanvas <QCanvas@noreply.codeberg.org>"]
 readme = "README.md"
@@ -16,8 +16,8 @@ qcanvas = "qcanvas.run:main"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13"
-qcanvas-api-clients = "^0.2.2"
-qcanvas-backend = "0.1.10"
+qcanvas-api-clients = "^0.3.0"
+qcanvas-backend = "^0.2.0"
 asynctaskpool = "^0.2.1"
 sqlalchemy = "^2.0.31"
 qtpy = "^2.4.1"
@@ -34,18 +34,18 @@ pyside6-essentials = "^6.7.2"
 setuptools = "70.3.0"
 pyinstaller = "^6.9.0"
 
-[tool.poetry.group.dev-tools]
+[tool.poetry.group.nuitka]
 optional = true
 
-[tool.poetry.group.dev-tools.dependencies]
-black = "^24.4.2"
-isort = "^5.13.2"
+[tool.poetry.group.nuitka.dependencies]
+pyside6-essentials = "^6.7.2"
+nuitka = "^2.4.5"
 
 [tool.poetry.group.local-deps]
 optional = true
 
 [tool.poetry.group.local-deps.dependencies]
-#qcanvas-api-clients = { path = "../QCanvas-API-Clients/", develop = false }
+#qcanvas-api-clients = { path = "../QCanvas-API-Clients/", develop = true }
 #qcanvas-backend = { path = "../QCanvas-Backend/", develop = true }
 
 [build-system]

@@ -1,24 +1,87 @@
 import logging
 from threading import Semaphore
+from typing import Optional
 
 from qasync import asyncSlot
 from qcanvas_api_clients.canvas import CanvasClient, CanvasClientConfig
 from qcanvas_api_clients.panopto import PanoptoClient, PanoptoClientConfig
 from qcanvas_api_clients.util.request_exceptions import ConfigInvalidError
-from qtpy.QtCore import QUrl, Signal, Slot
+from qtpy.QtCore import Qt, QUrl, Signal, Slot
 from qtpy.QtGui import QDesktopServices, QIcon
 from qtpy.QtWidgets import *
 
 import qcanvas.util.settings as settings
 from qcanvas import icons
-from qcanvas.util import is_url
-from qcanvas.util.layouts import grid_layout_widget, layout
+from qcanvas.util.layouts import GridItem, grid_layout_widget, layout
+from qcanvas.util.url_checker import is_url
 
 _logger = logging.getLogger(__name__)
 
 _tutorial_url = (
     "https://www.iorad.com/player/2053777/Canvas---How-to-generate-an-access-token-"
 )
+
+
+class _InputRow:
+    def __init__(
+        self,
+        *,
+        label: str,
+        initial_value: str,
+        placeholder_text: Optional[str] = None,
+        is_password: bool = False,
+    ):
+        self._label = QLabel(label)
+        self._input = QLineEdit(initial_value)
+
+        if placeholder_text is not None:
+            self._input.setPlaceholderText(placeholder_text)
+
+        if is_password:
+            self._input.setEchoMode(QLineEdit.EchoMode.Password)
+
+    def set_error(self, message: Optional[str]) -> None:
+        self._input.setStyleSheet("QLineEdit { border: 1px solid red }")
+        self._input.setToolTip(message)
+
+    def clear_error(self) -> None:
+        self._input.setStyleSheet(None)
+        self._input.setToolTip(None)
+
+    def grid_row(self) -> list[QWidget]:
+        return [self._label, self._input]
+
+    def disable(self) -> None:
+        self._input.setEnabled(False)
+
+    @property
+    def enabled(self) -> bool:
+        return self._input.isEnabled()
+
+    @enabled.setter
+    def enabled(self, value: bool) -> None:
+        self._input.setEnabled(value)
+
+    @property
+    def text(self) -> str:
+        return self._input.text().strip()
+
+    @property
+    def url_text(self) -> str:
+        url = self.text
+
+        if not url.startswith("http"):
+            return "https://" + url
+        else:
+            return url
+
+    @property
+    def is_valid_url(self) -> bool:
+        return is_url(self.url_text)
+
+    @property
+    def is_empty(self) -> bool:
+        return len(self.text) == 0
 
 
 class SetupDialog(QDialog):
@@ -33,38 +96,58 @@ class SetupDialog(QDialog):
         self.setWindowIcon(QIcon(icons.main_icon))
 
         self._semaphore = Semaphore()
-        self._canvas_url_box = QLineEdit(settings.client.canvas_url)
-        self._canvas_url_box.setPlaceholderText("https://instance.canvas.com")
-        self._canvas_api_key_box = QLineEdit(settings.client.canvas_api_key)
-        self._canvas_api_key_box.setEchoMode(QLineEdit.EchoMode.Password)
-        self._panopto_url_box = QLineEdit(settings.client.panopto_url)
-        self._panopto_url_box.setPlaceholderText("https://instance.panopto.com")
+
+        self._canvas_url_box = _InputRow(
+            label="Canvas URL",
+            initial_value=settings.client.canvas_url,
+            placeholder_text="https://instance.canvas.com",
+        )
+        self._panopto_url_box = _InputRow(
+            label="Panopto URL",
+            initial_value=settings.client.panopto_url,
+            placeholder_text="https://instance.panopto.com",
+        )
+        self._canvas_api_key_box = _InputRow(
+            label="Canvas API Key",
+            initial_value=settings.client.canvas_api_key,
+            is_password=True,
+        )
+        self._disable_panopto_checkbox = QCheckBox("Continue without Panopto")
+        self._disable_panopto_checkbox.checkStateChanged.connect(
+            self._disable_panopto_check_changed
+        )
         self._button_box = self._setup_button_box()
-        self._button_box.accepted.connect(self._accepted)
-        self._button_box.helpRequested.connect(self._help_requested)
         self._waiting_indicator = self._setup_progress_bar()
-        self._status_bar = QStatusBar()
 
         self.setLayout(
             layout(
                 QVBoxLayout,
                 grid_layout_widget(
                     [
-                        [QLabel("Canvas URL"), self._canvas_url_box],
-                        [QLabel("Canvas API Key"), self._canvas_api_key_box],
-                        [QLabel("Panopto URL"), self._panopto_url_box],
+                        self._canvas_url_box.grid_row(),
+                        self._canvas_api_key_box.grid_row(),
+                        self._panopto_url_box.grid_row(),
+                        [
+                            GridItem(
+                                self._disable_panopto_checkbox,
+                                col_span=2,
+                                alignment=Qt.AlignmentFlag.AlignRight,
+                            )
+                        ],
                     ]
                 ),
                 self._waiting_indicator,
                 self._button_box,
-                self._status_bar,
             )
         )
 
     def _setup_button_box(self) -> QDialogButtonBox:
         box = QDialogButtonBox()
         box.addButton(QDialogButtonBox.StandardButton.Ok)
-        box.addButton("Get a Canvas API key", QDialogButtonBox.ButtonRole.HelpRole)
+        box.addButton("Get a Canvas API Key", QDialogButtonBox.ButtonRole.HelpRole)
+
+        box.accepted.connect(self._verify_settings)
+        box.helpRequested.connect(self._help_requested)
         return box
 
     def _setup_progress_bar(self) -> QProgressBar:
@@ -81,32 +164,33 @@ class SetupDialog(QDialog):
         widget.setSizePolicy(size_policy)
 
     @asyncSlot()
-    async def _accepted(self) -> None:
+    async def _verify_settings(self) -> None:
         if self._semaphore.acquire(False):
             try:
                 self._clear_errors()
 
-                if not self._all_inputs_valid():
-                    self._status_bar.showMessage("Invalid input!", 5000)
+                if not self._check_all_inputs():
                     return
 
                 self._waiting_indicator.setVisible(True)
-                self._status_bar.showMessage("Checking configuration...")
 
                 canvas_config = CanvasClientConfig(
-                    api_token=self._canvas_api_key_box.text().strip(),
-                    canvas_url=self._get_url(self._canvas_url_box),
+                    api_token=self._canvas_api_key_box.text,
+                    canvas_url=self._canvas_url_box.url_text,
                 )
 
                 if not await self._check_canvas_config(canvas_config):
                     return
 
-                if not await self._check_panopto_config(canvas_config):
-                    self._show_panopto_help()
-                    return
+                if self._panopto_enabled:
+                    if not await self._check_panopto_config(canvas_config):
+                        self._show_panopto_help()
+                        return
             except Exception as e:
-                self._status_bar.showMessage(f"An error occurred: {e}", 5000)
                 _logger.warning("Checking config failed", exc_info=e)
+
+                error_box = QErrorMessage(self)
+                error_box.showMessage(f"Checking config failed: {e}")
             finally:
                 self._waiting_indicator.setVisible(False)
                 self._semaphore.release()
@@ -117,59 +201,40 @@ class SetupDialog(QDialog):
             _logger.debug("Validation already in progress")
 
     def _clear_errors(self) -> None:
-        for line_edit in [
-            self._canvas_url_box,
-            self._panopto_url_box,
-            self._canvas_api_key_box,
-        ]:
-            self._status_bar.clearMessage()
-            line_edit.setStyleSheet(None)
-            line_edit.setToolTip(None)
+        self._canvas_url_box.clear_error()
+        self._panopto_url_box.clear_error()
+        self._canvas_api_key_box.clear_error()
 
-    def _all_inputs_valid(self) -> bool:
+    def _check_all_inputs(self) -> bool:
         all_valid = True
 
-        if not is_url(self._get_url(self._canvas_url_box)):
+        if not self._canvas_url_box.is_valid_url:
             all_valid = False
-            self._show_error(self._canvas_url_box, "Canvas URL is invalid")
-        if len(self._canvas_api_key_box.text().strip()) == 0:
+            self._canvas_url_box.set_error("Canvas URL is invalid")
+
+        if self._canvas_api_key_box.is_empty:
             all_valid = False
-            self._show_error(self._canvas_api_key_box, "Canvas API key is empty")
-        if not is_url(self._get_url(self._panopto_url_box)):
+            self._canvas_api_key_box.set_error("Canvas API key is empty")
+
+        if self._panopto_enabled and not self._panopto_url_box.is_valid_url:
             all_valid = False
-            self._show_error(self._panopto_url_box, "Panopto URL is invalid")
+            self._panopto_url_box.set_error("Panopto URL is invalid")
 
         return all_valid
-
-    def _get_url(self, line_edit: QLineEdit) -> str:
-        url = line_edit.text().strip()
-
-        if not url.startswith("http"):
-            return "https://" + url
-        else:
-            return url
 
     async def _check_canvas_config(self, canvas_config: CanvasClientConfig) -> bool:
         try:
             await CanvasClient.verify_config(canvas_config)
             return True
         except ConfigInvalidError:
-            self._show_error(self._canvas_api_key_box, "Canvas API key is invalid")
+            self._canvas_api_key_box.set_error("Canvas API key is invalid")
             return False
-
-    def _show_error(self, line_edit: QLineEdit, text: str) -> None:
-        line_edit.setToolTip(text)
-        self._waiting_indicator.hide()
-        self._highlight_line_edit(line_edit)
-
-    def _highlight_line_edit(self, line_edit: QLineEdit) -> None:
-        line_edit.setStyleSheet("QLineEdit { border: 1px solid red }")
 
     async def _check_panopto_config(self, canvas_config: CanvasClientConfig) -> bool:
         client = CanvasClient(canvas_config)
         try:
             await PanoptoClient.verify_config(
-                PanoptoClientConfig(panopto_url=self._get_url(self._panopto_url_box)),
+                PanoptoClientConfig(panopto_url=self._panopto_url_box.url_text),
                 client,
             )
             return True
@@ -194,15 +259,21 @@ class SetupDialog(QDialog):
 
     @Slot()
     def _open_panopto_login(self) -> None:
-        url = QUrl(self._get_url(self._panopto_url_box))
+        url = QUrl(self._panopto_url_box.url_text)
         url.setPath("/Panopto/Pages/Auth/Login.aspx")
         url.setQuery("instance=Canvas&AllowBounce=true")
         QDesktopServices.openUrl(url)
 
     def _save_and_close(self) -> None:
-        settings.client.canvas_url = self._get_url(self._canvas_url_box)
-        settings.client.panopto_url = self._get_url(self._panopto_url_box)
-        settings.client.canvas_api_key = self._canvas_api_key_box.text().strip()
+        settings.client.canvas_url = self._canvas_url_box.url_text
+
+        if self._panopto_enabled:
+            settings.client.panopto_url = self._panopto_url_box.url_text
+        else:
+            settings.client.panopto_disabled = True
+
+        settings.client.canvas_api_key = self._canvas_api_key_box.text
+
         self.closed.emit()
         self.close()
 
@@ -223,3 +294,11 @@ class SetupDialog(QDialog):
     @Slot()
     def _open_tutorial(self) -> None:
         QDesktopServices.openUrl(QUrl(_tutorial_url))
+
+    @Slot(Qt.CheckState)
+    def _disable_panopto_check_changed(self, state: Qt.CheckState) -> None:
+        self._panopto_url_box.enabled = state == Qt.CheckState.Unchecked
+
+    @property
+    def _panopto_enabled(self) -> bool:
+        return self._disable_panopto_checkbox.checkState() == Qt.CheckState.Unchecked
