@@ -17,7 +17,8 @@ qcanvas = "qcanvas.run:main"
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13"
 qcanvas-api-clients = "^0.3.0"
-#qcanvas-backend = "^0.2.0"
+qcanvas-backend = "^0.2.1"
+#qcanvas-backend = { path = "../QCanvas-Backend/", develop = true }
 asynctaskpool = "^0.2.1"
 sqlalchemy = "^2.0.31"
 qtpy = "^2.4.1"
@@ -27,7 +28,6 @@ qasync = "^0.27.1"
 lightdb = "^2.0"
 platformdirs = "^4.2.2"
 validators = "^0.33.0"
-qcanvas-backend = { path = "../QCanvas-Backend/", develop = true }
 
 
 [tool.poetry.group.flatpak-exclude.dependencies]
