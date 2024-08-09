@@ -23,7 +23,7 @@
 # nuitka-project: --nofollow-import-to=yt_dlp.extractor.lazy_extractors
 
 import logging
-from logging import INFO, WARNING
+from logging import DEBUG, INFO, WARNING
 
 import qcanvas.app_start
 from qcanvas.util import logs, paths
@@ -42,6 +42,7 @@ logs.set_levels(
         "qcanvas.ui": WARNING,
         "qcanvas_backend": INFO,
         "qcanvas.ui.main_ui.status_bar_progress_display": INFO,
+        "qcanvas.util.themes": DEBUG,
     }
 )
 
