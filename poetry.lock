@@ -1143,13 +1143,13 @@ hook-testing = ["execnet (>=1.5.0)", "psutil", "pytest (>=2.7.3)"]
 
 [[package]]
 name = "pyinstaller-hooks-contrib"
-version = "2024.7"
+version = "2024.8"
 description = "Community maintained hooks for PyInstaller"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    { file = "pyinstaller_hooks_contrib-2024.7-py2.py3-none-any.whl", hash = "sha256:8bf0775771fbaf96bcd2f4dfd6f7ae6c1dd1b1efe254c7e50477b3c08e7841d8" },
-    { file = "pyinstaller_hooks_contrib-2024.7.tar.gz", hash = "sha256:fd5f37dcf99bece184e40642af88be16a9b89613ecb958a8bd1136634fc9fac5" },
+    { file = "pyinstaller_hooks_contrib-2024.8-py3-none-any.whl", hash = "sha256:0057fe9a5c398d3f580e73e58793a1d4a8315ca91c3df01efea1c14ed557825a" },
+    { file = "pyinstaller_hooks_contrib-2024.8.tar.gz", hash = "sha256:29b68d878ab739e967055b56a93eb9b58e529d5b054fbab7a2f2bacf80cef3e2" },
 ]
 
 [package.dependencies]
@@ -1306,13 +1306,13 @@ tenacity = ">=8.2.3,<9.0.0"
 
 [[package]]
 name = "qcanvas-backend"
-version = "0.2.1"
+version = "0.2.2"
 description = ""
 optional = false
 python-versions = "<4.0,>=3.10"
 files = [
-    { file = "qcanvas_backend-0.2.1-py3-none-any.whl", hash = "sha256:5da4541e7fc70048951c23de05e4026301e60ea3dafbb661652e92753139d6dc" },
-    { file = "qcanvas_backend-0.2.1.tar.gz", hash = "sha256:a9341a2f44c7eb172ed54cb347773bf962c20c526539c3b8a611c8d05199a4a1" },
+    { file = "qcanvas_backend-0.2.2-py3-none-any.whl", hash = "sha256:2a8af1699a0c97739f6d7f79a223ecb5c2cb6d2428c1a18dca406b194515f268" },
+    { file = "qcanvas_backend-0.2.2.tar.gz", hash = "sha256:a572b61b7093574f064b5334d90fd1a9a60134d95e9f6e71268b04eee7a3ca18" },
 ]
 
 [package.dependencies]
@@ -1841,4 +1841,4 @@ test = ["pytest (>=8.1,<9.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "58022c24f4e675e85d4b23e835bb177ada3cf298718f3876fb749f39aced0d9d"
+content-hash = "01a89ad083d9be49058ff1e5cf0070698b84faac9b2ac302a4cf8b87c15aee97"
