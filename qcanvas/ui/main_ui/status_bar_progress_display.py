@@ -77,10 +77,13 @@ class StatusBarProgressDisplay(QStatusBar):
         async with self._lock:
             if self._has_no_tasks:
                 self._show_done()
-            elif self._has_single_task:
-                self._show_single_task_progress(list(self._tasks.items())[0])
             else:
-                self._show_multiple_tasks_progress(list(self._tasks.values()))
+                tasks = list(self._tasks.items())
+
+                if self._has_single_task:
+                    self._show_single_task_progress(tasks[0])
+                else:
+                    self._show_multiple_tasks_progress(tasks)
 
     def _show_done(self) -> None:
         _logger.info("Finished tasks. Tasks: %s", self._tasks)
@@ -94,18 +97,24 @@ class StatusBarProgressDisplay(QStatusBar):
         self._show_progress(progress)
         self.showMessage(id.step_name)
 
-    def _show_multiple_tasks_progress(self, tasks: list[_TaskProgress]) -> None:
+    def _show_multiple_tasks_progress(
+        self, tasks: list[Tuple[TaskID, _TaskProgress]]
+    ) -> None:
         _logger.debug("Multiple tasks %s", tasks)
-        self.showMessage(f"{len(tasks)} tasks in progress")
+        self.showMessage(
+            f"{len(tasks)} tasks in progress - {', '.join([task[0].step_name for task in tasks])}"
+        )
         self._show_progress(self._calculate_progress(tasks))
 
-    def _calculate_progress(self, tasks: list[_TaskProgress]) -> _TaskProgress:
-        # Used to represent 0..1 progress as 0..multiplier
+    def _calculate_progress(
+        self, tasks: list[Tuple[TaskID, _TaskProgress]]
+    ) -> _TaskProgress:
+        # Task progresses are floats from 0 to 1, multiplier is used to turn them into ints
         multiplier = 1000
         current_sum = 0
         total_sum = 0
 
-        for task in tasks:
+        for _, task in tasks:
             if task.total != 0:
                 current_sum += (task.current / task.total) * multiplier
 
