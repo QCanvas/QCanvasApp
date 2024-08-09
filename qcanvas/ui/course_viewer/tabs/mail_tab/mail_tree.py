@@ -18,6 +18,7 @@ class MailTree(ContentTree[db.Course]):
             tree_name=f"course.{course_id}.mail",
             emit_selection_signal_for_type=db.CourseMessage,
         )
+
         self.ui_setup(
             header_text=["Subject", "Sender"],
             max_width=500,
@@ -25,13 +26,9 @@ class MailTree(ContentTree[db.Course]):
             indentation=20,
         )
 
-        self._adjust_header()
-
-    def _adjust_header(self) -> None:
-        header = self.header()
-        header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
-        header.setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
-        header.setStretchLastSection(False)
+        self.set_columns_resize_mode(
+            [QHeaderView.ResizeMode.Stretch, QHeaderView.ResizeMode.ResizeToContents]
+        )
 
     def create_tree_items(
         self, course: db.Course, sync_receipt: SyncReceipt

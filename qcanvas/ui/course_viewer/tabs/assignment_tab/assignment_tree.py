@@ -18,6 +18,7 @@ class AssignmentTree(ContentTree[db.Course]):
             tree_name=f"course.{course_id}.assignment_groups",
             emit_selection_signal_for_type=db.Assignment,
         )
+
         self.ui_setup(
             header_text=["Assignments", "Weight"],
             indentation=15,
@@ -25,13 +26,9 @@ class AssignmentTree(ContentTree[db.Course]):
             min_width=150,
         )
 
-        self._adjust_header()
-
-    def _adjust_header(self) -> None:
-        header = self.header()
-        header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
-        header.setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
-        header.setStretchLastSection(False)
+        self.set_columns_resize_mode(
+            [QHeaderView.ResizeMode.Stretch, QHeaderView.ResizeMode.ResizeToContents]
+        )
 
     def create_tree_items(
         self, course: db.Course, sync_receipt: SyncReceipt
@@ -39,8 +36,11 @@ class AssignmentTree(ContentTree[db.Course]):
         widgets = []
 
         for assignment_group in course.assignment_groups:  # type: db.AssignmentGroup
+            if len(assignment_group.assignments) == 0:
+                continue
+
             assignment_group_widget = self._create_assignment_group_widget(
-                assignment_group, sync_receipt
+                assignment_group
             )
 
             widgets.append(assignment_group_widget)
@@ -54,7 +54,7 @@ class AssignmentTree(ContentTree[db.Course]):
         return widgets
 
     def _create_assignment_group_widget(
-        self, assignment_group: db.AssignmentGroup, sync_receipt: SyncReceipt
+        self, assignment_group: db.AssignmentGroup
     ) -> MemoryTreeWidgetItem:
         assignment_group_widget = MemoryTreeWidgetItem(
             id=assignment_group.id,
@@ -63,9 +63,6 @@ class AssignmentTree(ContentTree[db.Course]):
         )
 
         assignment_group_widget.setFlags(Qt.ItemFlag.ItemIsEnabled)
-
-        if sync_receipt.was_updated(assignment_group):
-            self.mark_as_unseen(assignment_group_widget)
 
         return assignment_group_widget
 

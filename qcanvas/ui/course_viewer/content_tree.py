@@ -61,6 +61,19 @@ class ContentTree(MemoryTreeWidget, Generic[T]):
         if min_width is not None:
             self.setMinimumWidth(min_width)
 
+    def set_columns_resize_mode(
+        self,
+        resize_mode_for_columns: list[QHeaderView.ResizeMode],
+        *,
+        stretch_last: bool = False,
+    ) -> None:
+        header = self.header()
+
+        for index, mode in enumerate(resize_mode_for_columns):
+            header.setSectionResizeMode(index, mode)
+
+        header.setStretchLastSection(stretch_last)
+
     def reload(self, data: T, *, sync_receipt: SyncReceipt) -> None:
         self._reloading = True
 

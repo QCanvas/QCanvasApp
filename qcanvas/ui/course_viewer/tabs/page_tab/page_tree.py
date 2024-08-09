@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Sequence
+from typing import Sequence
 
 import qcanvas_backend.database.types as db
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
@@ -17,6 +17,7 @@ class PageTree(ContentTree[db.Course]):
             tree_name=f"course.{course_id}.modules",
             emit_selection_signal_for_type=db.ModulePage,
         )
+
         self.ui_setup(
             header_text="Content", indentation=15, max_width=300, min_width=150
         )
@@ -27,7 +28,10 @@ class PageTree(ContentTree[db.Course]):
         widgets = []
 
         for module in course.modules:  # type: db.Module
-            module_widget = self._create_module_widget(module, sync_receipt)
+            if len(module.pages) == 0:
+                continue
+
+            module_widget = self._create_module_widget(module)
             widgets.append(module_widget)
 
             for page in module.pages:  # type: db.ModulePage
@@ -36,17 +40,11 @@ class PageTree(ContentTree[db.Course]):
 
         return widgets
 
-    def _create_module_widget(
-        self, module: db.Module, sync_receipt: SyncReceipt
-    ) -> MemoryTreeWidgetItem:
+    def _create_module_widget(self, module: db.Module) -> MemoryTreeWidgetItem:
         module_widget = MemoryTreeWidgetItem(
             id=module.id, data=module, strings=[module.name]
         )
         module_widget.setFlags(Qt.ItemFlag.ItemIsEnabled)
-
-        # Todo not sure if modules should get highlighted since they can't be unhighlighted by selecting them...
-        if sync_receipt.was_updated(module):
-            self.mark_as_unseen(module_widget)
 
         return module_widget
 
