@@ -1,15 +1,46 @@
 import logging
+from math import floor
 from typing import *
 
 import qcanvas_backend.database.types as db
 from qcanvas_backend.net.resources.download.resource_manager import ResourceManager
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt, empty_receipt
 from qtpy.QtCore import Qt
+from qtpy.QtGui import QIcon
 from qtpy.QtWidgets import *
 
+from qcanvas import icons
 from qcanvas.ui.course_viewer.course_viewer import CourseViewer
 
 _logger = logging.getLogger(__name__)
+
+
+# todo needs to handle dark mode
+class _PlaceholderLogo(QLabel):
+    """
+    Automatically resizing logo icon for when no course is selected
+    """
+
+    def __init__(self):
+        super().__init__()
+        self._icon = QIcon(icons.logo_transparent_light)
+        self._old_width = -1
+        self._old_height = -1
+        self.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
+
+    def resizeEvent(self, event) -> None:
+        # Calculate the size of the logo as half of the width/height with a max size of 1000x1000
+        width = min(floor(self.width() * 0.5), 500)
+        height = min(floor(self.height() * 0.5), 500)
+
+        if width == self._old_width or height == self._old_height:
+            return
+        else:
+            self._old_width = width
+            self._old_height = height
+
+        self.setPixmap(self._icon.pixmap(width, height))
 
 
 class CourseViewerContainer(QStackedWidget):
@@ -19,8 +50,7 @@ class CourseViewerContainer(QStackedWidget):
         self._downloader = downloader
         self._last_course_id: Optional[str] = None
         self._last_sync_receipt: SyncReceipt = empty_receipt()
-        self._placeholder = QLabel("No Course Selected")
-        self._placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self._placeholder = _PlaceholderLogo()
         self.addWidget(self._placeholder)
 
     def show_blank(self) -> None:
