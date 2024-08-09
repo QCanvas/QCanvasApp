@@ -5,7 +5,7 @@ from qcanvas_backend.net.resources.download.resource_manager import ResourceMana
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qtpy.QtWidgets import *
 
-from qcanvas.ui.course_viewer.tabs.file_tab.file_tree import FileTree
+from qcanvas.ui.course_viewer.tabs.file_tab.pages_file_tree import PagesFileTree
 from qcanvas.util.layouts import layout
 
 _logger = logging.getLogger(__name__)
@@ -30,19 +30,17 @@ class FileTab(QWidget):
     ):
         super().__init__()
 
-        self._page_file_tree = FileTree.create_from_receipt(
-            course, sync_receipt=sync_receipt, mode="pages", resource_manager=downloader
+        self._page_file_tree = PagesFileTree.create_from_receipt(
+            course, sync_receipt=sync_receipt, resource_manager=downloader
         )
-        self._assignment_file_tree = FileTree.create_from_receipt(
-            course,
-            sync_receipt=sync_receipt,
-            mode="assignments",
-            resource_manager=downloader,
-        )
+        # self._assignment_file_tree = FileTree.create_from_receipt(
+        #     course,
+        #     sync_receipt=sync_receipt,
+        #     mode="assignments",
+        #     resource_manager=downloader,
+        # )
 
-        self.setLayout(
-            layout(QHBoxLayout, self._page_file_tree, self._assignment_file_tree)
-        )
+        self.setLayout(layout(QHBoxLayout, self._page_file_tree))
 
     def reload(self, course: db.Course, *, sync_receipt: SyncReceipt) -> None:
         pass

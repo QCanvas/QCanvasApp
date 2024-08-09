@@ -55,10 +55,10 @@ class CourseViewer(QWidget):
         )
 
         self._tabs = QTabWidget()
+        self._tabs.addTab(self._files_tab, "Files")
         self._tabs.addTab(self._pages_tab, "Pages")
         self._tabs.addTab(self._assignments_tab, "Assignments")
         self._tabs.addTab(self._mail_tab, "Mail")
-        self._tabs.addTab(self._files_tab, "Files")
         # self._tabs.addTab(QLabel("Not implemented"), "Panopto")  # The meme lives on!
 
         self.setLayout(layout(QVBoxLayout, self._course_label, self._tabs))
@@ -69,10 +69,10 @@ class CourseViewer(QWidget):
         self._unhighlight_tab(0)  # Because the first tab always gets auto-selected
 
     def reload(self, course: db.Course, *, sync_receipt: SyncReceipt) -> None:
+        self._files_tab.reload(course, sync_receipt=sync_receipt)
         self._pages_tab.reload(course, sync_receipt=sync_receipt)
         self._assignments_tab.reload(course, sync_receipt=sync_receipt)
         self._mail_tab.reload(course, sync_receipt=sync_receipt)
-
         self._highlight_tabs(sync_receipt)
 
     @Slot(int)
@@ -84,18 +84,17 @@ class CourseViewer(QWidget):
         updates = sync_receipt.updates_by_course.get(self._course_id, None)
 
         if updates is not None:
-            # if len(updates.updated_resources) > 0:
-            #     raise Exception("Looks like you forgot to update the other numbers??????"")
-            #     self._highlight_tab(0)
-
-            if len(updates.updated_pages) > 0:
+            if len(updates.updated_resources) > 0:
                 self._highlight_tab(0)
 
-            if len(updates.updated_assignments) > 0:
+            if len(updates.updated_pages) > 0:
                 self._highlight_tab(1)
 
-            if len(updates.updated_messages) > 0:
+            if len(updates.updated_assignments) > 0:
                 self._highlight_tab(2)
+
+            if len(updates.updated_messages) > 0:
+                self._highlight_tab(3)
         else:
             for index in range(0, 4):
                 self._unhighlight_tab(index)
