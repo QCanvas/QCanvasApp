@@ -4,12 +4,13 @@ import sys
 
 import qtpy
 from qasync import QEventLoop
+from qtpy.QtGui import QGuiApplication
 from qtpy.QtWidgets import QApplication
 
 import qcanvas.backend_connectors.qcanvas_task_master as task_master
 from qcanvas.ui.main_ui.qcanvas_window import QCanvasWindow
 from qcanvas.ui.setup import SetupDialog, setup_checker
-from qcanvas.util import settings, themes
+from qcanvas.util import runtime, settings, themes
 
 main_window = None
 setup_window = None
@@ -32,6 +33,10 @@ def launch():
     _show_qt_api_name()
 
     app = QApplication(sys.argv)
+
+    if runtime.is_running_as_flatpak:
+        QGuiApplication.setDesktopFileName("io.github.qcanvas.QCanvasApp")
+
     app.setApplicationName("QCanvas")
 
     task_master.register()
