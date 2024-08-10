@@ -30,9 +30,9 @@ def apply(theme: str) -> None:
             _selected_theme = SelectedTheme.AUTO
             selected_colour_scheme = "dark" if _is_dark_mode else "light"
         else:
-            selected_colour_scheme = theme
-            _selected_theme = SelectedTheme.OVERRIDE
             _is_dark_mode = theme == "dark"
+            _selected_theme = SelectedTheme.OVERRIDE
+            selected_colour_scheme = theme
 
         qdarktheme.setup_theme(
             selected_colour_scheme,
@@ -41,8 +41,8 @@ def apply(theme: str) -> None:
 
         QApplication.setStyle(QStyleFactory.create("Fusion"))
     else:
-        _selected_theme = SelectedTheme.NATIVE
         _is_dark_mode = is_dark_colour_scheme()
+        _selected_theme = SelectedTheme.NATIVE
 
     if was_dark_mode != _is_dark_mode:
         theme_changed().emit()
