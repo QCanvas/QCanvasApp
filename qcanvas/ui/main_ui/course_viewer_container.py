@@ -5,12 +5,13 @@ from typing import *
 import qcanvas_backend.database.types as db
 from qcanvas_backend.net.resources.download.resource_manager import ResourceManager
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt, empty_receipt
-from qtpy.QtCore import Qt
+from qtpy.QtCore import Qt, Slot
 from qtpy.QtGui import QIcon
 from qtpy.QtWidgets import *
 
 from qcanvas import icons
 from qcanvas.ui.course_viewer.course_viewer import CourseViewer
+from qcanvas.util import themes
 
 _logger = logging.getLogger(__name__)
 
@@ -23,24 +24,35 @@ class _PlaceholderLogo(QLabel):
 
     def __init__(self):
         super().__init__()
-        self._icon = QIcon(icons.logo_transparent_light)
+        self._light_icon = QIcon(icons.logo_transparent_light)
+        self._dark_icon = QIcon(icons.logo_transparent_dark)
         self._old_width = -1
         self._old_height = -1
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
+        themes.theme_changed().connect(self._theme_changed)
 
     def resizeEvent(self, event) -> None:
+        self._update_image()
+
+    @Slot()
+    def _theme_changed(self) -> None:
+        self._update_image(force=True)
+
+    def _update_image(self, force: bool = False) -> None:
         # Calculate the size of the logo as half of the width/height with a max size of 1000x1000
         width = min(floor(self.width() * 0.5), 500)
         height = min(floor(self.height() * 0.5), 500)
 
-        if width == self._old_width or height == self._old_height:
-            return
-        else:
+        if force or (width != self._old_width and height != self._old_height):
             self._old_width = width
             self._old_height = height
+        else:
+            return
 
-        self.setPixmap(self._icon.pixmap(width, height))
+        icon = self._dark_icon if themes.is_dark_mode() else self._light_icon
+
+        self.setPixmap(icon.pixmap(width, height))
 
 
 class CourseViewerContainer(QStackedWidget):

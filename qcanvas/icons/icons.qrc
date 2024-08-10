@@ -7,5 +7,6 @@
         <file>file-download-failed.svg</file>
         <file>file-unknown.svg</file>
         <file>logo-transparent-light.svg</file>
+        <file>logo-transparent-dark.svg</file>
     </qresource>
 </RCC>
