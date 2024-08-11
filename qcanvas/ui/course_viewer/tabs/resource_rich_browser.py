@@ -183,4 +183,21 @@ class ResourceRichBrowser(QTextBrowser):
     @Slot(db.Resource)
     def _download_updated(self, resource: db.Resource) -> None:
         if self._content is not None and resource.id in self._current_content_resources:
+            # BANDAID FIX: In the following situation:
+            # - Download is started
+            # - Synchronisation is started
+            # - Download finishes AFTER the sync
+            # --> `resource` is NOT `self._current_content_resources[resource.id]`, because the sync will reload the
+            # resource from the DB, but the downloader will still only know about the old resource object.
+            # This causes resources not update their download state in the viewer. This line "fixes" that, but does NOT
+            # address the root cause. I think reloading the resource from the DB somewhere is the only true fix for this
+
+            if self._current_content_resources[resource.id] is not resource:
+                _logger.warning(
+                    "Resource has diverged from current loaded data, applying bandaid fix"
+                )
+                self._current_content_resources[resource.id].download_state = (
+                    resource.download_state
+                )
+
             self._show_page_content(self._content)
