@@ -54,6 +54,7 @@ class TreeMemory:
     def set_expanded(self, node_id: str, expanded: bool) -> None:
         contains = node_id in self._state.collapsed_items
 
+        # fixme when using a slow usb stick, this can momentarily block the event loop.
         if expanded and contains:
             self._state.collapsed_items.remove(node_id)
             self._state.save()
