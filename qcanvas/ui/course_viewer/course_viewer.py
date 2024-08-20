@@ -55,7 +55,7 @@ class CourseViewer(QWidget):
         )
 
         self._tabs = QTabWidget()
-        self._tabs.addTab(self._files_tab, "Files")
+        # self._tabs.addTab(self._files_tab, "Files")  # Scrapped
         self._tabs.addTab(self._pages_tab, "Pages")
         self._tabs.addTab(self._assignments_tab, "Assignments")
         self._tabs.addTab(self._mail_tab, "Mail")
