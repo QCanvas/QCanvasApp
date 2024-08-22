@@ -16,6 +16,8 @@ def clean_up_html(html: str) -> str:
     _remove_tags(doc.find_all(["link", "script"]))
     # Remove font awesome icons (which don't load anyway)
     _remove_tags(doc.find_all(["span"], class_=["dp-icon-content"]))
+    # Remove screen reader elements
+    _remove_tags(doc.find_all(class_="screenreader-only"))
 
     return str(doc)
 

@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup, Tag
 from qasync import asyncSlot
 from qcanvas_backend.net.resources.download.resource_manager import ResourceManager
 from qcanvas_backend.net.resources.extracting.no_extractor_error import NoExtractorError
-from qcanvas_backend.net.resources.scanning.resource_scanner import ResourceScanner
+from qcanvas_backend.util import is_link_invisible
 from qtpy.QtCore import QUrl, Slot
 from qtpy.QtGui import QDesktopServices
 from qtpy.QtWidgets import QTextBrowser
@@ -85,8 +85,7 @@ class ResourceRichBrowser(QTextBrowser):
                 extractor = self._extractors.extractor_for_tag(resource_link)
                 resource_id = extractor.resource_id_from_tag(resource_link)
 
-                # FIXME private method
-                if ResourceScanner._is_link_invisible(resource_link):
+                if is_link_invisible(resource_link):
                     _logger.debug("Found dead link for %s, removing", resource_id)
                     resource_link.decompose()
                     continue
