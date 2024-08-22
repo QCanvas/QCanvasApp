@@ -122,9 +122,7 @@ class ResourceRichBrowser(QTextBrowser):
         # else:
         file_link_tag = doc.new_tag(
             "a",
-            attrs={
-                "href": f"data:{resource_id}",
-            },
+            attrs={"href": f"data:{resource_id}", "style": "font-weight: normal"},
         )
 
         file_link_tag.append(self._file_icon_tag(doc, resource.download_state))
