@@ -5,8 +5,10 @@ from typing import *
 import qcanvas_backend.database.types as db
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qtpy.QtCore import QItemSelection, Signal, Slot
+from qtpy.QtGui import QIcon
 from qtpy.QtWidgets import *
 
+from qcanvas import icons
 from qcanvas.ui.memory_tree import MemoryTreeWidget, MemoryTreeWidgetItem
 from qcanvas.util.basic_fonts import bold_font, normal_font
 
@@ -14,6 +16,8 @@ _logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
 U = TypeVar("U", bound=Type["ContentTree"])
+
+group_icon = QIcon(icons.tree.module)
 
 
 class ContentTree(MemoryTreeWidget, Generic[T]):

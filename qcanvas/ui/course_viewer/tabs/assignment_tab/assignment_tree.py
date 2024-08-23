@@ -4,12 +4,17 @@ from typing import Sequence
 import qcanvas_backend.database.types as db
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qtpy.QtCore import Qt
+from qtpy.QtGui import QIcon
 from qtpy.QtWidgets import QHeaderView
 
+from qcanvas import icons
+from qcanvas.ui.course_viewer import content_tree
 from qcanvas.ui.course_viewer.content_tree import ContentTree
 from qcanvas.ui.memory_tree import MemoryTreeWidgetItem
 
 _logger = logging.getLogger(__name__)
+
+_assignment_icon = QIcon(icons.tree.assignment)
 
 
 class AssignmentTree(ContentTree[db.Course]):
@@ -63,6 +68,7 @@ class AssignmentTree(ContentTree[db.Course]):
         )
 
         assignment_group_widget.setFlags(Qt.ItemFlag.ItemIsEnabled)
+        assignment_group_widget.setIcon(0, content_tree.group_icon)
 
         return assignment_group_widget
 
@@ -76,6 +82,7 @@ class AssignmentTree(ContentTree[db.Course]):
         assignment_widget.setFlags(
             Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
         )
+        assignment_widget.setIcon(0, _assignment_icon)
 
         if sync_receipt.was_updated(assignment):
             self.mark_as_unseen(assignment_widget)

@@ -1,12 +1,20 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
     <qresource>
-        <file>main_icon.svg</file>
-        <file>file-downloaded.svg</file>
-        <file>file-not-downloaded.svg</file>
-        <file>file-download-failed.svg</file>
-        <file>file-unknown.svg</file>
-        <file>logo-transparent-light.svg</file>
-        <file>logo-transparent-dark.svg</file>
+        <file>branding/logo-transparent-dark.svg</file>
+        <file>branding/logo-transparent-light.svg</file>
+        <file>branding/main-icon.svg</file>
+        <file>downloads/download-failed.svg</file>
+        <file>downloads/downloaded.svg</file>
+        <file>downloads/not-downloaded.svg</file>
+        <file>downloads/unknown.svg</file>
+        <file>tabs/assignments.svg</file>
+        <file>tabs/mail.svg</file>
+        <file>tabs/pages.svg</file>
+        <file>tree-icons/assignment.svg</file>
+        <file>tree-icons/mail.svg</file>
+        <file>tree-icons/module.svg</file>
+        <file>tree-icons/page.svg</file>
+        <file>tree-icons/semester.svg</file>
     </qresource>
 </RCC>

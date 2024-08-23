@@ -24,8 +24,8 @@ class _PlaceholderLogo(QLabel):
 
     def __init__(self):
         super().__init__()
-        self._light_icon = QIcon(icons.logo_transparent_light)
-        self._dark_icon = QIcon(icons.logo_transparent_dark)
+        self._light_icon = QIcon(icons.branding.transparent_light_logo)
+        self._dark_icon = QIcon(icons.branding.transparent_dark_logo)
         self._old_width = -1
         self._old_height = -1
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)

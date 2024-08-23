@@ -93,7 +93,7 @@ class SetupDialog(QDialog):
         self.setWindowTitle("Configure QCanvas")
         self.setMinimumSize(550, 200)
         self.resize(550, 200)
-        self.setWindowIcon(QIcon(icons.main_icon))
+        self.setWindowIcon(QIcon(icons.branding.main_icon))
 
         self._semaphore = Semaphore()
 

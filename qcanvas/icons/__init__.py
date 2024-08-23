@@ -1,9 +1,6 @@
-from qcanvas.icons import rc_icons
-
-main_icon = ":/main_icon.svg"
-file_downloaded = ":/file-downloaded.svg"
-file_not_downloaded = ":/file-not-downloaded.svg"
-file_download_failed = ":/file-download-failed.svg"
-file_unknown = ":/file-unknown.svg"
-logo_transparent_light = ":/logo-transparent-light.svg"
-logo_transparent_dark = ":/logo-transparent-dark.svg"
+# Needed or else the icons won't be loaded
+import qcanvas.icons._branding as branding
+import qcanvas.icons._downloads as download
+import qcanvas.icons._tabs as tabs
+import qcanvas.icons._tree_icons as tree
+import qcanvas.icons.rc_icons

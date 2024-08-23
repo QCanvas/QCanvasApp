@@ -128,8 +128,6 @@ class ResourceRichBrowser(QTextBrowser):
         file_link_tag.append(self._file_icon_tag(doc, resource.download_state))
         file_link_tag.append("\N{NO-BREAK SPACE}" + resource.file_name)
 
-        _logger.debug(str(file_link_tag))
-
         return file_link_tag
 
     def _file_icon_tag(
@@ -140,18 +138,18 @@ class ResourceRichBrowser(QTextBrowser):
             attrs={
                 "src": self._download_state_icon(download_state),
                 "style": "vertical-align:middle",
-                "width": 18,
+                "height": 16,
             },
         )
 
     def _download_state_icon(self, download_state: db.ResourceDownloadState) -> str:
         match download_state:
             case db.ResourceDownloadState.DOWNLOADED:
-                return icons.file_downloaded
+                return icons.download.downloaded
             case db.ResourceDownloadState.NOT_DOWNLOADED:
-                return icons.file_not_downloaded
+                return icons.download.not_downloaded
             case db.ResourceDownloadState.FAILED:
-                return icons.file_download_failed
+                return icons.download.download_failed
             case _:
                 raise ValueError()
 

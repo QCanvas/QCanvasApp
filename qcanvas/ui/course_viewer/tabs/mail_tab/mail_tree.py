@@ -3,12 +3,16 @@ from typing import *
 
 import qcanvas_backend.database.types as db
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
+from qtpy.QtGui import QIcon
 from qtpy.QtWidgets import *
 
+from qcanvas import icons
 from qcanvas.ui.course_viewer.content_tree import ContentTree
 from qcanvas.ui.memory_tree import MemoryTreeWidgetItem
 
 _logger = logging.getLogger(__name__)
+
+_mail_icon = QIcon(icons.tree.mail)
 
 
 class MailTree(ContentTree[db.Course]):
@@ -37,6 +41,7 @@ class MailTree(ContentTree[db.Course]):
 
         for message in course.messages:  # type: db.CourseMessage
             message_widget = self._create_mail_widget(message, sync_receipt)
+            message_widget.setIcon(0, _mail_icon)
             widgets.append(message_widget)
 
         return widgets

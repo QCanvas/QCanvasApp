@@ -4,8 +4,10 @@ import qcanvas_backend.database.types as db
 from qcanvas_backend.net.resources.download.resource_manager import ResourceManager
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qtpy.QtCore import Slot
+from qtpy.QtGui import QIcon
 from qtpy.QtWidgets import *
 
+from qcanvas import icons
 from qcanvas.ui.course_viewer.tabs.assignment_tab import AssignmentTab
 from qcanvas.ui.course_viewer.tabs.file_tab import FileTab
 from qcanvas.ui.course_viewer.tabs.mail_tab import MailTab
@@ -15,6 +17,10 @@ from qcanvas.util.layouts import layout
 from qcanvas.util.ui_tools import make_truncatable
 
 _logger = logging.getLogger(__name__)
+
+_assignments_icon = QIcon(icons.tabs.assignments)
+_mail_icon = QIcon(icons.tabs.mail)
+_pages_icon = QIcon(icons.tabs.pages)
 
 
 class CourseViewer(QWidget):
@@ -56,9 +62,9 @@ class CourseViewer(QWidget):
 
         self._tabs = QTabWidget()
         # self._tabs.addTab(self._files_tab, "Files")  # Scrapped
-        self._tabs.addTab(self._pages_tab, "Pages")
-        self._tabs.addTab(self._assignments_tab, "Assignments")
-        self._tabs.addTab(self._mail_tab, "Mail")
+        self._tabs.addTab(self._pages_tab, _pages_icon, "Pages")
+        self._tabs.addTab(self._assignments_tab, _assignments_icon, "Assignments")
+        self._tabs.addTab(self._mail_tab, _mail_icon, "Mail")
         # self._tabs.addTab(QLabel("Not implemented"), "Panopto")  # The meme lives on!
 
         self.setLayout(layout(QVBoxLayout, self._course_label, self._tabs))

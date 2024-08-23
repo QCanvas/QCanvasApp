@@ -4,11 +4,16 @@ from typing import Sequence
 import qcanvas_backend.database.types as db
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qtpy.QtCore import Qt
+from qtpy.QtGui import QIcon
 
+from qcanvas import icons
+from qcanvas.ui.course_viewer import content_tree
 from qcanvas.ui.course_viewer.content_tree import ContentTree
 from qcanvas.ui.memory_tree import MemoryTreeWidgetItem
 
 _logger = logging.getLogger(__name__)
+
+_page_icon = QIcon(icons.tree.page)
 
 
 class PageTree(ContentTree[db.Course]):
@@ -45,6 +50,7 @@ class PageTree(ContentTree[db.Course]):
             id=module.id, data=module, strings=[module.name]
         )
         module_widget.setFlags(Qt.ItemFlag.ItemIsEnabled)
+        module_widget.setIcon(0, content_tree.group_icon)
 
         return module_widget
 
@@ -53,6 +59,7 @@ class PageTree(ContentTree[db.Course]):
     ) -> MemoryTreeWidgetItem:
         page_widget = MemoryTreeWidgetItem(id=page.id, data=page, strings=[page.name])
         page_widget.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
+        page_widget.setIcon(0, _page_icon)
 
         if sync_receipt.was_updated(page):
             self.mark_as_unseen(page_widget)

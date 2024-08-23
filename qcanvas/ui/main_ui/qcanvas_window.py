@@ -37,7 +37,7 @@ class QCanvasWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("QCanvas")
-        self.setWindowIcon(QIcon(icons.main_icon))
+        self.setWindowIcon(QIcon(icons.branding.main_icon))
 
         self._operation_semaphore = BoundedSemaphore()
         self._data: Optional[DataMonolith] = None
