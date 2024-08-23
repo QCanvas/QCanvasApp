@@ -29,7 +29,7 @@ class CourseViewer(QWidget):
         course: db.Course,
         downloader: ResourceManager,
         *,
-        sync_receipt: SyncReceipt
+        sync_receipt: SyncReceipt,
     ):
         super().__init__()
         # todo this is a mess. there are several other messes like this too, do they all have to be a mess?
