@@ -51,6 +51,7 @@ class ContentTree(MemoryTreeWidget, Generic[T]):
         indentation: int = 20,
         max_width: Optional[int] = None,
         min_width: Optional[int] = None,
+        alternating_row_colours: bool = False,
     ) -> None:
         if not isinstance(header_text, str) and isinstance(header_text, Sequence):
             self.setHeaderLabels(header_text)
@@ -64,6 +65,8 @@ class ContentTree(MemoryTreeWidget, Generic[T]):
 
         if min_width is not None:
             self.setMinimumWidth(min_width)
+
+        self.setAlternatingRowColors(alternating_row_colours)
 
     def set_columns_resize_mode(
         self,

@@ -27,6 +27,7 @@ class MailTree(ContentTree[db.Course]):
             max_width=500,
             min_width=300,
             indentation=20,
+            alternating_row_colours=True,
         )
 
         self.set_columns_resize_mode(
