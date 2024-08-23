@@ -1,3 +1,4 @@
+import html
 import logging
 from typing import Optional
 
@@ -96,7 +97,7 @@ class ResourceRichBrowser(QTextBrowser):
                     continue
 
                 file_link_tag = self._create_resource_link_tag(
-                    doc, resource_id, resource_link.name == "img"
+                    resource_id, resource_link.name == "img"
                 )
                 resource_link.replace_with(file_link_tag)
             except NoExtractorError:
@@ -104,9 +105,7 @@ class ResourceRichBrowser(QTextBrowser):
 
         return str(doc)
 
-    def _create_resource_link_tag(
-        self, doc: BeautifulSoup, resource_id: str, is_image: bool
-    ) -> Tag:
+    def _create_resource_link_tag(self, resource_id: str, is_image: bool) -> Tag:
         resource = self._current_content_resources[resource_id]
 
         # todo not sure if this is a good idea or not
@@ -120,27 +119,24 @@ class ResourceRichBrowser(QTextBrowser):
         #         },
         #     )
         # else:
-        file_link_tag = doc.new_tag(
-            "a",
-            attrs={"href": f"data:{resource_id}", "style": "font-weight: normal"},
-        )
 
-        file_link_tag.append(self._file_icon_tag(doc, resource.download_state))
-        file_link_tag.append("\N{NO-BREAK SPACE}" + resource.file_name)
-
-        return file_link_tag
-
-    def _file_icon_tag(
-        self, document: BeautifulSoup, download_state: db.ResourceDownloadState
-    ) -> Tag:
-        return document.new_tag(
-            "img",
-            attrs={
-                "src": self._download_state_icon(download_state),
-                "style": "vertical-align:middle",
-                "height": 16,
-            },
-        )
+        return BeautifulSoup(
+            markup=f"""
+            <a href="data:{html.escape(resource_id)}" style="font-weight: normal">
+                <table style="vertical-align: middle; border-collapse: collapse;">
+                    <tr>
+                        <td style="text-decoration: none;">
+                            <img height="16" src="{html.escape(self._download_state_icon(resource.download_state))}"/>
+                        </td>
+                        <td>
+                            {html.escape(resource.file_name)}
+                        </td>
+                    </tr>
+                </table>
+            </a>
+            """,
+            features="html.parser",
+        ).a
 
     def _download_state_icon(self, download_state: db.ResourceDownloadState) -> str:
         match download_state:
