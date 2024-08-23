@@ -1,7 +1,7 @@
 import logging
 from typing import Any
 
-from qtpy.QtGui import QKeySequence
+from qtpy.QtGui import QIcon, QKeySequence, QPixmap
 from qtpy.QtWidgets import *
 
 _logger = logging.getLogger(__name__)
@@ -19,6 +19,7 @@ def create_qaction(
     triggered: Any = None,
     checkable: bool | None = None,
     checked: bool | None = None,
+    icon: QIcon | QPixmap | None = None
 ) -> QAction:
     action = QAction(name)
 
@@ -37,5 +38,8 @@ def create_qaction(
 
         if checked is not None:
             action.setChecked(checked)
+
+    if icon is not None:
+        action.setIcon(icon)
 
     return action

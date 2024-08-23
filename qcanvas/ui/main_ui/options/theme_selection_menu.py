@@ -1,9 +1,10 @@
 import logging
 
 from qtpy.QtCore import Slot
-from qtpy.QtGui import QAction, QActionGroup
+from qtpy.QtGui import QAction, QActionGroup, QIcon
 from qtpy.QtWidgets import QMenu
 
+from qcanvas import icons
 from qcanvas.util import settings, themes
 
 _logger = logging.getLogger(__name__)
@@ -38,6 +39,7 @@ class ThemeSelectionMenu(QMenu):
         actions = [auto_theme, light_theme, dark_theme, native_theme]
 
         self.addActions(actions)
+        self.setIcon(QIcon(icons.options.theme))
 
         for theme in actions:
             action_group.addAction(theme)

@@ -2,9 +2,10 @@ import logging
 from typing import *
 
 from qtpy.QtCore import Slot
-from qtpy.QtGui import QAction
+from qtpy.QtGui import QAction, QIcon
 from qtpy.QtWidgets import QMenu
 
+from qcanvas import icons
 from qcanvas.util import settings
 
 _logger = logging.getLogger(__name__)
@@ -36,6 +37,7 @@ class _EnableVideoDownloadOption(QAction):
 
 class AutoDownloadResourcesMenu(QMenu):
     def __init__(self, parent: Optional[QMenu] = None):
-        super().__init__("Download new resources", parent)
+        super().__init__("Auto download resources", parent)
         self.addAction(_EnableAutoDownloadOption(self))
         self.addAction(_EnableVideoDownloadOption(self))
+        self.setIcon(QIcon(icons.options.auto_download))

@@ -1,6 +1,11 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
     <qresource>
+        <file>actions/exit.svg</file>
+        <file>actions/mark-all-read.svg</file>
+        <file>actions/open-downloads.svg</file>
+        <file>actions/quick-login.svg</file>
+        <file>actions/sync.svg</file>
         <file>branding/logo-transparent-dark.svg</file>
         <file>branding/logo-transparent-light.svg</file>
         <file>branding/main-icon.svg</file>
@@ -8,13 +13,17 @@
         <file>downloads/downloaded.svg</file>
         <file>downloads/not-downloaded.svg</file>
         <file>downloads/unknown.svg</file>
+        <file>options/auto-download.svg</file>
+        <file>options/ignore-old.svg</file>
+        <file>options/include-videos.svg</file>
+        <file>options/theme.svg</file>
         <file>tabs/assignments.svg</file>
         <file>tabs/mail.svg</file>
         <file>tabs/pages.svg</file>
-        <file>tree-icons/assignment.svg</file>
-        <file>tree-icons/mail.svg</file>
-        <file>tree-icons/module.svg</file>
-        <file>tree-icons/page.svg</file>
-        <file>tree-icons/semester.svg</file>
+        <file>tree_icons/assignment.svg</file>
+        <file>tree_icons/mail.svg</file>
+        <file>tree_icons/module.svg</file>
+        <file>tree_icons/page.svg</file>
+        <file>tree_icons/semester.svg</file>
     </qresource>
 </RCC>

@@ -74,6 +74,7 @@ class QCanvasWindow(QMainWindow):
             shortcut=QKeySequence("Ctrl+S"),
             triggered=self._synchronise_requested,
             parent=app_menu,
+            icon=QIcon(icons.actions.sync),
         )
 
         create_qaction(
@@ -81,17 +82,22 @@ class QCanvasWindow(QMainWindow):
             shortcut=QKeySequence("Ctrl+D"),
             triggered=self._open_downloads_folder,
             parent=app_menu,
+            icon=QIcon(icons.actions.open_downloads),
         )
 
         create_qaction(
-            name="Quick canvas login",
+            name="Open Canvas in browser",
             shortcut=QKeySequence("Ctrl+O"),
             triggered=self._open_quick_auth_in_browser,
             parent=app_menu,
+            icon=QIcon(icons.actions.quick_login),
         )
 
         create_qaction(
-            name="Mark all as seen", triggered=self._clear_new_items, parent=app_menu
+            name="Mark all as seen",
+            triggered=self._clear_new_items,
+            parent=app_menu,
+            icon=QIcon(icons.actions.mark_all_read),
         )
 
         create_qaction(
@@ -99,6 +105,7 @@ class QCanvasWindow(QMainWindow):
             shortcut=QKeySequence("Ctrl+Q"),
             triggered=lambda: self.close(),
             parent=app_menu,
+            icon=QIcon(icons.actions.exit),
         )
 
         options_menu = menu_bar.addMenu("Options")
