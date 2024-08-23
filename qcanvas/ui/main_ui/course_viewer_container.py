@@ -61,12 +61,14 @@ class CourseViewerContainer(QStackedWidget):
         self._course_viewers: dict[str, CourseViewer] = {}
         self._downloader = downloader
         self._last_course_id: Optional[str] = None
+        self._selected_course: Optional[db.Course] = None
         self._last_sync_receipt: SyncReceipt = empty_receipt()
         self._placeholder = _PlaceholderLogo()
         self.addWidget(self._placeholder)
 
     def show_blank(self) -> None:
         self._last_course_id = None
+        self._selected_course = None
         self.setCurrentWidget(self._placeholder)
 
     def load_course(self, course: db.Course) -> None:
@@ -82,6 +84,7 @@ class CourseViewerContainer(QStackedWidget):
             viewer = self._course_viewers[course.id]
 
         self.setCurrentWidget(viewer)
+        self._selected_course = course
         self._last_course_id = course.id
 
     async def reload_all(
@@ -92,3 +95,7 @@ class CourseViewerContainer(QStackedWidget):
             if course.id in self._course_viewers:
                 viewer = self._course_viewers[course.id]
                 viewer.reload(course, sync_receipt=sync_receipt)
+
+    @property
+    def selected_course(self) -> Optional[db.Course]:
+        return self._selected_course
