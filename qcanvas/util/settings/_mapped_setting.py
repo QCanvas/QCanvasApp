@@ -53,8 +53,13 @@ class BoolSetting(MappedSetting[bool]):
         try:
             # noinspection PyTypeChecker
             value: str = super()._read()
+
+            if isinstance(value, bool):
+                return value
+
             return value.lower() == "true"
-        except:
+        except Exception as e:
+            _logger.error("Could not read setting", exc_info=e)
             return self.default
 
     # @override
