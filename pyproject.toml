@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "qcanvas"
-version = "1.2.0a0"
+version = "1.2.0a1"
 description = "QCanvas is a desktop client for Canvas LMS."
 authors = ["QCanvas <QCanvas@noreply.codeberg.org>"]
 readme = "README.md"
@@ -17,7 +17,7 @@ qcanvas = "qcanvas.run:main"
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13"
 qcanvas-api-clients = "^0.3.0"
-qcanvas-backend = "^0.2.2"
+qcanvas-backend = "^0.2.3"
 #qcanvas-backend = { path = "../QCanvas-Backend/", develop = true }
 asynctaskpool = "^0.2.1"
 sqlalchemy = "^2.0.31"
