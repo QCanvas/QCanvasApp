@@ -22,11 +22,14 @@ def layout_widget(layout_type: Type[T], *items: QWidget, **kwargs) -> QWidget:
     return widget
 
 
-def layout(layout_type: Type[T], *items: QWidget, **kwargs) -> T:
+def layout(layout_type: Type[T], *items: QWidget | QLayout, **kwargs) -> T:
     result_layout: QLayout = layout_type(**kwargs)
 
     for item in items:
-        result_layout.addWidget(item)
+        if isinstance(item, QLayout):
+            result_layout.addItem(item)
+        else:
+            result_layout.addWidget(item)
 
     return result_layout
 
