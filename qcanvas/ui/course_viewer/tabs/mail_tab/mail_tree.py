@@ -11,7 +11,6 @@ from qcanvas.ui.course_viewer.content_tree import ContentTree
 from qcanvas.ui.memory_tree import MemoryTreeWidgetItem
 
 _logger = logging.getLogger(__name__)
-
 _mail_icon = QIcon(icons.tree.mail)
 
 
