@@ -2,20 +2,20 @@
 <RCC version="1.0">
     <qresource>
         <file>actions/exit.svg</file>
-        <file>actions/mark-all-read.svg</file>
-        <file>actions/open-downloads.svg</file>
-        <file>actions/quick-login.svg</file>
+        <file>actions/mark_all_read.svg</file>
+        <file>actions/open_downloads.svg</file>
+        <file>actions/quick_login.svg</file>
         <file>actions/sync.svg</file>
-        <file>branding/logo-transparent-dark.svg</file>
-        <file>branding/logo-transparent-light.svg</file>
-        <file>branding/main-icon.svg</file>
-        <file>downloads/download-failed.svg</file>
+        <file>branding/logo_transparent_dark.svg</file>
+        <file>branding/logo_transparent_light.svg</file>
+        <file>branding/main_icon.svg</file>
+        <file>downloads/download_failed.svg</file>
         <file>downloads/downloaded.svg</file>
-        <file>downloads/not-downloaded.svg</file>
+        <file>downloads/not_downloaded.svg</file>
         <file>downloads/unknown.svg</file>
-        <file>options/auto-download.svg</file>
-        <file>options/ignore-old.svg</file>
-        <file>options/include-videos.svg</file>
+        <file>options/auto_download.svg</file>
+        <file>options/ignore_old.svg</file>
+        <file>options/include_videos.svg</file>
         <file>options/theme.svg</file>
         <file>tabs/assignments.svg</file>
         <file>tabs/mail.svg</file>
