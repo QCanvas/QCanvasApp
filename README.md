@@ -8,7 +8,13 @@ https://github.com/QCanvas/QCanvasApp
 
 # Downloads
 
-Download it from [releases](https://github.com/QCanvas/QCanvasApp/releases)
+<a href='https://flathub.org/apps/io.github.qcanvas.QCanvasApp'>
+    <img width='240' alt='Get it on Flathub' src='https://flathub.org/api/badge?locale=en'/>
+</a>
+
+You can download a **windows** version from [releases](https://github.com/QCanvas/QCanvasApp/releases)
+
+The appimage is *not recommended* as it is not a proper portable appimage.
 
 # Development/Run from source
 
