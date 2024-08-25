@@ -5,23 +5,10 @@ import logging
 import os
 import subprocess
 from pathlib import Path
-from typing import *
 
 import xmltodict
 
 _logger = logging.getLogger(__name__)
-
-
-class TempThemeIcon(NamedTuple):
-    theme_path: Path
-
-
-class TempUniversalIcon(NamedTuple):
-    theme_path: Path
-    full_path: Path
-
-
-AnyIcon = TempUniversalIcon | TempThemeIcon
 
 
 def remove_base_directory(path: str | Path) -> Path:
@@ -31,7 +18,7 @@ def remove_base_directory(path: str | Path) -> Path:
     return Path(*path.parts[1:])
 
 
-def generate_xml(all_icons: list[str]) -> str:
+def generate_xml(all_icons: list[Path]) -> str:
     xml_dict = {
         "RCC": {
             "@version": "1.0",
@@ -44,8 +31,9 @@ def generate_xml(all_icons: list[str]) -> str:
     )
 
 
-def generate_icon_defs(icons: list[AnyIcon]) -> str:
-    groups = group_icons_by_category(icons)
+def generate_icon_defs(icons: list[Path]) -> str:
+    icons_base_removed = [remove_base_directory(icon) for icon in icons]
+    groups = group_icons_by_category(icons_base_removed)
     classes = [
         generate_group_class(group_name, icons) for group_name, icons in groups.items()
     ]
@@ -59,33 +47,24 @@ from ._icon_type import UniversalIcon, ThemeIcon
     )
 
 
-def group_icons_by_category(icons: list[AnyIcon]) -> dict[str, set[AnyIcon]]:
-    groups: dict[str, set[AnyIcon]] = {}
+def group_icons_by_category(icons: list[Path]) -> dict[str, set[Path]]:
+    groups: dict[str, set[Path]] = {}
 
     for icon in icons:
-        theme_path = icon.theme_path.parts
-        groups.setdefault(theme_path[0], set())
-        groups[theme_path[0]].add(icon)
+        icon_category = icon.parts[0]
+        groups.setdefault(icon_category, set())
+        groups[icon_category].add(icon)
 
     return groups
 
 
-def generate_group_class(group_name: str, icons: set[AnyIcon]) -> str:
+def generate_group_class(group_name: str, icons: set[Path]) -> str:
     # pascal_case_class_name = "".join([part.title() for part in group_name.split("_")])
     lines = ["# noinspection PyPep8Naming", f"class {group_name}:"]
 
-    for icon in icons:
-        path_no_ext = os.path.splitext(icon.theme_path)[0]
-
-        lines.append(f'    {icon.theme_path.stem} = QIcon.fromTheme("{path_no_ext}")')
-        # if isinstance(icon, TempThemeIcon):
-        #     lines.append(f'    {icon.theme_path.stem} = ThemeIcon("{path_no_ext}")')
-        # elif isinstance(icon, TempUniversalIcon):
-        #     lines.append(
-        #         f'    {icon.theme_path.stem} = UniversalIcon("{path_no_ext}", "{icon.full_path}")'
-        #     )
-        # else:
-        #     raise RuntimeError("Wtf??")
+    for icon in sorted(icons):
+        path_no_ext = os.path.splitext(icon)[0]
+        lines.append(f'    {icon.stem} = QIcon.fromTheme("{path_no_ext}")')
 
     return "\n".join(lines)
 
@@ -100,24 +79,11 @@ def write(file_name: str, content: str) -> None:
 
 
 if __name__ == "__main__":
-    theme_icons: list[TempThemeIcon] = []
-    universal_icons: list[TempUniversalIcon] = []
-    all_icons: list[str] = []
-
-    for file in glob.glob("**/*.svg", recursive=True):
-        path = Path(file)
-
-        if path.parts[0] == "universal":
-            universal_icons.append(
-                TempUniversalIcon(
-                    full_path=path, theme_path=remove_base_directory(path)
-                )
-            )
-        else:
-            theme_icons.append(TempThemeIcon(theme_path=remove_base_directory(path)))
-
-        all_icons.append(file)
+    all_icons: list[Path] = [
+        Path(file) for file in glob.glob("**/*.svg", recursive=True)
+    ]
+    all_icons.sort()
 
     write("icons.qrc", generate_xml(all_icons))
-    write("__init__.py", generate_icon_defs(theme_icons + universal_icons))
+    write("__init__.py", generate_icon_defs(all_icons))
     run_rcc()
