@@ -105,17 +105,9 @@ class ResourceRichBrowser(QTextBrowser):
 
         return BeautifulSoup(
             markup=f"""
-            <a href="data:{html.escape(resource_id)}" style="font-weight: normal">
-                <!--<table style="vertical-align: middle; border-collapse: collapse;">
-                    <tr>
-                        <td style="text-decoration: none;">-->
-                            <img height="16" src="{html.escape(self._download_state_icon(resource.download_state))}"/>
-                        <!--</td>
-                        <td>-->
-                            {html.escape(resource.file_name)}
-                        <!--</td>
-                    </tr>
-                </table>-->
+            <a href="data:{html.escape(resource_id)}" style="font-weight: normal;">
+                <img height="18" src="{html.escape(self._download_state_icon(resource.download_state))}"/>
+                {html.escape(resource.file_name)}
             </a>
             """,
             features="html.parser",
