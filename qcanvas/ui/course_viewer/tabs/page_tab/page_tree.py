@@ -7,6 +7,7 @@ from qtpy.QtCore import Qt
 
 from qcanvas import icons
 from qcanvas.ui.course_viewer.content_tree import ContentTree
+from qcanvas.ui.course_viewer.tree_widget_data_item import TreeWidgetDataItem
 from qcanvas.ui.memory_tree import MemoryTreeWidgetItem
 
 _logger = logging.getLogger(__name__)
@@ -52,8 +53,8 @@ class PageTree(ContentTree[db.Course]):
 
     def _create_page_widget(
         self, page: db.ModulePage, sync_receipt: SyncReceipt
-    ) -> MemoryTreeWidgetItem:
-        page_widget = MemoryTreeWidgetItem(id=page.id, data=page, strings=[page.name])
+    ) -> TreeWidgetDataItem:
+        page_widget = TreeWidgetDataItem(id=page.id, data=page, strings=[page.name])
         page_widget.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
         page_widget.setIcon(0, icons.tree_items.page)
 

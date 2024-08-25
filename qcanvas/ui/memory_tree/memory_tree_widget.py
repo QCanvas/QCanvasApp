@@ -17,7 +17,7 @@ class MemoryTreeWidget(QTreeWidget):
         parent: Optional[QWidget] = None,
     ):
         super().__init__(parent)
-        self._id_map: dict[str, MemoryTreeWidgetItem] = {}
+        self._id_map: dict[str, QTreeWidgetItem] = {}
         self._memory = TreeMemory(tree_name)
         self._suppress_expansion_signals = False
         self._suppress_selection_signal = False
@@ -100,7 +100,7 @@ class MemoryTreeWidget(QTreeWidget):
         while len(widget_stack) > 0:
             item = widget_stack.pop()
 
-            if isinstance(item, MemoryTreeWidgetItem):
+            if hasattr(item, "id"):
                 if item.id in self._id_map or item.id in map_updates:
                     raise ValueError(f"Item with ID {item.id} is already in the tree")
 

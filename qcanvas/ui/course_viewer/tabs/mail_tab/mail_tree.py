@@ -7,7 +7,7 @@ from qtpy.QtWidgets import *
 
 from qcanvas import icons
 from qcanvas.ui.course_viewer.content_tree import ContentTree
-from qcanvas.ui.memory_tree import MemoryTreeWidgetItem
+from qcanvas.ui.course_viewer.tree_widget_data_item import TreeWidgetDataItem
 
 _logger = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ class MailTree(ContentTree[db.Course]):
 
     def create_tree_items(
         self, course: db.Course, sync_receipt: SyncReceipt
-    ) -> Sequence[MemoryTreeWidgetItem]:
+    ) -> Sequence[TreeWidgetDataItem]:
         widgets = []
 
         for message in course.messages:  # type: db.CourseMessage
@@ -46,8 +46,8 @@ class MailTree(ContentTree[db.Course]):
 
     def _create_mail_widget(
         self, message: db.CourseMessage, sync_receipt: SyncReceipt
-    ) -> MemoryTreeWidgetItem:
-        message_widget = MemoryTreeWidgetItem(
+    ) -> TreeWidgetDataItem:
+        message_widget = TreeWidgetDataItem(
             id=message.id,
             data=message,
             strings=[message.name, message.sender_name],

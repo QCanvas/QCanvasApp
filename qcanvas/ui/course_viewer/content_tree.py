@@ -7,7 +7,8 @@ from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qtpy.QtCore import QItemSelection, Signal, Slot
 from qtpy.QtWidgets import *
 
-from qcanvas.ui.memory_tree import MemoryTreeWidget, MemoryTreeWidgetItem
+from qcanvas.ui.course_viewer.tree_widget_data_item import AnyTreeDataItem
+from qcanvas.ui.memory_tree import MemoryTreeWidget
 from qcanvas.util.basic_fonts import bold_font, normal_font
 
 _logger = logging.getLogger(__name__)
@@ -97,7 +98,7 @@ class ContentTree(MemoryTreeWidget, Generic[T]):
     @abstractmethod
     def create_tree_items(
         self, data: T, sync_receipt: SyncReceipt
-    ) -> Sequence[MemoryTreeWidgetItem]: ...
+    ) -> Sequence[QTreeWidgetItem]: ...
 
     @Slot(QItemSelection, QItemSelection)
     def _selection_changed(self, _0: QItemSelection, _1: QItemSelection) -> None:
@@ -113,7 +114,7 @@ class ContentTree(MemoryTreeWidget, Generic[T]):
         if self.is_unseen(selected):
             self.mark_as_seen(selected)
 
-        if not isinstance(selected, MemoryTreeWidgetItem):
+        if not isinstance(selected, AnyTreeDataItem):
             self._clear_selection()
             return
 

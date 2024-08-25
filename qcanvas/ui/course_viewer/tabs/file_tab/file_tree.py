@@ -8,6 +8,10 @@ from qtpy.QtCore import QPoint, Qt, Slot
 from qtpy.QtWidgets import *
 
 from qcanvas.ui.course_viewer.content_tree import ContentTree
+from qcanvas.ui.course_viewer.tree_widget_data_item import (
+    AnyTreeDataItem,
+    TreeWidgetDataItem,
+)
 from qcanvas.ui.memory_tree import MemoryTreeWidgetItem
 from qcanvas.util.file_icons import icon_for_filename
 from qcanvas.util.ui_tools import create_qaction
@@ -63,8 +67,10 @@ class FileTree(ContentTree[db.Course]):
         # fixme the reesource widget items shouls NOT be a memory widget item because they can't be collapsed, but
         #  mostly because the same file can appear in the tree multiple times in different places, which memory tree
         #  can NOT deal with!
-        item_widget = QTreeWidgetItem(
-            [resource.file_name, str(resource.discovery_date.date())],
+        item_widget = TreeWidgetDataItem(
+            id=resource.id,
+            data=resource,
+            strings=[resource.file_name, str(resource.discovery_date.date())],
         )
         item_widget.setIcon(
             0,
@@ -81,15 +87,13 @@ class FileTree(ContentTree[db.Course]):
     def _context_menu(self, point: QPoint) -> None:
         item = self.itemAt(point)
 
-        if item is None or not isinstance(item, MemoryTreeWidgetItem):
-            return
+        if isinstance(item, AnyTreeDataItem):
+            menu = QMenu()
+            create_qaction(
+                name="Test",
+                parent=menu,
+                triggered=lambda: print(f"Clicked {item.extra_data.file_name}"),
+            )
+            menu.addAction("Another thing")
 
-        menu = QMenu()
-        create_qaction(
-            name="Test",
-            parent=menu,
-            triggered=lambda: print(f"Clicked {item.extra_data.file_name}"),
-        )
-        menu.addAction("Another thing")
-
-        menu.exec(self.mapToGlobal(point))
+            menu.exec(self.mapToGlobal(point))

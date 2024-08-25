@@ -27,24 +27,30 @@ class PagesFileTree(FileTree):
             if len(group.content_items) == 0:
                 continue
 
-            group_widget = self._create_group_widget(group, sync_receipt)
+            # Init group_widget lazily to prevent creating pointless tree widgets
+            group_widget: MemoryTreeWidgetItem | None = None
             items_in_group = set()
 
             for item in group.content_items:
-                for resource in item.resources:  # type: db.Resource
+                resource_widgets = []
 
+                for resource in item.resources:  # type: db.Resource
                     if resource.id not in items_in_group:
                         items_in_group.add(resource.id)
-                    else:
-                        continue
 
-                    resource_widget = self._create_resource_widget(
-                        resource, sync_receipt
-                    )
+                        if group_widget is None:
+                            group_widget = self._create_group_widget(
+                                group, sync_receipt
+                            )
 
-                    group_widget.addChild(resource_widget)
+                        resource_widgets.append(
+                            self._create_resource_widget(resource, sync_receipt)
+                        )
 
-            if group_widget.childCount() > 0:
+                if len(resource_widgets) > 0:
+                    group_widget.addChildren(resource_widgets)
+
+            if group_widget is not None:
                 widgets.append(group_widget)
 
         return widgets

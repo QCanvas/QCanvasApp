@@ -10,14 +10,15 @@ from qcanvas.ui.course_viewer.content_tree import ContentTree
 from qcanvas.ui.course_viewer.course_tree._course_icon_generator import (
     CourseIconGenerator,
 )
+from qcanvas.ui.course_viewer.tree_widget_data_item import TreeWidgetDataItem
 from qcanvas.ui.memory_tree import MemoryTreeWidgetItem
 
 _logger = logging.getLogger(__name__)
 
 
-class _CourseTreeItem(MemoryTreeWidgetItem):
+class _CourseTreeItem(TreeWidgetDataItem):
     def __init__(self, course: db.Course, owner: "CourseTree"):
-        MemoryTreeWidgetItem.__init__(
+        TreeWidgetDataItem.__init__(
             self,
             id=course.id,
             data=course,

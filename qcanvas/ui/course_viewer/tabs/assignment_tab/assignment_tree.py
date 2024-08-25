@@ -8,6 +8,7 @@ from qtpy.QtWidgets import QHeaderView
 
 from qcanvas import icons
 from qcanvas.ui.course_viewer.content_tree import ContentTree
+from qcanvas.ui.course_viewer.tree_widget_data_item import TreeWidgetDataItem
 from qcanvas.ui.memory_tree import MemoryTreeWidgetItem
 
 _logger = logging.getLogger(__name__)
@@ -70,8 +71,8 @@ class AssignmentTree(ContentTree[db.Course]):
 
     def _create_assignment_widget(
         self, assignment: db.Assignment, sync_receipt: SyncReceipt
-    ) -> MemoryTreeWidgetItem:
-        assignment_widget = MemoryTreeWidgetItem(
+    ) -> TreeWidgetDataItem:
+        assignment_widget = TreeWidgetDataItem(
             id=assignment.id, data=assignment, strings=[assignment.name]
         )
 
