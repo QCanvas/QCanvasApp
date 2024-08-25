@@ -16,7 +16,6 @@ from qcanvas.util import themes
 _logger = logging.getLogger(__name__)
 
 
-# todo needs to handle dark mode
 class _PlaceholderLogo(QLabel):
     """
     Automatically resizing logo icon for when no course is selected
