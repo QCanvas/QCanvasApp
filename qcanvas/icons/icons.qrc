@@ -1,32 +1,46 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
 	<qresource prefix="icons/">
+            <file>dark/actions/exit.svg</file>
+            <file>dark/actions/mark_all_read.svg</file>
+            <file>dark/actions/open_downloads.svg</file>
+            <file>dark/actions/quick_login.svg</file>
+            <file>dark/actions/sync.svg</file>
+            <file>dark/branding/logo_transparent.svg</file>
+            <file>dark/options/auto_download.svg</file>
+            <file>dark/options/theme.svg</file>
+            <file>dark/tabs/assignments.svg</file>
+            <file>dark/tabs/mail.svg</file>
+            <file>dark/tabs/pages.svg</file>
+            <file>dark/tree_items/assignment.svg</file>
+            <file>dark/tree_items/mail.svg</file>
+            <file>dark/tree_items/module.svg</file>
+            <file>dark/tree_items/page.svg</file>
+            <file>light/actions/exit.svg</file>
+            <file>light/actions/mark_all_read.svg</file>
+            <file>light/actions/open_downloads.svg</file>
+            <file>light/actions/quick_login.svg</file>
+            <file>light/actions/sync.svg</file>
+            <file>light/branding/logo_transparent.svg</file>
+            <file>light/options/auto_download.svg</file>
+            <file>light/options/ignore_old.svg</file>
+            <file>light/options/include_videos.svg</file>
+            <file>light/options/theme.svg</file>
+            <file>light/tabs/assignments.svg</file>
+            <file>light/tabs/mail.svg</file>
+            <file>light/tabs/pages.svg</file>
+            <file>light/tree_items/assignment.svg</file>
+            <file>light/tree_items/mail.svg</file>
+            <file>light/tree_items/module.svg</file>
+            <file>light/tree_items/page.svg</file>
+            <file>universal/branding/main_icon.svg</file>
 		<file>universal/downloads/download_failed.svg</file>
 		<file>universal/downloads/downloaded.svg</file>
 		<file>universal/downloads/not_downloaded.svg</file>
 		<file>universal/downloads/unknown.svg</file>
-		<file>universal/branding/main_icon.svg</file>
-		<file>universal/tabs/mail_new_content.svg</file>
 		<file>universal/tabs/assignments_new_content.svg</file>
+            <file>universal/tabs/mail_new_content.svg</file>
 		<file>universal/tabs/pages_new_content.svg</file>
-		<file>dark/branding/logo_transparent.svg</file>
-		<file>light/tree_items/mail.svg</file>
-		<file>light/tree_items/semester.svg</file>
-		<file>light/tree_items/assignment.svg</file>
-		<file>light/tree_items/page.svg</file>
-		<file>light/tree_items/module.svg</file>
-		<file>light/options/theme.svg</file>
-		<file>light/options/include_videos.svg</file>
-		<file>light/options/auto_download.svg</file>
-		<file>light/options/ignore_old.svg</file>
-		<file>light/branding/logo_transparent.svg</file>
-		<file>light/tabs/mail.svg</file>
-		<file>light/tabs/assignments.svg</file>
-		<file>light/tabs/pages.svg</file>
-		<file>light/actions/quick_login.svg</file>
-		<file>light/actions/open_downloads.svg</file>
-		<file>light/actions/sync.svg</file>
-		<file>light/actions/mark_all_read.svg</file>
-		<file>light/actions/exit.svg</file>
+            <file>universal/tree_items/semester.svg</file>
 	</qresource>
 </RCC>
