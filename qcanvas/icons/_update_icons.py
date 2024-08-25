@@ -120,3 +120,4 @@ if __name__ == "__main__":
 
     write("icons.qrc", generate_xml(all_icons))
     write("__init__.py", generate_icon_defs(theme_icons + universal_icons))
+    run_rcc()
