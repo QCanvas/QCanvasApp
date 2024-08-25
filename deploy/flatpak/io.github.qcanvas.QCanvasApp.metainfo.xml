@@ -7,6 +7,7 @@
     <metadata_license>FSFAP</metadata_license>
     <project_license>AGPL-3.0-only</project_license>
     <url type="homepage">https://github.com/QCanvas/QCanvasApp/</url>
+    <url type="vcs-browser">https://github.com/QCanvas/QCanvasApp/</url>
     <url type="bugtracker">https://codeberg.org/QCanvas/QCanvas/issues</url>
     <developer id="io.github.qcanvas">
         <name>QCanvas</name>
@@ -56,7 +57,6 @@
                     </li>
                     <li>Indexing panopto videos might fail less now</li>
                 </ul>
-
             </description>
         </release>
         <release version="v1.1.0" date="2024-08-06">
