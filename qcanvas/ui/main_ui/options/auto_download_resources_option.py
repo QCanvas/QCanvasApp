@@ -2,7 +2,7 @@ import logging
 from typing import *
 
 from qtpy.QtCore import Slot
-from qtpy.QtGui import QAction, QIcon
+from qtpy.QtGui import QAction
 from qtpy.QtWidgets import QMenu
 
 from qcanvas import icons
@@ -40,4 +40,4 @@ class AutoDownloadResourcesMenu(QMenu):
         super().__init__("Auto download resources", parent)
         self.addAction(_EnableAutoDownloadOption(self))
         self.addAction(_EnableVideoDownloadOption(self))
-        self.setIcon(QIcon(icons.options.auto_download))
+        self.setIcon(icons.options.auto_download)

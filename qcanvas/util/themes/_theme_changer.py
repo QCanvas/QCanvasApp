@@ -2,6 +2,7 @@ import logging
 
 import qdarktheme
 from qtpy.QtCore import Slot
+from qtpy.QtGui import QIcon
 from qtpy.QtWidgets import QApplication, QStyleFactory
 
 from qcanvas.util.themes._colour_scheme_helper import (
@@ -16,6 +17,10 @@ _logger = logging.getLogger(__name__)
 default_theme = "auto"
 _is_dark_mode: bool | None = None
 _selected_theme: SelectedTheme | None = None
+
+_universal_path = ":icons/universal"
+_dark_path = ":icons/dark"
+_light_path = ":icons/light"
 
 
 def apply(theme: str) -> None:
@@ -45,6 +50,7 @@ def apply(theme: str) -> None:
         _selected_theme = SelectedTheme.NATIVE
 
     if was_dark_mode != _is_dark_mode:
+        _set_fallback_paths()
         theme_changed().emit()
 
 
@@ -66,9 +72,15 @@ def _scheme_changed():
     if _selected_theme == SelectedTheme.AUTO:
         apply("auto")
     elif _selected_theme == SelectedTheme.NATIVE:
-        # noinspection PyTestUnpassedFixture
         _is_dark_mode = is_dark_colour_scheme()
+        _set_fallback_paths()
         theme_changed().emit()
+
+
+def _set_fallback_paths():
+    QIcon.setFallbackSearchPaths(
+        [_dark_path if _is_dark_mode else _light_path, _universal_path]
+    )
 
 
 colour_scheme_changed().connect(_scheme_changed)

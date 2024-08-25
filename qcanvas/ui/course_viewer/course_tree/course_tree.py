@@ -4,7 +4,6 @@ from typing import *
 import qcanvas_backend.database.types as db
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
 from qtpy.QtCore import Qt, Signal
-from qtpy.QtGui import QIcon
 
 from qcanvas import icons
 from qcanvas.ui.course_viewer.content_tree import ContentTree
@@ -14,8 +13,6 @@ from qcanvas.ui.course_viewer.course_tree._course_icon_generator import (
 from qcanvas.ui.memory_tree import MemoryTreeWidgetItem
 
 _logger = logging.getLogger(__name__)
-
-_semester_icon = QIcon(icons.tree.semester)
 
 
 class _CourseTreeItem(MemoryTreeWidgetItem):
@@ -96,6 +93,6 @@ class CourseTree(ContentTree[Sequence[db.Term]]):
     def _create_term_widget(self, term: db.Term) -> MemoryTreeWidgetItem:
         term_widget = MemoryTreeWidgetItem(id=term.id, data=term, strings=[term.name])
         term_widget.setFlags(Qt.ItemFlag.ItemIsEnabled)
-        term_widget.setIcon(0, _semester_icon)
+        term_widget.setIcon(0, icons.tree_items.semester)
 
         return term_widget

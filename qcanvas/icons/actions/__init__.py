@@ -1,5 +1,0 @@
-exit = ":/actions/exit.svg"
-mark_all_read = ":/actions/mark_all_read.svg"
-open_downloads = ":/actions/open_downloads.svg"
-sync = ":/actions/sync.svg"
-quick_login = ":/actions/quick_login.svg"

@@ -1,5 +1,0 @@
-assignment = ":/tree_icons/assignment.svg"
-page = ":/tree_icons/page.svg"
-module = ":/tree_icons/module.svg"
-semester = ":/tree_icons/semester.svg"
-mail = ":/tree_icons/mail.svg"

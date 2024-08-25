@@ -6,7 +6,6 @@ import qcanvas_backend.database.types as db
 from qcanvas_backend.net.resources.download.resource_manager import ResourceManager
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt, empty_receipt
 from qtpy.QtCore import Qt, Slot
-from qtpy.QtGui import QIcon
 from qtpy.QtWidgets import *
 
 from qcanvas import icons
@@ -23,12 +22,13 @@ class _PlaceholderLogo(QLabel):
 
     def __init__(self):
         super().__init__()
-        self._light_icon = QIcon(icons.branding.transparent_light_logo)
-        self._dark_icon = QIcon(icons.branding.transparent_dark_logo)
+        self._icon = icons.branding.logo_transparent
         self._old_width = -1
         self._old_height = -1
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
+        # Because we are using a pixmap for the icon, it will not get updated like a normal QIcon when the theme changes,
+        # So we need to update it ourselves
         themes.theme_changed().connect(self._theme_changed)
 
     def resizeEvent(self, event) -> None:
@@ -46,12 +46,7 @@ class _PlaceholderLogo(QLabel):
         if force or (width != self._old_width and height != self._old_height):
             self._old_width = width
             self._old_height = height
-        else:
-            return
-
-        icon = self._dark_icon if themes.is_dark_mode() else self._light_icon
-
-        self.setPixmap(icon.pixmap(width, height))
+            self.setPixmap(self._icon.pixmap(width, height))
 
 
 class CourseViewerContainer(QStackedWidget):

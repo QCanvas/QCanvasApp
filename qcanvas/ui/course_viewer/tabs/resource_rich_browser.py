@@ -12,28 +12,11 @@ from qtpy.QtCore import QUrl, Slot
 from qtpy.QtGui import QDesktopServices
 from qtpy.QtWidgets import QTextBrowser
 
-from qcanvas import icons
 from qcanvas.backend_connectors import FrontendResourceManager
 from qcanvas.util.html_cleaner import clean_up_html
 from qcanvas.util.qurl_util import file_url
 
 _logger = logging.getLogger(__name__)
-
-
-# class _DarkListener(QObject):
-#     theme_changed = Signal(str)
-#
-#     def __init__(self):
-#         super().__init__()
-#
-#         self._thread = threading.Thread(target=darkdetect.listener, args=(self._emit,))
-#         self._thread.daemon = True
-#         self._thread.start()
-#
-#     def _emit(self, theme: str) -> None:
-#         self.theme_changed.emit(theme)
-#
-# _dark_listener = _DarkListener()
 
 
 class ResourceRichBrowser(QTextBrowser):
@@ -139,13 +122,14 @@ class ResourceRichBrowser(QTextBrowser):
         ).a
 
     def _download_state_icon(self, download_state: db.ResourceDownloadState) -> str:
+        icon_path = ":icons/universal/downloads"
         match download_state:
             case db.ResourceDownloadState.DOWNLOADED:
-                return icons.download.downloaded
+                return f"{icon_path}/downloaded.svg"
             case db.ResourceDownloadState.NOT_DOWNLOADED:
-                return icons.download.not_downloaded
+                return f"{icon_path}/not_downloaded.svg"
             case db.ResourceDownloadState.FAILED:
-                return icons.download.download_failed
+                return f"{icon_path}/download_failed.svg"
             case _:
                 raise ValueError()
 
