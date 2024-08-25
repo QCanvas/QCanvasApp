@@ -32,6 +32,15 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="v1.2.1" date="2024-08-25T21:30+10:00">
+            <description>
+                <ul>
+                    <li>Fixed null-related error when synchronising</li>
+                    <li>Added check for changed assignment marks</li>
+                    <li>Added retry to panopto video extractor to reduce chance of unindexed videos</li>
+                </ul>
+            </description>
+        </release>
         <release version="v1.2.0" date="2024-08-25T16:00+10:00">
             <description>
                 <ul>
@@ -53,7 +62,7 @@
                     <li>Fixed screenreader text being shown in the page viewer</li>
                     <li>Fixed resource links appearing bold under some circumstances</li>
                     <li>‘Fixed’ edge case bug when synchronising and starting a
-                        download
+                        download would not update the icon in the page viewer
                     </li>
                     <li>Indexing panopto videos might fail less now</li>
                 </ul>
