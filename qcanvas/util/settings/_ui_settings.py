@@ -20,7 +20,7 @@ class ThemeSetting(MappedSetting):
 
 
 class _UISettings:
-    settings = QSettings("QCanvasTeam", "QCanvas")
+    settings = QSettings("QCanvasTeam", "UI")
     theme: ThemeSetting = ThemeSetting()
     last_geometry: MappedSetting[QByteArray] = MappedSetting()
     last_window_state: MappedSetting[QByteArray] = MappedSetting()
