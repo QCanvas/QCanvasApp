@@ -228,9 +228,10 @@ class QCanvasWindow(QMainWindow):
         opening_progress_dialog = QProgressDialog("Opening canvas", None, 0, 0, self)
         opening_progress_dialog.setWindowTitle("Please wait")
         opening_progress_dialog.show()
-        QDesktopServices.openUrl(
-            QUrl(await self._qcanvas.canvas_client.get_temporary_session_url())
-        )
+
+        open_url = QUrl(await self._qcanvas.canvas_client.get_temporary_session_url())
+        _logger.info(f"Opening URL {open_url}")
+        QDesktopServices.openUrl(open_url)
         opening_progress_dialog.close()
 
     @Slot()
