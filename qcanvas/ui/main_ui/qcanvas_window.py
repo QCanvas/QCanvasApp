@@ -109,7 +109,7 @@ class QCanvasWindow(QMainWindow):
         )
 
         options_menu = menu_bar.addMenu("Options")
-
+        options_menu.setToolTipsVisible(True)
         options_menu.addAction(QuickSyncOption(options_menu))
         options_menu.addAction(SyncOnStartOption(options_menu))
         options_menu.addMenu(AutoDownloadResourcesMenu(options_menu))
