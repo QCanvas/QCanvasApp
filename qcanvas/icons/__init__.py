@@ -26,6 +26,7 @@ class options:
     auto_download = QIcon.fromTheme("options/auto_download")
     ignore_old = QIcon.fromTheme("options/ignore_old")
     include_videos = QIcon.fromTheme("options/include_videos")
+    sync_on_start = QIcon.fromTheme("options/sync_on_start")
     theme = QIcon.fromTheme("options/theme")
 
 
