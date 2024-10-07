@@ -33,9 +33,8 @@ validators = "^0.34.0"
 
 [tool.poetry.group.flatpak-exclude.dependencies]
 pyside6-essentials = "^6.7.2"
-#2024-07-18: Latest version causes error with pyinstaller
-setuptools = "70.3.0"
-pyinstaller = "^6.9.0"
+setuptools = "^71.1.0"
+pyinstaller = "^6.10.0"
 
 [tool.poetry.group.dev-tools]
 optional = true
