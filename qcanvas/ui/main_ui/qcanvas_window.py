@@ -33,7 +33,7 @@ _logger = logging.getLogger(__name__)
 class QCanvasWindow(QMainWindow):
     _loaded = Signal()
 
-    def __init__(self):
+    def __init__(self, _qcanvas: QCanvas[FrontendResourceManager]):
         super().__init__()
 
         self.setWindowTitle("QCanvas")
@@ -41,12 +41,7 @@ class QCanvasWindow(QMainWindow):
 
         self._operation_semaphore = BoundedSemaphore()
         self._data: Optional[DataMonolith] = None
-        self._qcanvas = QCanvas[FrontendResourceManager](
-            canvas_config=settings.client.canvas_config,
-            panopto_config=settings.client.panopto_config,
-            storage_path=paths.data_storage(),
-            resource_manager_class=FrontendResourceManager,
-        )
+        self._qcanvas = _qcanvas
 
         self._course_tree = CourseTree()
         self._course_tree.item_selected.connect(self._on_course_selected)
@@ -147,7 +142,6 @@ class QCanvasWindow(QMainWindow):
 
     @asyncSlot()
     async def _on_app_loaded(self) -> None:
-        await self._qcanvas.init()
         self._course_tree.reload(await self._get_terms(), sync_receipt=empty_receipt())
 
         if settings.client.sync_on_start:
