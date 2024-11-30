@@ -12,7 +12,7 @@ exclude = [
 ]
 
 [tool.poetry.scripts]
-qcanvas = "qcanvas.run:main"
+qcanvas = "qcanvas:main"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13,!=3.11.0"
