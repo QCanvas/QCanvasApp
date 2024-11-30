@@ -21,7 +21,7 @@ based distros.
 
 ## Prerequisites
 
-- Python 3.12+ (use [pyenv](https://github.com/pyenv/pyenv) if your distro does not have that version)
+- Python 3.11+ (use [pyenv](https://github.com/pyenv/pyenv) if your distro does not have that version)
 - [Pipx](https://pipx.pypa.io/stable/) (optional)
 - Poetry (recommended to install using `pipx install poetry`)
 - [Appimagetool](https://github.com/AppImage/appimagetool) (Only for building the appimage)
@@ -35,14 +35,17 @@ cd QCanvasApp
 # Enter shell and run it
 poetry shell
 poetry install
-python qcanvas/run.py
+python -m qcanvas
 
 # Alternatively you can run it like this:
 poetry install
-poetry run python qcanvas/run.py
+poetry run python -m qcanvas
 ```
 
 ## Build custom AppImage
+
+> [!INFO]
+> This is not recommended as the appimage produced by this process isn't a proper appimage.
 
 ```bash
 bash build_appimage.sh
