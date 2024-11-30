@@ -113,6 +113,7 @@ class SetupDialog(QDialog):
             is_password=True,
         )
         self._disable_panopto_checkbox = QCheckBox("Continue without Panopto")
+        self._disable_panopto_checkbox.setChecked(settings.client.panopto_disabled)
         self._disable_panopto_checkbox.checkStateChanged.connect(
             self._disable_panopto_check_changed
         )
