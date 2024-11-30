@@ -1,9 +1,9 @@
 import logging
-from typing import *
 
 import qcanvas_backend.database.types as db
 from qcanvas_backend.net.resources.download.resource_manager import ResourceManager
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
+from qcanvas_backend.util import as_local
 from qtpy.QtWidgets import *
 
 from qcanvas.ui.course_viewer.tabs.content_tab import ContentTab
@@ -55,5 +55,7 @@ class MailTab(ContentTab):
         return grid
 
     def update_info_grid(self, mail: db.CourseMessage) -> None:
-        self._date_sent_label.setText(mail.creation_date.strftime(date_strftime_format))
+        self._date_sent_label.setText(
+            as_local(mail.creation_date).strftime(date_strftime_format)
+        )
         self._sender_label.setText(mail.sender_name)

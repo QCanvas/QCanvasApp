@@ -3,6 +3,7 @@ import logging
 import qcanvas_backend.database.types as db
 from qcanvas_backend.net.resources.download.resource_manager import ResourceManager
 from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
+from qcanvas_backend.util import as_local
 from qtpy.QtWidgets import *
 
 from qcanvas.ui.course_viewer.tabs.assignment_tab.assignment_tree import AssignmentTree
@@ -57,7 +58,7 @@ class AssignmentTab(ContentTab):
 
     def update_info_grid(self, assignment: db.Assignment) -> None:
         if assignment.due_date is not None:
-            due_text = assignment.due_date.strftime(date_strftime_format)
+            due_text = as_local(assignment.due_date).strftime(date_strftime_format)
         else:
             due_text = "?"
 
