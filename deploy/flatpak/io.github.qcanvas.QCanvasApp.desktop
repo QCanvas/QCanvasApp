@@ -5,7 +5,7 @@ Type=Application
 Name=QCanvas
 Comment=A desktop client for Canvas LMS
 Categories=Utility;Education;
-Keywords=qtcanvas;canvas;mls;qcanvas;pyside6;qt;
+Keywords=qtcanvas;canvas;lms;qcanvas;pyside6;qt;
 
 Icon=io.github.qcanvas.QCanvasApp
 Exec=qcanvas
