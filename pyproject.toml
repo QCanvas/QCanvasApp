@@ -6,9 +6,9 @@ authors = ["QCanvas <QCanvas@noreply.codeberg.org>"]
 readme = "README.md"
 exclude = [
     "images",
-    "flatpak",
-    "appimage",
-    "windows",
+    "deploy",
+    "qcanvas/icons/*/*/*.svg",
+    "qcanvas/icons/_update_icons.py",
 ]
 
 [tool.poetry.scripts]
