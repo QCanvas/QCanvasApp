@@ -2,9 +2,9 @@ import logging
 from math import floor
 from typing import *
 
-import qcanvas_backend.database.types as db
-from qcanvas_backend.net.resources.download.resource_manager import ResourceManager
-from qcanvas_backend.net.sync.sync_receipt import SyncReceipt, empty_receipt
+import libqcanvas.database.types as db
+from libqcanvas.net.resources.download.resource_manager import ResourceManager
+from libqcanvas.net.sync.sync_receipt import SyncReceipt, empty_receipt
 from qtpy.QtCore import Qt, Slot
 from qtpy.QtWidgets import *
 

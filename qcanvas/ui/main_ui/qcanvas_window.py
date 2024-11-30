@@ -3,11 +3,11 @@ from threading import BoundedSemaphore
 from typing import *
 
 import httpx
-import qcanvas_backend.database.types as db
+import libqcanvas.database.types as db
+from libqcanvas.database.data_monolith import DataMonolith
+from libqcanvas.net.sync.sync_receipt import SyncReceipt, empty_receipt
+from libqcanvas.qcanvas import QCanvas
 from qasync import asyncSlot
-from qcanvas_backend.database.data_monolith import DataMonolith
-from qcanvas_backend.net.sync.sync_receipt import SyncReceipt, empty_receipt
-from qcanvas_backend.qcanvas import QCanvas
 from qtpy.QtCore import QUrl, Signal, Slot
 from qtpy.QtGui import QDesktopServices, QKeySequence
 from qtpy.QtWidgets import *
@@ -23,7 +23,7 @@ from qcanvas.ui.main_ui.options.quick_sync_option import QuickSyncOption
 from qcanvas.ui.main_ui.options.sync_on_start_option import SyncOnStartOption
 from qcanvas.ui.main_ui.options.theme_selection_menu import ThemeSelectionMenu
 from qcanvas.ui.main_ui.status_bar_progress_display import StatusBarProgressDisplay
-from qcanvas.util import auto_downloader, paths, settings
+from qcanvas.util import auto_downloader, settings
 from qcanvas.util.qurl_util import file_url
 from qcanvas.util.ui_tools import create_qaction
 

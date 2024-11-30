@@ -1,8 +1,8 @@
 import logging
 from typing import Sequence
 
-import qcanvas_backend.database.types as db
-from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
+import libqcanvas.database.types as db
+from libqcanvas.net.sync.sync_receipt import SyncReceipt
 from qtpy.QtCore import Qt
 
 from qcanvas import icons

@@ -1,9 +1,9 @@
 import asyncio
 import logging
 
-import qcanvas_backend.database.types as db
-from qcanvas_backend.net.resources.download.resource_manager import ResourceManager
-from qcanvas_backend.net.sync.sync_receipt import SyncReceipt
+import libqcanvas.database.types as db
+from libqcanvas.net.resources.download.resource_manager import ResourceManager
+from libqcanvas.net.sync.sync_receipt import SyncReceipt
 from qtpy.QtWidgets import QMessageBox, QWidget
 
 from qcanvas.util import settings

@@ -2,12 +2,12 @@ import html
 import logging
 from typing import Optional
 
-import qcanvas_backend.database.types as db
+import libqcanvas.database.types as db
 from bs4 import BeautifulSoup, Tag
+from libqcanvas.net.resources.download.resource_manager import ResourceManager
+from libqcanvas.net.resources.extracting.no_extractor_error import NoExtractorError
+from libqcanvas.util import is_link_invisible
 from qasync import asyncSlot
-from qcanvas_backend.net.resources.download.resource_manager import ResourceManager
-from qcanvas_backend.net.resources.extracting.no_extractor_error import NoExtractorError
-from qcanvas_backend.util import is_link_invisible
 from qtpy.QtCore import QUrl, Slot
 from qtpy.QtGui import QDesktopServices
 from qtpy.QtWidgets import QTextBrowser

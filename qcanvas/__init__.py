@@ -46,7 +46,7 @@ if __name__ == "__main__":
         {
             "qcanvas": INFO,
             "qcanvas.ui": WARNING,
-            "qcanvas_backend": INFO,
+            "libqcanvas": INFO,
             "qcanvas.ui.main_ui.status_bar_progress_display": INFO,
         }
     )

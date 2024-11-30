@@ -3,8 +3,8 @@ import logging
 import sys
 
 import qtpy
+from libqcanvas.qcanvas import QCanvas
 from qasync import QEventLoop, asyncSlot
-from qcanvas_backend.qcanvas import QCanvas
 from qtpy.QtCore import QObject, Signal, Slot
 from qtpy.QtGui import QGuiApplication
 from qtpy.QtWidgets import QApplication

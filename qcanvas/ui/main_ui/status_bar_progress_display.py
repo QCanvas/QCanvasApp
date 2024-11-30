@@ -3,8 +3,8 @@ from asyncio import Lock
 from dataclasses import dataclass
 from typing import *
 
+from libqcanvas.task_master import TaskID
 from qasync import asyncSlot
-from qcanvas_backend.task_master import TaskID
 from qtpy.QtWidgets import *
 
 from qcanvas.backend_connectors import task_master
