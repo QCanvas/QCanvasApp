@@ -22,7 +22,7 @@ class _CourseTreeItem(TreeWidgetDataItem):
             self,
             id=course.id,
             data=course,
-            strings=[course.configuration.nickname or course.name],
+            strings=["FIXME course config still broken" or course.name],
         )
 
         self._owner = owner
