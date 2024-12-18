@@ -39,12 +39,10 @@ def generate_icon_defs(icons: list[Path]) -> str:
     ]
 
     return f"""from .rc_icons import qt_resource_data as _  # Without this, icon data will not be loaded
-from qtpy.QtGui import QIcon
+from PySide6.QtGui import QIcon
 from ._icon_type import UniversalIcon, ThemeIcon
 
-""" + "\n\n".join(
-        classes
-    )
+""" + "\n\n".join(classes)
 
 
 def group_icons_by_category(icons: list[Path]) -> dict[str, set[Path]]:

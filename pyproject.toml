@@ -21,7 +21,6 @@ libqcanvas = "^0.4.0"
 #libqcanvas-clients = { path = "../QCanvas-API-Clients/", develop = true }
 asynctaskpool = "^0.2.1"
 sqlalchemy = "^2.0.31"
-qtpy = "^2.4.1"
 aiosqlite = "^0.20.0"
 pyqtdarktheme-fork = "^2.3.2"
 qasync = "^0.27.1"

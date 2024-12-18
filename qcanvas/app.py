@@ -2,12 +2,11 @@ import asyncio
 import logging
 import sys
 
-import qtpy
+from PySide6.QtCore import QObject, Signal, Slot
+from PySide6.QtGui import QGuiApplication
+from PySide6.QtWidgets import QApplication
 from libqcanvas.qcanvas import QCanvas
 from qasync import QEventLoop, asyncSlot
-from qtpy.QtCore import QObject, Signal, Slot
-from qtpy.QtGui import QGuiApplication
-from qtpy.QtWidgets import QApplication
 
 import qcanvas.backend_connectors.qcanvas_task_master as task_master
 from qcanvas.backend_connectors import FrontendResourceManager
@@ -53,14 +52,7 @@ class _MainStarter(QObject):
         return _qcanvas
 
 
-def _show_qt_api_name():
-    print(f"Using Qt bindings from {qtpy.API_NAME}")
-    _logger.info("Using Qt bindings from %s", qtpy.API_NAME)
-
-
 def launch():
-    _show_qt_api_name()
-
     app = QApplication(sys.argv)
 
     if runtime.is_running_as_flatpak:

@@ -1,4 +1,4 @@
-from qtpy.QtGui import QIcon
+from PySide6.QtGui import QIcon
 
 from ._icon_type import ThemeIcon, UniversalIcon
 from .rc_icons import (

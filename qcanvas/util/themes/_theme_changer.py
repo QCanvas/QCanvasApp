@@ -1,9 +1,9 @@
 import logging
 
 import qdarktheme
-from qtpy.QtCore import Slot
-from qtpy.QtGui import QIcon
-from qtpy.QtWidgets import QApplication, QStyleFactory
+from PySide6.QtCore import Slot
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QApplication, QStyleFactory
 
 from qcanvas.util.themes._colour_scheme_helper import (
     colour_scheme_changed,

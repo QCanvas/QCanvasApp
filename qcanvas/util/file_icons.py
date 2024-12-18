@@ -1,9 +1,9 @@
 import logging
 import os.path
 
-from qtpy.QtCore import QFileInfo, QMimeDatabase
-from qtpy.QtGui import QIcon
-from qtpy.QtWidgets import QApplication, QFileIconProvider, QStyle
+from PySide6.QtCore import QFileInfo, QMimeDatabase
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QApplication, QFileIconProvider, QStyle
 
 import qcanvas.util.runtime as runtime
 

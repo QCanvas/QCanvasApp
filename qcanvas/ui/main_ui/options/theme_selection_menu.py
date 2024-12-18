@@ -1,8 +1,8 @@
 import logging
 
-from qtpy.QtCore import Slot
-from qtpy.QtGui import QAction, QActionGroup
-from qtpy.QtWidgets import QMenu
+from PySide6.QtCore import Slot
+from PySide6.QtGui import QAction, QActionGroup
+from PySide6.QtWidgets import QMenu
 
 from qcanvas import icons
 from qcanvas.util import settings, themes

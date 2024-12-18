@@ -1,8 +1,8 @@
 import logging
 from typing import Any
 
-from qtpy.QtGui import QIcon, QKeySequence, QPixmap
-from qtpy.QtWidgets import *
+from PySide6.QtGui import QIcon, QKeySequence, QPixmap
+from PySide6.QtWidgets import *
 
 _logger = logging.getLogger(__name__)
 

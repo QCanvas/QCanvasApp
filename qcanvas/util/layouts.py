@@ -1,8 +1,8 @@
 import logging
 from typing import *
 
-from qtpy.QtCore import Qt
-from qtpy.QtWidgets import *
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import *
 
 _logger = logging.getLogger(__name__)
 

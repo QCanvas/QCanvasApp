@@ -3,10 +3,10 @@ from abc import ABCMeta
 from pathlib import Path
 
 import libqcanvas.database.types as db
+from PySide6.QtCore import QObject, Signal
 from libqcanvas.database import QCanvasDatabase
 from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.resources.extracting.extractors import Extractors
-from qtpy.QtCore import QObject, Signal
 
 _logger = logging.getLogger(__name__)
 

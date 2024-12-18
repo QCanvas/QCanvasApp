@@ -4,7 +4,7 @@ from pathlib import Path
 
 import cachetools
 import platformdirs
-from qtpy.QtCore import QSettings
+from PySide6.QtCore import QSettings
 
 from qcanvas.util.runtime import *
 

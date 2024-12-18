@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from qtpy.QtWidgets import QTreeWidgetItem
+from PySide6.QtWidgets import QTreeWidgetItem
 
 from qcanvas.ui.memory_tree import MemoryTreeWidgetItem
 

@@ -3,9 +3,9 @@ from asyncio import Lock
 from dataclasses import dataclass
 from typing import *
 
+from PySide6.QtWidgets import *
 from libqcanvas.task_master import TaskID
 from qasync import asyncSlot
-from qtpy.QtWidgets import *
 
 from qcanvas.backend_connectors import task_master
 

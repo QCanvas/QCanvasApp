@@ -1,10 +1,10 @@
 import logging
 
 import libqcanvas.database.types as db
+from PySide6.QtWidgets import *
 from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.sync.sync_receipt import SyncReceipt
 from libqcanvas.util import as_local
-from qtpy.QtWidgets import *
 
 from qcanvas.ui.course_viewer.tabs.assignment_tab.assignment_tree import AssignmentTree
 from qcanvas.ui.course_viewer.tabs.content_tab import ContentTab

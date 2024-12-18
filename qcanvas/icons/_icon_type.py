@@ -1,7 +1,7 @@
 # Unused
 import logging
 
-from qtpy.QtGui import QIcon
+from PySide6.QtGui import QIcon
 
 _logger = logging.getLogger(__name__)
 

@@ -1,7 +1,7 @@
 import logging
 from typing import *
 
-from qtpy.QtWidgets import QTreeWidgetItem
+from PySide6.QtWidgets import QTreeWidgetItem
 
 _logger = logging.getLogger(__name__)
 

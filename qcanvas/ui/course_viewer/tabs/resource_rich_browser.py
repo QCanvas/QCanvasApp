@@ -3,14 +3,14 @@ import logging
 from typing import Optional
 
 import libqcanvas.database.types as db
+from PySide6.QtCore import QUrl, Slot
+from PySide6.QtGui import QDesktopServices
+from PySide6.QtWidgets import QTextBrowser
 from bs4 import BeautifulSoup, Tag
 from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.resources.extracting.no_extractor_error import NoExtractorError
 from libqcanvas.util import is_link_invisible
 from qasync import asyncSlot
-from qtpy.QtCore import QUrl, Slot
-from qtpy.QtGui import QDesktopServices
-from qtpy.QtWidgets import QTextBrowser
 
 from qcanvas.backend_connectors import FrontendResourceManager
 from qcanvas.util.html_cleaner import clean_up_html
@@ -163,8 +163,8 @@ class ResourceRichBrowser(QTextBrowser):
                 _logger.warning(
                     "Resource has diverged from current loaded data, applying bandaid fix"
                 )
-                self._current_content_resources[resource.id].download_state = (
-                    resource.download_state
-                )
+                self._current_content_resources[
+                    resource.id
+                ].download_state = resource.download_state
 
             self._show_page_content(self._content)

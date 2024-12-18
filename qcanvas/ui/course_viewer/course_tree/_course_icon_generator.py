@@ -2,10 +2,10 @@ import itertools
 import logging
 import random
 
+from PySide6.QtCore import QByteArray
+from PySide6.QtGui import QColor, QPainter, QPixmap
+from PySide6.QtSvg import QSvgRenderer
 from cachetools import cached
-from qtpy.QtCore import QByteArray
-from qtpy.QtGui import QColor, QPainter, QPixmap
-from qtpy.QtSvg import QSvgRenderer
 
 _logger = logging.getLogger(__name__)
 _transparent = QColor("#00000000")

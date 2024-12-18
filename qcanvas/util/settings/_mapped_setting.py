@@ -1,7 +1,7 @@
 import logging
 from typing import *
 
-from qtpy.QtCore import QSettings
+from PySide6.QtCore import QSettings
 
 _logger = logging.getLogger(__name__)
 

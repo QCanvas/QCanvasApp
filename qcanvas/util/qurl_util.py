@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 
-from qtpy.QtCore import QUrl
+from PySide6.QtCore import QUrl
 
 _logger = logging.getLogger(__name__)
 

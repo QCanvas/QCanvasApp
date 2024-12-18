@@ -4,13 +4,13 @@ from typing import *
 
 import httpx
 import libqcanvas.database.types as db
+from PySide6.QtCore import QUrl, Signal, Slot
+from PySide6.QtGui import QDesktopServices, QKeySequence
+from PySide6.QtWidgets import *
 from libqcanvas.database.data_monolith import DataMonolith
 from libqcanvas.net.sync.sync_receipt import SyncReceipt, empty_receipt
 from libqcanvas.qcanvas import QCanvas
 from qasync import asyncSlot
-from qtpy.QtCore import QUrl, Signal, Slot
-from qtpy.QtGui import QDesktopServices, QKeySequence
-from qtpy.QtWidgets import *
 
 from qcanvas import icons
 from qcanvas.backend_connectors import FrontendResourceManager

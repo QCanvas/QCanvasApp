@@ -1,5 +1,5 @@
-from qtpy.QtGui import QFont
-from qtpy.QtWidgets import QLabel
+from PySide6.QtGui import QFont
+from PySide6.QtWidgets import QLabel
 
 normal_font = QFont()
 bold_font = QFont()

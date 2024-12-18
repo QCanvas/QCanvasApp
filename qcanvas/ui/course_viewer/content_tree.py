@@ -3,9 +3,9 @@ from abc import abstractmethod
 from typing import *
 
 import libqcanvas.database.types as db
+from PySide6.QtCore import QItemSelection, Signal, Slot
+from PySide6.QtWidgets import *
 from libqcanvas.net.sync.sync_receipt import SyncReceipt
-from qtpy.QtCore import QItemSelection, Signal, Slot
-from qtpy.QtWidgets import *
 
 from qcanvas.ui.course_viewer.tree_widget_data_item import AnyTreeDataItem
 from qcanvas.ui.memory_tree import MemoryTreeWidget

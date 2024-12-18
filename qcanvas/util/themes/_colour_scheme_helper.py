@@ -1,7 +1,7 @@
 import logging
 
-from qtpy.QtCore import QObject, Signal, Slot
-from qtpy.QtGui import QGuiApplication, Qt
+from PySide6.QtCore import QObject, Signal, Slot
+from PySide6.QtGui import QGuiApplication, Qt
 
 _logger = logging.getLogger(__name__)
 

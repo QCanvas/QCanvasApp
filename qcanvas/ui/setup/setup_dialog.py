@@ -2,13 +2,13 @@ import logging
 from threading import Semaphore
 from typing import Optional
 
+from PySide6.QtCore import Qt, QUrl, Signal, Slot
+from PySide6.QtGui import QDesktopServices, QIcon
+from PySide6.QtWidgets import *
 from libqcanvas_clients.canvas import CanvasClient, CanvasClientConfig
 from libqcanvas_clients.panopto import PanoptoClient, PanoptoClientConfig
 from libqcanvas_clients.util.request_exceptions import ConfigInvalidError
 from qasync import asyncSlot
-from qtpy.QtCore import Qt, QUrl, Signal, Slot
-from qtpy.QtGui import QDesktopServices, QIcon
-from qtpy.QtWidgets import *
 
 import qcanvas.util.settings as settings
 from qcanvas import icons

@@ -2,8 +2,8 @@ import logging
 from typing import *
 
 import libqcanvas.database.types as db
+from PySide6.QtWidgets import *
 from libqcanvas.net.sync.sync_receipt import SyncReceipt
-from qtpy.QtWidgets import *
 
 from qcanvas import icons
 from qcanvas.ui.course_viewer.content_tree import ContentTree

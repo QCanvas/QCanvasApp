@@ -3,10 +3,10 @@ from math import floor
 from typing import *
 
 import libqcanvas.database.types as db
+from PySide6.QtCore import Qt, Slot
+from PySide6.QtWidgets import *
 from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.sync.sync_receipt import SyncReceipt, empty_receipt
-from qtpy.QtCore import Qt, Slot
-from qtpy.QtWidgets import *
 
 from qcanvas import icons
 from qcanvas.ui.course_viewer.course_viewer import CourseViewer
