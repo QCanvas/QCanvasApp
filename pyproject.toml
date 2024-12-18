@@ -40,7 +40,7 @@ optional = true
 [tool.poetry.group.dev-tools.dependencies]
 #nuitka = "^2.4.5"
 rich = "^13.7.1"
-pre-commit = "^3.8.0"
+pre-commit = "^4.0.1"
 scalene = "^1.5.44.1"
 xmltodict = "^0.13.0"
 #block-timer = "^0.2.0"
@@ -49,5 +49,8 @@ xmltodict = "^0.13.0"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.isort]
-profile = "black"
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["libqcanvas_clients", "asynctaskpool", "libqcanvas"]
