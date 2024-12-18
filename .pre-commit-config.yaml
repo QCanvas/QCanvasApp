@@ -1,17 +1,6 @@
 repos:
-    -   repo: https://github.com/pycqa/isort
-        rev: 5.13.2
+    -   repo: https://github.com/astral-sh/ruff-pre-commit
+        rev: v0.8.2
         hooks:
-            -   id: isort
-                name: isort (python)
-    -   repo: https://github.com/psf/black
-        rev: 24.8.0
-        hooks:
-            -   id: black
-    -   repo: local
-        hooks:
-            -   name: Detect pyside imports
-                id: pyside-guard
-                language: pygrep
-                types: [ python ]
-                entry: "import PySide6|from PySide6"
+            -   id: ruff
+            -   id: ruff-format
