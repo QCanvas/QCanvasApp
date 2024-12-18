@@ -1,7 +1,6 @@
 # This file regenerates icons.qrc, rc_icons.py and the icons definition file based on the icons in dark/, light/ and universal/
 
 import glob
-import logging
 import subprocess
 from pathlib import Path
 
@@ -9,8 +8,6 @@ import xmltodict
 import textwrap
 from mako.template import Template
 from collections import defaultdict
-
-_logger = logging.getLogger(__name__)
 
 
 def remove_base_directory(path: str | Path) -> Path:
