@@ -25,7 +25,6 @@ class _ThemeAction(QAction):
 
 
 class ThemeSelectionMenu(QMenu):
-
     def __init__(self, parent: QMenu):
         super().__init__("Theme", parent)
 

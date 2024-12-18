@@ -26,7 +26,6 @@ class _Tab:
 
 
 class CourseViewer(QWidget):
-
     def __init__(
         self,
         course: db.Course,

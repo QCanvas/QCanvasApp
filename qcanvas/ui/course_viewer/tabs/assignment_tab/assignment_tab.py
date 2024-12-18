@@ -16,7 +16,6 @@ _logger = logging.getLogger(__name__)
 
 
 class AssignmentTab(ContentTab):
-
     def __init__(
         self,
         *,

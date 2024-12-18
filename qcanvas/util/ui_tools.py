@@ -19,7 +19,7 @@ def create_qaction(
     triggered: Any = None,
     checkable: bool | None = None,
     checked: bool | None = None,
-    icon: QIcon | QPixmap | None = None
+    icon: QIcon | QPixmap | None = None,
 ) -> QAction:
     action = QAction(name)
 

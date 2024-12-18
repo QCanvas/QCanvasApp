@@ -13,7 +13,6 @@ _logger = logging.getLogger(__name__)
 
 
 class MailTree(ContentTree[db.Course]):
-
     def __init__(self, course_id: str):
         super().__init__(
             tree_name=f"course.{course_id}.mail",

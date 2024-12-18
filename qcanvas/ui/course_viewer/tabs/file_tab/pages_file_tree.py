@@ -12,7 +12,6 @@ _logger = logging.getLogger(__name__)
 
 
 class PagesFileTree(FileTree):
-
     def __init__(self, tree_name: str, *, resource_manager: ResourceManager):
         super().__init__(
             tree_name=f"{tree_name}.pages", resource_manager=resource_manager
