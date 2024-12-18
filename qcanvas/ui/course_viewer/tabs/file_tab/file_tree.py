@@ -1,10 +1,10 @@
 import logging
 
 import libqcanvas.database.types as db
-from PySide6.QtCore import QPoint, Qt, Slot
-from PySide6.QtWidgets import QMenu, QHeaderView, QTreeWidgetItem
 from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.sync.sync_receipt import SyncReceipt
+from PySide6.QtCore import QPoint, Qt, Slot
+from PySide6.QtWidgets import QHeaderView, QMenu, QTreeWidgetItem
 
 from qcanvas.ui.course_viewer.content_tree import ContentTree
 from qcanvas.ui.course_viewer.tree_widget_data_item import (

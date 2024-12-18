@@ -3,13 +3,13 @@ import logging
 from typing import Optional
 
 import libqcanvas.database.types as db
-from PySide6.QtCore import QUrl, Slot
-from PySide6.QtGui import QDesktopServices
-from PySide6.QtWidgets import QTextBrowser
 from bs4 import BeautifulSoup, Tag
 from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.resources.extracting.no_extractor_error import NoExtractorError
 from libqcanvas.util import is_link_invisible
+from PySide6.QtCore import QUrl, Slot
+from PySide6.QtGui import QDesktopServices
+from PySide6.QtWidgets import QTextBrowser
 from qasync import asyncSlot
 
 from qcanvas.backend_connectors import FrontendResourceManager

@@ -2,10 +2,10 @@ import asyncio
 import logging
 import sys
 
+from libqcanvas.qcanvas import QCanvas
 from PySide6.QtCore import QObject, Signal, Slot
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QApplication
-from libqcanvas.qcanvas import QCanvas
 from qasync import QEventLoop, asyncSlot
 
 import qcanvas.backend_connectors.qcanvas_task_master as task_master

@@ -1,9 +1,9 @@
 import logging
 
 import libqcanvas.database.types as db
-from PySide6.QtWidgets import QHBoxLayout, QWidget
 from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.sync.sync_receipt import SyncReceipt
+from PySide6.QtWidgets import QHBoxLayout, QWidget
 
 from qcanvas.ui.course_viewer.tabs.file_tab.pages_file_tree import PagesFileTree
 from qcanvas.util.layouts import layout

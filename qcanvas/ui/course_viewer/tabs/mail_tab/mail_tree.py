@@ -2,8 +2,8 @@ import logging
 from typing import Sequence
 
 import libqcanvas.database.types as db
-from PySide6.QtWidgets import QHeaderView
 from libqcanvas.net.sync.sync_receipt import SyncReceipt
+from PySide6.QtWidgets import QHeaderView
 
 from qcanvas import icons
 from qcanvas.ui.course_viewer.content_tree import ContentTree

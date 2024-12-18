@@ -2,8 +2,8 @@ import logging
 from asyncio import Lock
 from dataclasses import dataclass
 
-from PySide6.QtWidgets import QProgressBar, QStatusBar
 from libqcanvas.task_master import TaskID
+from PySide6.QtWidgets import QProgressBar, QStatusBar
 from qasync import asyncSlot
 
 from qcanvas.backend_connectors import task_master

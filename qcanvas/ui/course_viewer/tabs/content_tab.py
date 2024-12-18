@@ -2,10 +2,10 @@ import logging
 from typing import Optional
 
 import libqcanvas.database.types as db
-from PySide6.QtCore import Slot
-from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget, QGridLayout, QHBoxLayout
 from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.sync.sync_receipt import SyncReceipt
+from PySide6.QtCore import Slot
+from PySide6.QtWidgets import QGridLayout, QHBoxLayout, QLabel, QVBoxLayout, QWidget
 
 from qcanvas.ui.course_viewer.content_tree import ContentTree
 from qcanvas.ui.course_viewer.tabs.resource_rich_browser import ResourceRichBrowser

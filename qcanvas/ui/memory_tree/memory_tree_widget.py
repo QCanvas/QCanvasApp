@@ -1,5 +1,5 @@
 import logging
-from typing import Sequence, Optional
+from typing import Optional, Sequence
 
 from PySide6.QtCore import QItemSelectionModel, Slot
 from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem, QWidget

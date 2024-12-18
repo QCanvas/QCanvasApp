@@ -7,9 +7,9 @@ import platformdirs
 from PySide6.QtCore import QSettings
 
 from qcanvas.util.runtime import (
-    is_running_portable,
-    is_running_as_flatpak,
     is_running_as_compiled,
+    is_running_as_flatpak,
+    is_running_portable,
 )
 
 _logger = logging.getLogger(__name__)

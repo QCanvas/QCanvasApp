@@ -1,8 +1,8 @@
 import logging
 from abc import ABCMeta
 
-from PySide6.QtCore import QObject, Signal
 from libqcanvas.task_master import TaskID, TaskMaster, set_global_task_master
+from PySide6.QtCore import QObject, Signal
 
 _logger = logging.getLogger(__name__)
 

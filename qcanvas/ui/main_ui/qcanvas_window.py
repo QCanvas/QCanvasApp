@@ -4,20 +4,20 @@ from typing import Optional, Sequence
 
 import httpx
 import libqcanvas.database.types as db
-from PySide6.QtCore import QUrl, Signal, Slot
-from PySide6.QtGui import QDesktopServices, QKeySequence
-from PySide6.QtWidgets import (
-    QMainWindow,
-    QPushButton,
-    QHBoxLayout,
-    QWidget,
-    QVBoxLayout,
-    QErrorMessage,
-    QProgressDialog,
-)
 from libqcanvas.database.data_monolith import DataMonolith
 from libqcanvas.net.sync.sync_receipt import SyncReceipt, empty_receipt
 from libqcanvas.qcanvas import QCanvas
+from PySide6.QtCore import QUrl, Signal, Slot
+from PySide6.QtGui import QDesktopServices, QKeySequence
+from PySide6.QtWidgets import (
+    QErrorMessage,
+    QHBoxLayout,
+    QMainWindow,
+    QProgressDialog,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
 from qasync import asyncSlot
 
 from qcanvas import icons

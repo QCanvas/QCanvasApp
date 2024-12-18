@@ -2,7 +2,7 @@ import logging
 from typing import Iterable, NamedTuple
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QLayout, QGridLayout
+from PySide6.QtWidgets import QGridLayout, QLayout, QWidget
 
 _logger = logging.getLogger(__name__)
 

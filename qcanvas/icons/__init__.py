@@ -2,8 +2,8 @@ from PySide6.QtGui import QIcon
 
 from ._icon_type import ThemeIcon, UniversalIcon
 from .rc_icons import (
-    qt_resource_data as _,  # Without this, icon data will not be loaded
-)
+    qt_resource_data as _,
+)  # Without this, icon data will not be loaded
 
 
 # noinspection PyPep8Naming

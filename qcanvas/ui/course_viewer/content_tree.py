@@ -1,11 +1,11 @@
 import logging
 from abc import abstractmethod
-from typing import Sequence, Optional, Self
+from typing import Optional, Self, Sequence
 
 import libqcanvas.database.types as db
+from libqcanvas.net.sync.sync_receipt import SyncReceipt
 from PySide6.QtCore import QItemSelection, Signal, Slot
 from PySide6.QtWidgets import QHeaderView, QTreeWidgetItem
-from libqcanvas.net.sync.sync_receipt import SyncReceipt
 
 from qcanvas.ui.course_viewer.tree_widget_data_item import AnyTreeDataItem
 from qcanvas.ui.memory_tree import MemoryTreeWidget
