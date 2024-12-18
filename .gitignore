@@ -1,5 +1,6 @@
 *.AppImage
 /experiment/
+.idea
 
 # ------------ TEMPLATE ----------------
 
