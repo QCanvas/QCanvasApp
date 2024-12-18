@@ -2,7 +2,7 @@ import logging
 from abc import ABCMeta
 from pathlib import Path
 
-import libqcanvas.database.types as db
+from libqcanvas import db
 from libqcanvas.database import QCanvasDatabase
 from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.resources.extracting.extractors import Extractors

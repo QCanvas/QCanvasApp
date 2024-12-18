@@ -2,7 +2,7 @@ import html
 import logging
 from typing import Optional
 
-import libqcanvas.database.types as db
+from libqcanvas import db
 from bs4 import BeautifulSoup, Tag
 from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.resources.extracting.no_extractor_error import NoExtractorError

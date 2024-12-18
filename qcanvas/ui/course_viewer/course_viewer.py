@@ -1,7 +1,7 @@
 import logging
 from dataclasses import dataclass
 
-import libqcanvas.database.types as db
+from libqcanvas import db
 from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.sync.sync_receipt import SyncReceipt
 from PySide6.QtCore import Slot

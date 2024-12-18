@@ -3,7 +3,7 @@ from threading import BoundedSemaphore
 from typing import Optional, Sequence
 
 import httpx
-import libqcanvas.database.types as db
+from libqcanvas import db
 from libqcanvas.database.data_monolith import DataMonolith
 from libqcanvas.net.sync.sync_receipt import SyncReceipt, empty_receipt
 from libqcanvas.qcanvas import QCanvas
@@ -202,13 +202,13 @@ class QCanvasWindow(QMainWindow):
         )
 
     async def _get_resources(self) -> dict[str, db.Resource]:
-        return (await self._qcanvas.get_data()).resources
+        return (await self._qcanvas.load()).resources
 
     async def _get_terms(self) -> Sequence[db.Term]:
-        return (await self._qcanvas.get_data()).terms
+        return (await self._qcanvas.load()).terms
 
     async def _get_courses(self) -> Sequence[db.Course]:
-        return (await self._qcanvas.get_data()).courses
+        return (await self._qcanvas.load()).courses
 
     @Slot(db.Course)
     def _on_course_selected(self, course: Optional[db.Course]) -> None:

@@ -1,7 +1,7 @@
 import logging
 from typing import Sequence
 
-import libqcanvas.database.types as db
+from libqcanvas import db
 from libqcanvas.net.sync.sync_receipt import SyncReceipt
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QHeaderView

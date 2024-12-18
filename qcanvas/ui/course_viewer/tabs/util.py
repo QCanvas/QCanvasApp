@@ -1,6 +1,6 @@
 from typing import Protocol
 
-import libqcanvas.database.types as db
+from libqcanvas import db
 from libqcanvas.net.sync.sync_receipt import SyncReceipt
 
 date_strftime_format = "%A, %Y-%m-%d, %H:%M:%S"
