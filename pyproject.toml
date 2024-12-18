@@ -15,7 +15,7 @@ exclude = [
 qcanvas = "qcanvas:main"
 
 [tool.poetry.dependencies]
-python = ">=3.11,<3.13,!=3.11.0"
+python = ">=3.12,<3.13"
 libqcanvas = "^0.4.0"
 #libqcanvas = { path = "../QCanvas-Backend/", develop = true }
 #libqcanvas-clients = { path = "../QCanvas-API-Clients/", develop = true }
