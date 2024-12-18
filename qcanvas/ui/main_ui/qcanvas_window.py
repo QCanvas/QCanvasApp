@@ -1,12 +1,20 @@
 import logging
 from threading import BoundedSemaphore
-from typing import *
+from typing import Optional, Sequence
 
 import httpx
 import libqcanvas.database.types as db
 from PySide6.QtCore import QUrl, Signal, Slot
 from PySide6.QtGui import QDesktopServices, QKeySequence
-from PySide6.QtWidgets import *
+from PySide6.QtWidgets import (
+    QMainWindow,
+    QPushButton,
+    QHBoxLayout,
+    QWidget,
+    QVBoxLayout,
+    QErrorMessage,
+    QProgressDialog,
+)
 from libqcanvas.database.data_monolith import DataMonolith
 from libqcanvas.net.sync.sync_receipt import SyncReceipt, empty_receipt
 from libqcanvas.qcanvas import QCanvas
@@ -193,7 +201,7 @@ class QCanvasWindow(QMainWindow):
             await self._get_courses(), sync_receipt=receipt
         )
 
-    async def _get_resources(self) -> Dict[str, db.Resource]:
+    async def _get_resources(self) -> dict[str, db.Resource]:
         return (await self._qcanvas.get_data()).resources
 
     async def _get_terms(self) -> Sequence[db.Term]:

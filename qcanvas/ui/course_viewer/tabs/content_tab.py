@@ -1,9 +1,9 @@
 import logging
-from typing import *
+from typing import Optional
 
 import libqcanvas.database.types as db
 from PySide6.QtCore import Slot
-from PySide6.QtWidgets import *
+from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget, QGridLayout, QHBoxLayout
 from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.sync.sync_receipt import SyncReceipt
 
@@ -14,18 +14,16 @@ from qcanvas.util.ui_tools import make_truncatable
 
 _logger = logging.getLogger(__name__)
 
-T = TypeVar("T", bound=Type["ContentTab"])
-
 
 class ContentTab(QWidget):
     @classmethod
-    def create_from_receipt(
+    def create_from_receipt[T: ContentTab](
         cls: T,
         *,
         course: db.Course,
         sync_receipt: SyncReceipt,
         downloader: ResourceManager,
-    ) -> Type[T]:
+    ) -> type[T]:
         return cls(course=course, sync_receipt=sync_receipt, downloader=downloader)
 
     def __init__(

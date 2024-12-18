@@ -1,5 +1,5 @@
 import logging
-from typing import *
+from typing import Optional
 
 from PySide6.QtCore import Slot
 from PySide6.QtGui import QAction

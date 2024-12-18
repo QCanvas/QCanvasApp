@@ -1,12 +1,10 @@
 import logging
-from typing import *
+from typing import Iterable, NamedTuple
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import *
+from PySide6.QtWidgets import QWidget, QLayout, QGridLayout
 
 _logger = logging.getLogger(__name__)
-
-T = TypeVar("T")
 
 
 class GridItem(NamedTuple):
@@ -16,13 +14,13 @@ class GridItem(NamedTuple):
     alignment: Qt.AlignmentFlag = Qt.AlignmentFlag.AlignLeft
 
 
-def layout_widget(layout_type: Type[T], *items: QWidget, **kwargs) -> QWidget:
+def layout_widget[T](layout_type: type[T], *items: QWidget, **kwargs) -> QWidget:
     widget = QWidget()
     widget.setLayout(layout(layout_type, *items, **kwargs))
     return widget
 
 
-def layout(layout_type: Type[T], *items: QWidget | QLayout, **kwargs) -> T:
+def layout[T](layout_type: type[T], *items: QWidget | QLayout, **kwargs) -> T:
     result_layout: QLayout = layout_type(**kwargs)
 
     for item in items:

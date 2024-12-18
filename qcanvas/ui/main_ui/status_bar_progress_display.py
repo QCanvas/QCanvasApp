@@ -1,9 +1,8 @@
 import logging
 from asyncio import Lock
 from dataclasses import dataclass
-from typing import *
 
-from PySide6.QtWidgets import *
+from PySide6.QtWidgets import QProgressBar, QStatusBar
 from libqcanvas.task_master import TaskID
 from qasync import asyncSlot
 
@@ -90,7 +89,7 @@ class StatusBarProgressDisplay(QStatusBar):
         self.showMessage("Done", 5000)
         self._progress_bar.hide()
 
-    def _show_single_task_progress(self, task: Tuple[TaskID, _TaskProgress]) -> None:
+    def _show_single_task_progress(self, task: tuple[TaskID, _TaskProgress]) -> None:
         _logger.debug("Single task %s", task)
         id, progress = task
 
@@ -98,7 +97,7 @@ class StatusBarProgressDisplay(QStatusBar):
         self.showMessage(id.step_name)
 
     def _show_multiple_tasks_progress(
-        self, tasks: list[Tuple[TaskID, _TaskProgress]]
+        self, tasks: list[tuple[TaskID, _TaskProgress]]
     ) -> None:
         _logger.debug("Multiple tasks %s", tasks)
         self.showMessage(
@@ -107,7 +106,7 @@ class StatusBarProgressDisplay(QStatusBar):
         self._show_progress(self._calculate_progress(tasks))
 
     def _calculate_progress(
-        self, tasks: list[Tuple[TaskID, _TaskProgress]]
+        self, tasks: list[tuple[TaskID, _TaskProgress]]
     ) -> _TaskProgress:
         # Task progresses are floats from 0 to 1, multiplier is used to turn them into ints
         multiplier = 1000

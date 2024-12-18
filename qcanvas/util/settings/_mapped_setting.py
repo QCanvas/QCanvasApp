@@ -1,14 +1,11 @@
 import logging
-from typing import *
 
 from PySide6.QtCore import QSettings
 
 _logger = logging.getLogger(__name__)
 
-T = TypeVar("T")
 
-
-class MappedSetting(Generic[T]):
+class MappedSetting[T]:
     """
     Acts as a proxy for a named value in a QSettings object.
     Stores the value in memory when initialised and updates it accordingly, to protect it from changes on disk.

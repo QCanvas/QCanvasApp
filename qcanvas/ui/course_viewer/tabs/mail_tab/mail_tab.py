@@ -1,7 +1,7 @@
 import logging
 
 import libqcanvas.database.types as db
-from PySide6.QtWidgets import *
+from PySide6.QtWidgets import QGridLayout, QLabel
 from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.sync.sync_receipt import SyncReceipt
 from libqcanvas.util import as_local

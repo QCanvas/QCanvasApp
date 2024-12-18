@@ -1,6 +1,5 @@
 import logging
 from pathlib import Path
-from typing import *
 
 from lightdb import LightDB, Model
 
@@ -20,7 +19,7 @@ _state_db = LightDB(str(_storage_path()))
 
 class _TreeState(Model, table="trees", db=_state_db):
     tree_name: str
-    collapsed_items: List[str] = []
+    collapsed_items: list[str] = []
 
 
 def _get_or_create_state(name: str) -> _TreeState:
@@ -63,5 +62,5 @@ class TreeMemory:
             self._state.save()
 
     @property
-    def collapsed_ids(self) -> List[str]:
+    def collapsed_ids(self) -> list[str]:
         return self._state.collapsed_items

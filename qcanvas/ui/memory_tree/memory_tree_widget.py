@@ -1,5 +1,5 @@
 import logging
-from typing import *
+from typing import Sequence, Optional
 
 from PySide6.QtCore import QItemSelectionModel, Slot
 from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem, QWidget
@@ -44,7 +44,7 @@ class MemoryTreeWidget(QTreeWidget):
         super().clear()
         self._id_map.clear()
 
-    def select_ids(self, ids: List[str]) -> bool:
+    def select_ids(self, ids: list[str]) -> bool:
         """
         :returns: True if all ids were still found in the tree, False if one or more was missing
         """
@@ -95,7 +95,7 @@ class MemoryTreeWidget(QTreeWidget):
         self, widget: QTreeWidgetItem | Sequence[QTreeWidgetItem]
     ):
         map_updates = {}
-        widget_stack = widget if isinstance(widget, List) else [widget]
+        widget_stack = widget if isinstance(widget, list) else [widget]
 
         while len(widget_stack) > 0:
             item = widget_stack.pop()

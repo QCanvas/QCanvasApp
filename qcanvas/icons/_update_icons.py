@@ -38,7 +38,7 @@ def generate_icon_defs(icons: list[Path]) -> str:
         generate_group_class(group_name, icons) for group_name, icons in groups.items()
     ]
 
-    return f"""from .rc_icons import qt_resource_data as _  # Without this, icon data will not be loaded
+    return """from .rc_icons import qt_resource_data as _  # Without this, icon data will not be loaded
 from PySide6.QtGui import QIcon
 from ._icon_type import UniversalIcon, ThemeIcon
 

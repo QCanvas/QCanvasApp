@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import libqcanvas.database.types as db
 from PySide6.QtCore import Slot
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import *
+from PySide6.QtWidgets import QWidget, QLabel, QTabWidget, QVBoxLayout
 from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.sync.sync_receipt import SyncReceipt
 

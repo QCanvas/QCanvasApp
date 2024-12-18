@@ -1,5 +1,5 @@
 import logging
-from typing import *
+from typing import Sequence
 
 import libqcanvas.database.types as db
 from libqcanvas.net.resources.download.resource_manager import ResourceManager

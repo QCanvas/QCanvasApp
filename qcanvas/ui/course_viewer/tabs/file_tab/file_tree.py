@@ -1,9 +1,8 @@
 import logging
-from typing import *
 
 import libqcanvas.database.types as db
 from PySide6.QtCore import QPoint, Qt, Slot
-from PySide6.QtWidgets import *
+from PySide6.QtWidgets import QMenu, QHeaderView, QTreeWidgetItem
 from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.sync.sync_receipt import SyncReceipt
 
@@ -17,9 +16,6 @@ from qcanvas.util.file_icons import icon_for_filename
 from qcanvas.util.ui_tools import create_qaction
 
 _logger = logging.getLogger(__name__)
-
-
-T = TypeVar("T")
 
 
 class FileTree(ContentTree[db.Course]):

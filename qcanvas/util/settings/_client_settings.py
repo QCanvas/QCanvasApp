@@ -1,5 +1,5 @@
 import logging
-from typing import *
+from typing import Optional
 
 from libqcanvas_clients.canvas import CanvasClientConfig
 from libqcanvas_clients.panopto import PanoptoClientConfig

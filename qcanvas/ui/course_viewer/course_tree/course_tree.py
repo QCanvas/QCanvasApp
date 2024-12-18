@@ -1,5 +1,5 @@
 import logging
-from typing import *
+from typing import Sequence
 
 import libqcanvas.database.types as db
 from PySide6.QtCore import Qt, Signal
@@ -34,7 +34,7 @@ class _CourseTreeItem(TreeWidgetDataItem):
             | Qt.ItemFlag.ItemIsEnabled
         )
 
-    def setData(self, column: int, role: int, value: Any):
+    def setData(self, column: int, role: int, value: object):
         if column != 0 or not isinstance(value, str):
             return super().setData(column, role, value)
 
@@ -59,7 +59,7 @@ class CourseTree(ContentTree[Sequence[db.Term]]):
         )
 
     def create_tree_items(
-        self, terms: List[db.Term], sync_receipt: SyncReceipt
+        self, terms: list[db.Term], sync_receipt: SyncReceipt
     ) -> Sequence[MemoryTreeWidgetItem]:
         widgets = []
 
