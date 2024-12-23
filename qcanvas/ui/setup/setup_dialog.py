@@ -21,7 +21,7 @@ from PySide6.QtWidgets import (
 )
 from qasync import asyncSlot
 
-import qcanvas.util.settings as settings
+import qcanvas.settings as settings
 from qcanvas import icons
 from qcanvas.util.layouts import GridItem, grid_layout_widget, layout
 from qcanvas.util.url_checker import is_url

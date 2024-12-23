@@ -12,7 +12,8 @@ import qcanvas.backend_connectors.qcanvas_task_master as task_master
 from qcanvas.backend_connectors import FrontendResourceManager
 from qcanvas.ui.main_ui.qcanvas_window import QCanvasWindow
 from qcanvas.ui.setup import SetupDialog, setup_checker
-from qcanvas.util import paths, runtime, settings, themes
+from qcanvas.util import paths, runtime, themes
+import qcanvas.settings as settings
 
 _logger = logging.getLogger(__name__)
 

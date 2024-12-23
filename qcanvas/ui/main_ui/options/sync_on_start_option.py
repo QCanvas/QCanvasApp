@@ -5,7 +5,7 @@ from PySide6.QtCore import Slot
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QMenu
 
-from qcanvas.util import settings
+import qcanvas.settings as settings
 
 _logger = logging.getLogger(__name__)
 

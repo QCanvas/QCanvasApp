@@ -5,7 +5,7 @@ from libqcanvas_clients.canvas import CanvasClientConfig
 from libqcanvas_clients.panopto import PanoptoClientConfig
 
 from qcanvas.util import paths
-from qcanvas.util.settings._mapped_setting import BoolSetting, MappedSetting
+from ._mapped_setting import BoolSetting, MappedSetting
 
 _logger = logging.getLogger(__name__)
 

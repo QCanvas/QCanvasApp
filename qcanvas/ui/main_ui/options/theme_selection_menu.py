@@ -5,7 +5,8 @@ from PySide6.QtGui import QAction, QActionGroup
 from PySide6.QtWidgets import QMenu
 
 from qcanvas import icons
-from qcanvas.util import settings, themes
+from qcanvas.util import themes
+import qcanvas.settings as settings
 
 _logger = logging.getLogger(__name__)
 

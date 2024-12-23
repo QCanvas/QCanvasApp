@@ -1,6 +1,6 @@
 import logging
 
-import qcanvas.util.settings as settings
+import qcanvas.settings as settings
 from qcanvas.util.url_checker import is_url
 
 _logger = logging.getLogger(__name__)

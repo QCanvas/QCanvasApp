@@ -6,7 +6,7 @@ from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.sync.sync_receipt import SyncReceipt
 from PySide6.QtWidgets import QMessageBox, QWidget
 
-from qcanvas.util import settings
+import qcanvas.settings as settings
 
 _logger = logging.getLogger(__name__)
 
