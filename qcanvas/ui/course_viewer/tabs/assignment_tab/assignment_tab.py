@@ -59,12 +59,13 @@ class AssignmentTab(ContentTab):
         if assignment.due_date is not None:
             due_text = as_local(assignment.due_date).strftime(date_strftime_format)
         else:
-            due_text = "?"
+            due_text = "No due date"
 
         self._due_date_label.setText(due_text)
 
-        submission_score = (
-            assignment.submissions[-1].score if assignment.submissions else "?"
-        )
+        if assignment.submissions and not (
+            submission_score := assignment.submissions[-1].score
+        ):
+            submission_score = "-"
 
         self._score_label.setText(f"{submission_score}/{assignment.max_score or '?'}")
