@@ -1,8 +1,4 @@
-import logging
-
 from PySide6.QtCore import QObject, Signal
-
-_logger = logging.getLogger(__name__)
 
 
 class ThemeChangedEvent(QObject):

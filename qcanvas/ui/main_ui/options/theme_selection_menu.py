@@ -5,7 +5,7 @@ from PySide6.QtGui import QAction, QActionGroup
 from PySide6.QtWidgets import QMenu
 
 from qcanvas import icons
-from qcanvas.util import themes
+import qcanvas.theme as theme
 import qcanvas.settings as settings
 
 _logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ class _ThemeAction(QAction):
     @Slot()
     def _change_theme(self) -> None:
         settings.ui.theme = self._theme_name
-        themes.apply(self._theme_name)
+        theme.apply(self._theme_name)
 
 
 class ThemeSelectionMenu(QMenu):
@@ -36,10 +36,10 @@ class ThemeSelectionMenu(QMenu):
         dark_theme = _ThemeAction("Dark", "dark", self)
         native_theme = _ThemeAction("Native (requires restart)", "native", self)
 
-        actions = [auto_theme, light_theme, dark_theme, native_theme]
+        select_theme_actions = [auto_theme, light_theme, dark_theme, native_theme]
 
-        self.addActions(actions)
+        self.addActions(select_theme_actions)
         self.setIcon(icons.options.theme)
 
-        for theme in actions:
-            action_group.addAction(theme)
+        for selection_action in select_theme_actions:
+            action_group.addAction(selection_action)

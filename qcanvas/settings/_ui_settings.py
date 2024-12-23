@@ -3,7 +3,7 @@ import logging
 from PySide6.QtCore import QByteArray, QSettings
 
 from ._mapped_setting import MappedSetting
-from qcanvas.util.themes import default_theme, ensure_theme_is_valid
+from qcanvas.theme import default_theme, ensure_theme_is_valid
 
 _logger = logging.getLogger(__name__)
 

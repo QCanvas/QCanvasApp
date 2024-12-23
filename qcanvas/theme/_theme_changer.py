@@ -1,18 +1,15 @@
-import logging
-
 import qdarktheme
 from PySide6.QtCore import Slot
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QStyleFactory
 
-from qcanvas.util.themes._colour_scheme_helper import (
+from ._colour_scheme_helper import (
     colour_scheme_changed,
     is_dark_colour_scheme,
 )
-from qcanvas.util.themes._selected_theme import SelectedTheme
-from qcanvas.util.themes._theme_changed_event import theme_changed
+from ._selected_theme import SelectedTheme
+from ._theme_changed_event import theme_changed
 
-_logger = logging.getLogger(__name__)
 
 default_theme = "auto"
 _is_dark_mode: bool | None = None

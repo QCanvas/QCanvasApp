@@ -1,9 +1,5 @@
-import logging
-
 from PySide6.QtCore import QObject, Signal, Slot
 from PySide6.QtGui import QGuiApplication, Qt
-
-_logger = logging.getLogger(__name__)
 
 
 def colour_scheme() -> Qt.ColorScheme:
