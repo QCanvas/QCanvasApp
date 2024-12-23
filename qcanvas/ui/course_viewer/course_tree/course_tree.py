@@ -63,7 +63,7 @@ class CourseTree(ContentTree[Sequence[db.Term]]):
     ) -> Sequence[MemoryTreeWidgetItem]:
         widgets = []
 
-        for term in reversed(terms):
+        for term in terms:
             term_widget = self._create_term_widget(term)
             course_icon_generator = CourseIconGenerator(term.id)
 
