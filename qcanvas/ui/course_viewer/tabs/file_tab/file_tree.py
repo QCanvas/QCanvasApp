@@ -1,4 +1,5 @@
 import logging
+from abc import ABC
 
 from libqcanvas import db
 from libqcanvas.net.resources.download.resource_manager import ResourceManager
@@ -18,7 +19,7 @@ from qcanvas.util.ui_tools import create_qaction
 _logger = logging.getLogger(__name__)
 
 
-class FileTree(ContentTree[db.Course]):
+class FileTree(ContentTree[db.Course], ABC):
     @classmethod
     def create_from_receipt(
         cls,
