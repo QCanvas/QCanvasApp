@@ -6,6 +6,7 @@ from libqcanvas.net.sync.sync_receipt import SyncReceipt
 from PySide6.QtCore import Qt, Signal
 
 from qcanvas import icons
+from qcanvas.settings import course_configs
 from qcanvas.ui.course_viewer.content_tree import ContentTree
 from qcanvas.ui.course_viewer.course_tree._course_icon_generator import (
     CourseIconGenerator,
@@ -22,7 +23,7 @@ class _CourseTreeItem(TreeWidgetDataItem):
             self,
             id=course.id,
             data=course,
-            strings=["FIXME course config still broken" or course.name],
+            strings=[course_configs[course.id].nickname or course.name],
         )
 
         self._owner = owner

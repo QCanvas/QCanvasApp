@@ -22,6 +22,7 @@ from qasync import asyncSlot
 
 from qcanvas import icons
 from qcanvas.backend_connectors import FrontendResourceManager
+from qcanvas.settings import course_configs
 from qcanvas.ui.course_viewer import CourseTree
 from qcanvas.ui.main_ui.course_viewer_container import CourseViewerContainer
 from qcanvas.ui.main_ui.options.auto_download_resources_option import (
@@ -221,10 +222,9 @@ class QCanvasWindow(QMainWindow):
     @asyncSlot(db.Course, str)
     async def _on_course_renamed(self, course: db.Course, new_name: str) -> None:
         _logger.debug("Rename %s -> %s", course.name, new_name)
-
-        async with self._qcanvas.database.session() as session:
-            session.add(course)
-            course.configuration.nickname = new_name
+        config = course_configs[course.id]
+        config.nickname = new_name
+        await config.save()
 
     @asyncSlot()
     async def _open_quick_auth_in_browser(self) -> None:
