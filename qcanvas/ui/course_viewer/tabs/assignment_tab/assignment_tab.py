@@ -63,6 +63,8 @@ class AssignmentTab(ContentTab):
 
         self._due_date_label.setText(due_text)
 
-        self._score_label.setText(
-            f"{assignment.mark or '?'}/{assignment.max_mark_possible or '?'}"
+        submission_score = (
+            assignment.submissions[-1].score if assignment.submissions else "?"
         )
+
+        self._score_label.setText(f"{submission_score}/{assignment.max_score or '?'}")
