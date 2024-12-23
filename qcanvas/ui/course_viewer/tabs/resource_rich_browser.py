@@ -43,14 +43,14 @@ class ResourceRichBrowser(QTextBrowser):
         self._content = None
         self._current_content_resources.clear()
 
-    def show_content(self, page: db.CourseContentItem) -> None:
+    def show_content(self, page: db.AnyContentItem) -> None:
         if page.body is None:
             self.show_blank()
         else:
             self._collect_resources(page)
             self._show_page_content(page)
 
-    def _collect_resources(self, page: db.CourseContentItem):
+    def _collect_resources(self, page: db.AnyContentItem):
         self._current_content_resources = {
             resource.id: resource for resource in page.resources
         }

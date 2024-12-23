@@ -54,7 +54,7 @@ class MailTab(ContentTab):
 
         return grid
 
-    def update_info_grid(self, mail: db.CourseMessage) -> None:
+    def update_info_grid(self, mail: db.Message) -> None:
         self._date_sent_label.setText(
             as_local(mail.creation_date).strftime(date_strftime_format)
         )

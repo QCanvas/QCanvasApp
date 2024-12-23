@@ -16,7 +16,7 @@ class MailTree(ContentTree[db.Course]):
     def __init__(self, course_id: str):
         super().__init__(
             tree_name=f"course.{course_id}.mail",
-            emit_selection_signal_for_type=db.CourseMessage,
+            emit_selection_signal_for_type=db.Message,
         )
 
         self.ui_setup(
@@ -36,7 +36,7 @@ class MailTree(ContentTree[db.Course]):
     ) -> Sequence[TreeWidgetDataItem]:
         widgets = []
 
-        for message in course.messages:  # type: db.CourseMessage
+        for message in course.messages:  # type: db.Message
             message_widget = self._create_mail_widget(message, sync_receipt)
             message_widget.setIcon(0, icons.tree_items.mail)
             widgets.append(message_widget)
@@ -44,7 +44,7 @@ class MailTree(ContentTree[db.Course]):
         return widgets
 
     def _create_mail_widget(
-        self, message: db.CourseMessage, sync_receipt: SyncReceipt
+        self, message: db.Message, sync_receipt: SyncReceipt
     ) -> TreeWidgetDataItem:
         message_widget = TreeWidgetDataItem(
             id=message.id,

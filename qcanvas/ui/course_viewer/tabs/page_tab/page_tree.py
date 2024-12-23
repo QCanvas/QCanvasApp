@@ -17,7 +17,7 @@ class PageTree(ContentTree[db.Course]):
     def __init__(self, course_id: str):
         super().__init__(
             tree_name=f"course.{course_id}.modules",
-            emit_selection_signal_for_type=db.ModulePage,
+            emit_selection_signal_for_type=db.Page,
         )
 
         self.ui_setup(
@@ -52,7 +52,7 @@ class PageTree(ContentTree[db.Course]):
         return module_widget
 
     def _create_page_widget(
-        self, page: db.ModulePage, sync_receipt: SyncReceipt
+        self, page: db.Page, sync_receipt: SyncReceipt
     ) -> TreeWidgetDataItem:
         page_widget = TreeWidgetDataItem(id=page.id, data=page, strings=[page.name])
         page_widget.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)

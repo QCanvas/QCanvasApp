@@ -23,14 +23,14 @@ class PagesFileTree(FileTree):
         widgets = []
 
         for group in data.modules:  # type: db.Module
-            if len(group.content_items) == 0:
+            if not group.pages:
                 continue
 
             # Init group_widget lazily to prevent creating pointless tree widgets
             group_widget: MemoryTreeWidgetItem | None = None
             items_in_group = set()
 
-            for item in group.content_items:
+            for item in group.pages:
                 resource_widgets = []
 
                 for resource in item.resources:  # type: db.Resource
