@@ -1,6 +1,5 @@
 # This file regenerates icons.qrc, rc_icons.py and the icons definition file based on the icons in dark/, light/ and universal/
 
-import glob
 import subprocess
 from pathlib import Path
 
@@ -64,21 +63,26 @@ def group_icons_by_category(icons: list[Path]) -> dict[str, set[Path]]:
     return groups
 
 
-def run_rcc() -> None:
-    subprocess.run(["pyside6-rcc", "icons.qrc", "-o", "rc_icons.py"])
+def run_rcc(icons_dir: Path) -> None:
+    subprocess.run(
+        ["pyside6-rcc", icons_dir / "icons.qrc", "-o", icons_dir / "rc_icons.py"]
+    )
 
 
-def write(file_name: str, content: str) -> None:
+def write(file_name: Path, content: str) -> None:
     with open(file_name, "w") as f:
         f.write(content)
 
 
-if __name__ == "__main__":
+def update(icons_dir: Path):
     all_icons: list[Path] = [
-        Path(file) for file in glob.glob("**/*.svg", recursive=True)
+        Path(file).relative_to(icons_dir)
+        for file in icons_dir.glob(
+            "**/*.svg",
+        )
     ]
     all_icons.sort()
 
-    write("icons.qrc", generate_xml(all_icons))
-    write("__init__.py", generate_icon_defs(all_icons))
-    run_rcc()
+    write(icons_dir / "icons.qrc", generate_xml(all_icons))
+    write(icons_dir / "__init__.py", generate_icon_defs(all_icons))
+    run_rcc(icons_dir)
