@@ -20,7 +20,7 @@ async def download_new_resources(
 ) -> None:
     resources_to_download = []
 
-    for file_id in receipt.updated_resources:
+    for file_id in receipt.updates[db.Resource]:
         resource = all_resources[file_id]
 
         if _should_auto_download_resource(resource, resource_manager=downloader):

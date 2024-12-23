@@ -23,6 +23,7 @@ _logger = logging.getLogger(__name__)
 class _Tab:
     icon: QIcon
     highlighted_icon: QIcon
+    update_type: type
 
 
 class CourseViewer(QWidget):
@@ -72,23 +73,26 @@ class CourseViewer(QWidget):
         #     icon=icons.tabs.pages,
         #     highlighted_icon=icons.tabs.pages_new_content,
         # )
-        self._PAGES_TAB = self._setup_tab(
+        self._PAGES_TAB = self._set_up_tab(
             name="Pages",
             widget=self._pages_tab,
             icon=icons.tabs.pages,
             highlighted_icon=icons.tabs.pages_new_content,
+            content_update_key=db.Page,
         )
-        self._ASSIGNMENTS_TAB = self._setup_tab(
+        self._ASSIGNMENTS_TAB = self._set_up_tab(
             name="Assignments",
             widget=self._assignments_tab,
             icon=icons.tabs.assignments,
             highlighted_icon=icons.tabs.assignments_new_content,
+            content_update_key=db.Assignment,
         )
-        self._MAIL_TAB = self._setup_tab(
+        self._MAIL_TAB = self._set_up_tab(
             name="Mail",
             widget=self._mail_tab,
             icon=icons.tabs.mail,
             highlighted_icon=icons.tabs.mail_new_content,
+            content_update_key=db.Message,
         )
         # self._tabs.addTab(QLabel("Not implemented"), "Panopto")  # The meme lives on!
 
@@ -96,11 +100,17 @@ class CourseViewer(QWidget):
         self._tab_widget.currentChanged.connect(self._tab_changed)
         self._highlight_tabs(sync_receipt)
 
-    def _setup_tab(
-        self, widget: QWidget, icon: QIcon, highlighted_icon: QIcon, name: str
+    def _set_up_tab(
+        self,
+        *,
+        widget: QWidget,
+        icon: QIcon,
+        highlighted_icon: QIcon,
+        name: str,
+        content_update_key: type,
     ) -> int:
         index = self._tab_widget.addTab(widget, icon, name)
-        self._tabs[index] = _Tab(icon, highlighted_icon)
+        self._tabs[index] = _Tab(icon, highlighted_icon, update_type=content_update_key)
         return index
 
     def reload(self, course: db.Course, *, sync_receipt: SyncReceipt) -> None:
@@ -115,35 +125,19 @@ class CourseViewer(QWidget):
         _logger.debug(f"Index = {index}")
         if index != -1:
             _logger.debug(f"Previous tab = {self._previous_tab_index}")
-            self._unhighlight_tab(self._previous_tab_index)
+            self._set_tab_highlight(self._previous_tab_index, False)
             self._previous_tab_index = index
 
     def _highlight_tabs(self, sync_receipt: SyncReceipt) -> None:
         updates = sync_receipt.updates_by_course.get(self._course_id, None)
 
-        if updates is not None:
-            if len(updates.updated_pages) > 0:
-                self._highlight_tab(self._PAGES_TAB)
-            else:
-                self._unhighlight_tab(self._PAGES_TAB)
+        for tab_index, tab in enumerate(self._tabs.values()):
+            self._set_tab_highlight(
+                tab_index, updates is not None and updates[tab.update_type] is not None
+            )
 
-            if len(updates.updated_assignments) > 0:
-                self._highlight_tab(self._ASSIGNMENTS_TAB)
-            else:
-                self._unhighlight_tab(self._ASSIGNMENTS_TAB)
-
-            if len(updates.updated_messages) > 0:
-                self._highlight_tab(self._MAIL_TAB)
-            else:
-                self._unhighlight_tab(self._MAIL_TAB)
-        else:
-            for index in range(0, len(self._tabs)):
-                self._unhighlight_tab(index)
-
-    def _highlight_tab(self, tab_index: int) -> None:
+    def _set_tab_highlight(self, tab_index: int, highlighted: bool) -> None:
         tab = self._tabs[tab_index]
-        self._tab_widget.setTabIcon(tab_index, tab.highlighted_icon)
-
-    def _unhighlight_tab(self, tab_index: int) -> None:
-        tab = self._tabs[tab_index]
-        self._tab_widget.setTabIcon(tab_index, tab.icon)
+        self._tab_widget.setTabIcon(
+            tab_index, tab.highlighted_icon if highlighted else tab.icon
+        )
