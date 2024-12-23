@@ -10,6 +10,10 @@ from qcanvas.ui.memory_tree.memory_tree_widget_item import MemoryTreeWidgetItem
 _logger = logging.getLogger(__name__)
 
 
+class _HasID:
+    id: str
+
+
 class MemoryTreeWidget(QTreeWidget):
     def __init__(
         self,
@@ -17,7 +21,7 @@ class MemoryTreeWidget(QTreeWidget):
         parent: Optional[QWidget] = None,
     ):
         super().__init__(parent)
-        self._id_map: dict[str, QTreeWidgetItem] = {}
+        self._id_map: dict[str, QTreeWidgetItem | _HasID] = {}
         self._memory = TreeMemory(tree_name)
         self._suppress_expansion_signals = False
         self._suppress_selection_signal = False
@@ -94,25 +98,25 @@ class MemoryTreeWidget(QTreeWidget):
     def _add_widget_to_id_map(
         self, widget: QTreeWidgetItem | Sequence[QTreeWidgetItem]
     ):
-        map_updates = {}
         widget_stack = widget if isinstance(widget, list) else [widget]
 
         while len(widget_stack) > 0:
-            item = widget_stack.pop()
+            popped_widget = widget_stack.pop()
 
-            if hasattr(item, "id"):
-                if item.id in self._id_map or item.id in map_updates:
-                    raise ValueError(f"Item with ID {item.id} is already in the tree")
+            if hasattr(popped_widget, "id"):
+                if popped_widget.id in self._id_map:
+                    raise ValueError(
+                        f"Item with ID {popped_widget.id} is already in the tree"
+                    )
 
-                map_updates[item.id] = item
-                _logger.debug("Add %s to map", item.id)
+                self._id_map[popped_widget.id] = popped_widget
+                _logger.debug("Add %s to map", popped_widget.id)
 
-            if item.childCount() > 0:
+            if popped_widget.childCount() > 0:
                 widget_stack.extend(
-                    [item.child(index) for index in range(0, item.childCount())]
+                    popped_widget.child(index)
+                    for index in range(0, popped_widget.childCount())
                 )
-
-        self._id_map.update(map_updates.items())
 
     @Slot(QTreeWidgetItem)
     def _expanded(self, item: QTreeWidgetItem):
