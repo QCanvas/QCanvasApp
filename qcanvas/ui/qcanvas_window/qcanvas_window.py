@@ -24,14 +24,14 @@ from qcanvas import icons
 from qcanvas.backend_connectors import FrontendResourceManager
 from qcanvas.settings import course_configs
 from qcanvas.ui.course_viewer import CourseTree
-from qcanvas.ui.main_ui.course_viewer_container import CourseViewerContainer
-from qcanvas.ui.main_ui.options.auto_download_resources_option import (
+from .course_viewer_container import CourseViewerContainer
+from .options.auto_download_resources_option import (
     AutoDownloadResourcesMenu,
 )
-from qcanvas.ui.main_ui.options.quick_sync_option import QuickSyncOption
-from qcanvas.ui.main_ui.options.sync_on_start_option import SyncOnStartOption
-from qcanvas.ui.main_ui.options.theme_selection_menu import ThemeSelectionMenu
-from qcanvas.ui.main_ui.status_bar_progress_display import StatusBarProgressDisplay
+from .options.quick_sync_option import QuickSyncOption
+from .options.sync_on_start_option import SyncOnStartOption
+from .options.theme_selection_menu import ThemeSelectionMenu
+from .status_bar_progress_display import StatusBarProgressDisplay
 from qcanvas.util import auto_downloader
 import qcanvas.settings as settings
 from qcanvas.util.qurl_util import file_url
