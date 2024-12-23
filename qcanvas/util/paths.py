@@ -15,10 +15,6 @@ from qcanvas.util.runtime import (
 _logger = logging.getLogger(__name__)
 
 
-def ui_storage() -> Path:
-    return root() / ".UI"
-
-
 def data_storage() -> Path:
     return root()
 

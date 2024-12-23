@@ -1,48 +1,41 @@
+import asyncio
 import logging
 from pathlib import Path
 
-from lightdb import LightDB, Model
+from aiofile import async_open
 
 from qcanvas.util import paths
 
 _logger = logging.getLogger(__name__)
 
 
-def _storage_path() -> Path:
-    path = paths.ui_storage() / "TREE.DB"
-    path.parent.mkdir(parents=True, exist_ok=True)
-    return path
-
-
-_state_db = LightDB(str(_storage_path()))
-
-
-class _TreeState(Model, table="trees", db=_state_db):
-    tree_name: str
-    collapsed_items: list[str] = []
-
-
-def _get_or_create_state(name: str) -> _TreeState:
-    state = _TreeState.get(tree_name=name)
-
-    if state is None:
-        state = _TreeState.create(tree_name=name)
-        # Initialise the list here! Or else every instance has the same list object
-        state.collapsed_items = []
-        # Important or instances will get duplicated data in some cases
-        state.save()
-        return state
-    else:
-        return state
-
-
 class TreeMemory:
     def __init__(self, tree_name: str):
         self._tree_name = tree_name
-        self._state = _get_or_create_state(tree_name)
+        self._loaded = False
+        self._collapsed_items: set[str] = set()
 
-    def is_expanded(self, node_id: str) -> bool:
-        return node_id in self._state.expanded_items
+    def load(self, force: bool = False):
+        if force or not self._loaded:
+            self._loaded = True
+
+            if not self._storage_path.exists():
+                # Nothing to do
+                return
+
+            # fixme this blocks the event loop, but using aiofile will require significant changes to other
+            #  parts of the code to accommodate these methods now being async.
+            #  this will really only have any noticeable effect on slow disks, and only ever happens once anyway.
+            with open(self._storage_path, "rt") as file:
+                lines = file.read().splitlines()
+                _logger.debug("Tree % loaded %s", self._tree_name, lines)
+                self._collapsed_items.update(lines)
+
+    async def save(self):
+        assert self._loaded, "Memory is not loaded yet"
+
+        async with async_open(self._storage_path, "wt") as file:
+            await file.write("\n".join(self._collapsed_items))
 
     def expanded(self, node_id: str) -> None:
         self.set_expanded(node_id, True)
@@ -51,16 +44,27 @@ class TreeMemory:
         self.set_expanded(node_id, False)
 
     def set_expanded(self, node_id: str, expanded: bool) -> None:
-        contains = node_id in self._state.collapsed_items
+        self.load()
 
-        # fixme when using a slow usb stick, this can momentarily block the event loop.
-        if expanded and contains:
-            self._state.collapsed_items.remove(node_id)
-            self._state.save()
-        elif not expanded and not contains:
-            self._state.collapsed_items.append(node_id)
-            self._state.save()
+        if expanded and node_id in self._collapsed_items:
+            self._collapsed_items.remove(node_id)
+        else:
+            self._collapsed_items.add(node_id)
+
+        # hack: avoid blocking the event loop
+        asyncio.create_task(self.save())
 
     @property
-    def collapsed_ids(self) -> list[str]:
-        return self._state.collapsed_items
+    def collapsed_ids(self) -> set[str]:
+        assert self._loaded, "Memory not loaded yet"
+        return self._collapsed_items
+
+    @property
+    def _storage_path(self) -> Path:
+        path = (
+            paths.data_storage()
+            / "tree_state"
+            / f"{self._tree_name}_collapsed_items.txt"
+        )
+        path.parent.mkdir(parents=True, exist_ok=True)
+        return path

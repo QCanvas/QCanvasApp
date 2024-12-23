@@ -34,7 +34,7 @@ class MemoryTreeWidget(QTreeWidget):
 
         try:
             self._suppress_expansion_signals = True
-
+            self._memory.load()
             collapsed_ids = self._memory.collapsed_ids
 
             for widget in self._id_map.values():
