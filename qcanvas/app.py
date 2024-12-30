@@ -3,7 +3,7 @@ import logging
 import sys
 
 from libqcanvas.qcanvas import QCanvas
-from PySide6.QtCore import QObject, Signal, Slot
+from PySide6.QtCore import QObject, Signal, Slot, Qt
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QApplication
 from qasync import QEventLoop, asyncSlot
@@ -26,7 +26,7 @@ class _MainStarter(QObject):
 
     def __init__(self):
         super().__init__()
-        self._starting.connect(self._start)
+        self._starting.connect(self._start, Qt.ConnectionType.SingleShotConnection)
 
     @Slot()
     def start(self):
@@ -69,14 +69,14 @@ def launch():
     asyncio.set_event_loop(event_loop)
 
     app_close_event = asyncio.Event()
-    app.aboutToQuit.connect(app_close_event.set)
+    app.aboutToQuit.connect(app_close_event.set, Qt.ConnectionType.SingleShotConnection)
 
     _main = _MainStarter()
 
     if setup_checker.needs_setup():
         setup_window = SetupDialog()
         setup_window.show()
-        setup_window.closed.connect(_main.start)
+        setup_window.closed.connect(_main.start, Qt.ConnectionType.SingleShotConnection)
     else:
         _main.start()
 

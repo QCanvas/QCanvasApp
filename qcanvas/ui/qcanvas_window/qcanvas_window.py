@@ -7,7 +7,7 @@ from libqcanvas import db
 from libqcanvas.database.data_monolith import DataMonolith
 from libqcanvas.net.sync.sync_receipt import SyncReceipt, empty_receipt
 from libqcanvas.qcanvas import QCanvas
-from PySide6.QtCore import QUrl, Signal, Slot
+from PySide6.QtCore import QUrl, Signal, Slot, Qt
 from PySide6.QtGui import QDesktopServices, QKeySequence
 from PySide6.QtWidgets import (
     QErrorMessage,
@@ -67,7 +67,9 @@ class QCanvasWindow(QMainWindow):
         self._setup_menu_bar()
         self._restore_window_position()
 
-        self._loaded.connect(self._on_app_loaded)
+        self._loaded.connect(
+            self._on_app_loaded, Qt.ConnectionType.SingleShotConnection
+        )
         self._loaded.emit()
 
     def _setup_menu_bar(self) -> None:

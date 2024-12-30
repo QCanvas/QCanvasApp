@@ -266,7 +266,9 @@ class SetupDialog(QDialog):
             QMessageBox.StandardButton.Ok,
             self,
         )
-        msg.accepted.connect(self._open_panopto_login)
+        msg.accepted.connect(
+            self._open_panopto_login, Qt.ConnectionType.SingleShotConnection
+        )
         msg.show()
 
     @Slot()
@@ -300,7 +302,9 @@ class SetupDialog(QDialog):
             "Don't share this key. You can revoke it at any time.",
             parent=self,
         )
-        msg.accepted.connect(self._open_tutorial)
+        msg.accepted.connect(
+            self._open_tutorial, Qt.ConnectionType.SingleShotConnection
+        )
         msg.show()
 
     @Slot()
