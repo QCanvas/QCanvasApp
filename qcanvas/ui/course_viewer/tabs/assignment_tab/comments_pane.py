@@ -50,7 +50,7 @@ class CommentsPane(QGroupBox):
                     body=remove_unwanted_whitespaces(comment.body),
                     author=comment.author,
                     date=as_local(comment.creation_date).strftime("%Y-%m-%d %H:%M"),
-                    attachments=attachments,
+                    attachments=AutoModel(Attachment, items=attachments),
                 )
             )
 
