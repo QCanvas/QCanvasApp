@@ -41,6 +41,7 @@ class ContentTab(QWidget):
         self.content_grid = QGridLayout()
         self._placeholder_text = title_placeholder_text
         self._title_label = self._create_title_label()
+        self._use_info_grid = False
         self._info_grid = QWidget()
         self._info_grid.hide()
         self._viewer = ResourceRichBrowser(downloader=downloader)
@@ -52,6 +53,7 @@ class ContentTab(QWidget):
 
     def enable_info_grid(self) -> None:
         self._info_grid.setLayout(self.setup_info_grid())
+        self._use_info_grid = True
 
     def _create_title_label(self) -> QLabel:
         return ui.label(
@@ -87,7 +89,7 @@ class ContentTab(QWidget):
         self._title_label.setText(item.name)
         self._viewer.show_content(item)
 
-        if self._info_grid is not None:
+        if self._use_info_grid:
             self._info_grid.show()
             self.update_info_grid(item)
 
@@ -98,5 +100,5 @@ class ContentTab(QWidget):
         self._title_label.setText(self._placeholder_text)
         self._viewer.show_blank(completely_blank=True)
 
-        if self._info_grid is not None:
+        if self._use_info_grid:
             self._info_grid.hide()
