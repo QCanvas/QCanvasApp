@@ -120,6 +120,7 @@ Control {
                 height: contentHeight
                 model: attachments
                 interactive: false
+                visible: attachments.count > 0
                 anchors {
                     left: parent.left
                     right: parent.right
