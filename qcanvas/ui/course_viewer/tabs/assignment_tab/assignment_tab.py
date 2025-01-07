@@ -6,6 +6,7 @@ from libqcanvas.net.sync.sync_receipt import SyncReceipt
 from libqcanvas.util import as_local
 from PySide6.QtWidgets import QGridLayout, QLabel
 
+import qcanvas.util.ui_tools as ui
 from qcanvas.ui.course_viewer.tabs.assignment_tab.assignment_tree import AssignmentTree
 from qcanvas.ui.course_viewer.tabs.content_tab import ContentTab
 from qcanvas.ui.course_viewer.tabs.util import date_strftime_format
@@ -37,23 +38,9 @@ class AssignmentTab(ContentTab):
         self.enable_info_grid()
 
     def setup_info_grid(self) -> QGridLayout:
-        grid = grid_layout(
-            [
-                [
-                    bold_label("Due:"),
-                    self._due_date_label,
-                ],
-                [
-                    bold_label("Score:"),
-                    self._score_label,
-                ],
-            ]
+        return ui.form_layout(
+            {"Due": self._due_date_label, "Score": self._score_label},
         )
-
-        grid.setColumnStretch(0, 0)
-        grid.setColumnStretch(1, 1)
-
-        return grid
 
     def update_info_grid(self, assignment: db.Assignment) -> None:
         if assignment.due_date is not None:

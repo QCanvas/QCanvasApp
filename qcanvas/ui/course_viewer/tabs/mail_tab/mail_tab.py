@@ -4,13 +4,12 @@ from libqcanvas import db
 from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.sync.sync_receipt import SyncReceipt
 from libqcanvas.util import as_local
-from PySide6.QtWidgets import QGridLayout, QLabel
+from PySide6.QtWidgets import QLabel, QLayout
 
 from qcanvas.ui.course_viewer.tabs.content_tab import ContentTab
 from qcanvas.ui.course_viewer.tabs.mail_tab.mail_tree import MailTree
 from qcanvas.ui.course_viewer.tabs.util import date_strftime_format
-from qcanvas.util.basic_fonts import bold_label
-from qcanvas.util.layouts import grid_layout
+import qcanvas.util.ui_tools as ui
 
 _logger = logging.getLogger(__name__)
 
@@ -35,24 +34,10 @@ class MailTab(ContentTab):
 
         self.enable_info_grid()
 
-    def setup_info_grid(self) -> QGridLayout:
-        grid = grid_layout(
-            [
-                [
-                    bold_label("From:"),
-                    self._sender_label,
-                ],
-                [
-                    bold_label("Date:"),
-                    self._date_sent_label,
-                ],
-            ]
+    def setup_info_grid(self) -> QLayout:
+        return ui.form_layout(
+            {"From": self._sender_label, "Date": self._date_sent_label},
         )
-
-        grid.setColumnStretch(0, 0)
-        grid.setColumnStretch(1, 1)
-
-        return grid
 
     def update_info_grid(self, mail: db.Message) -> None:
         self._date_sent_label.setText(

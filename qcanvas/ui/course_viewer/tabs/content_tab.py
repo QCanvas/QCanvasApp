@@ -5,7 +5,14 @@ from libqcanvas import db
 from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.sync.sync_receipt import SyncReceipt
 from PySide6.QtCore import Slot
-from PySide6.QtWidgets import QGridLayout, QHBoxLayout, QLabel, QVBoxLayout, QWidget
+from PySide6.QtWidgets import (
+    QGridLayout,
+    QHBoxLayout,
+    QVBoxLayout,
+    QLabel,
+    QWidget,
+    QLayout,
+)
 
 from qcanvas.ui.course_viewer.content_tree import ContentTree
 from qcanvas.ui.course_viewer.tabs.resource_rich_browser import ResourceRichBrowser
@@ -61,7 +68,7 @@ class ContentTab(QWidget):
         make_truncatable(title_label)
         return title_label
 
-    def setup_info_grid(self) -> QGridLayout:
+    def setup_info_grid(self) -> QLayout:
         """
         Override this if you need an info grid
         """
