@@ -16,9 +16,9 @@ qcanvas = "qcanvas:main"
 
 [tool.poetry.dependencies]
 python = ">=3.12,<3.13"
-libqcanvas = "^0.4.0"
-#libqcanvas = { path = "../QCanvas-Backend/", develop = true }
-#libqcanvas-clients = { path = "../QCanvas-API-Clients/", develop = true }
+libqcanvas = "^0.5.1"
+#libqcanvas = { path = "../libqcanvas/", develop = true }
+#libqcanvas-clients = { path = "../libqcanvas_clients/", develop = true }
 asynctaskpool = "^0.2.1"
 sqlalchemy = "^2.0.31"
 aiosqlite = "^0.20.0"
