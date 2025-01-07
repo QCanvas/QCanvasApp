@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 from libqcanvas import db
 from libqcanvas.net.resources.download.resource_manager import ResourceManager
@@ -7,8 +6,6 @@ from libqcanvas.net.sync.sync_receipt import SyncReceipt
 from PySide6.QtCore import Slot
 from PySide6.QtWidgets import (
     QGridLayout,
-    QHBoxLayout,
-    QVBoxLayout,
     QLabel,
     QWidget,
     QLayout,
@@ -16,8 +13,8 @@ from PySide6.QtWidgets import (
 
 from qcanvas.ui.course_viewer.content_tree import ContentTree
 from qcanvas.ui.course_viewer.tabs.resource_rich_browser import ResourceRichBrowser
-from qcanvas.util.basic_fonts import bold_font
-from qcanvas.util.ui_tools import make_truncatable
+
+import qcanvas.util.ui_tools as ui
 
 _logger = logging.getLogger(__name__)
 
@@ -41,32 +38,27 @@ class ContentTab(QWidget):
         downloader: ResourceManager,
     ):
         super().__init__()
-        self._content_vbox = QVBoxLayout()
+        self.content_grid = QGridLayout()
         self._placeholder_text = title_placeholder_text
         self._title_label = self._create_title_label()
-        self._info_grid: Optional[QWidget] = None
+        self._info_grid = QWidget()
+        self._info_grid.hide()
         self._viewer = ResourceRichBrowser(downloader=downloader)
         self._explorer = explorer
 
+        self.setLayout(self.content_grid)
         self._setup_layout()
         self._explorer.item_selected.connect(self._item_selected)
 
     def enable_info_grid(self) -> None:
-        # Info grid needs to be a widget, so it can be hidden/shown
-        grid_layout = self.setup_info_grid()
-
-        grid_widget = QWidget()
-        grid_widget.setLayout(grid_layout)
-        grid_widget.hide()
-
-        self._info_grid = grid_widget
-        self._content_vbox.insertWidget(1, grid_widget)
+        self._info_grid.setLayout(self.setup_info_grid())
 
     def _create_title_label(self) -> QLabel:
-        title_label = QLabel(self._placeholder_text)
-        title_label.setFont(bold_font)
-        make_truncatable(title_label)
-        return title_label
+        return ui.label(
+            self._placeholder_text,
+            font=ui.font(point_size=12, bold=True),
+            allow_truncation=True,
+        )
 
     def setup_info_grid(self) -> QLayout:
         """
@@ -75,15 +67,10 @@ class ContentTab(QWidget):
         raise NotImplementedError()
 
     def _setup_layout(self) -> None:
-        parent_layout = QHBoxLayout()
-        parent_layout.addWidget(self._explorer)
-
-        self._content_vbox.addWidget(self._title_label)
-        self._content_vbox.addWidget(self._viewer)
-
-        parent_layout.addLayout(self._content_vbox)
-
-        self.setLayout(parent_layout)
+        self.content_grid.addWidget(self._explorer, 0, 0, 3, 1)
+        self.content_grid.addWidget(self._title_label, 0, 1)
+        self.content_grid.addWidget(self._info_grid, 1, 1)
+        self.content_grid.addWidget(self._viewer, 2, 1)
 
     def reload(self, course: db.Course, *, sync_receipt: SyncReceipt) -> None:
         self._explorer.reload(course, sync_receipt=sync_receipt)
