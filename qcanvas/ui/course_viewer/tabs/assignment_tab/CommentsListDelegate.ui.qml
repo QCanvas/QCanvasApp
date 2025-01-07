@@ -99,19 +99,6 @@ Control {
 
             Spacer {
                 size: 10
-            }
-
-            Text {
-                visible: attachments.count > 0
-                text: "Attachments"
-                color: palette.text
-                font {
-                    bold: true
-                }
-            }
-
-            Spacer {
-                size: 10
                 visible: attachments.count > 0
             }
 
