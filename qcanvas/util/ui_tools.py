@@ -1,10 +1,7 @@
-import logging
 from typing import Any
 
 from PySide6.QtGui import QAction, QIcon, QKeySequence, QPixmap
 from PySide6.QtWidgets import QMenu, QSizePolicy, QWidget
-
-_logger = logging.getLogger(__name__)
 
 
 def make_truncatable(widget: QWidget) -> None:
