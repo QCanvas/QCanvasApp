@@ -8,7 +8,6 @@ Item {
         left: parent.left
         right: parent.right
     }
-    signal opened(resource_id : string)
 
     ColumnLayout {
         spacing: 0
@@ -72,7 +71,8 @@ Item {
         target: textClickArea
 
         function onClicked() {
-            delegate.opened(model.resource_id)
+            // Emit the opened signal on the QObject behind the model
+            model.__object.opened(model.resource_id)
         }
     }
 }
