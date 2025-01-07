@@ -19,7 +19,7 @@ Item {
         }
 
         RowLayout {
-            height: childrenRect.height
+            height: childrenRect.implicitHeight
             Layout.fillWidth: true
             spacing: 10
 
