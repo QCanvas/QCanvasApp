@@ -33,7 +33,7 @@ Item {
             Layout.fillWidth: true
             color: palette.text
             readOnly: true
-            textFormat: TextEdit.RichText
+            textFormat: TextEdit.AutoText
             anchors {
                 left: decoration.right
                 leftMargin: 10
