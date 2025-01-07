@@ -1,17 +1,31 @@
 from dataclasses import fields, is_dataclass
 from typing import Sequence
 
-from PySide6.QtCore import QAbstractListModel, QObject, QModelIndex, Property
+from PySide6.QtCore import (
+    QAbstractListModel,
+    QObject,
+    QModelIndex,
+    Property,
+    Signal,
+    Slot,
+)
 from PySide6.QtGui import Qt
 
 
 class AutoModel[T](QAbstractListModel):
+    count_changed = Signal()
+
     def __init__(
         self, type_: type[T], items: list = None, parent: QObject | None = None
     ):
         super().__init__(parent)
         self._type = type_
         self._items = []
+        self._last_count = 0
+
+        self.rowsInserted.connect(self._on_rows_changed)
+        self.rowsRemoved.connect(self._on_rows_changed)
+
         if items:
             self.extend(items)
 
@@ -60,3 +74,14 @@ class AutoModel[T](QAbstractListModel):
         self.beginRemoveRows(QModelIndex(), 0, self.rowCount())
         self._items.clear()
         self.endRemoveRows()
+
+    # Needed for compatibility with the QtQuick ListModel element
+    @Property(int, notify=count_changed)
+    def count(self) -> int:
+        return self._last_count
+
+    @Slot()
+    def _on_rows_changed(self):
+        if (count := self.rowCount()) != self._last_count:
+            self._last_count = count
+            self.count_changed.emit()
