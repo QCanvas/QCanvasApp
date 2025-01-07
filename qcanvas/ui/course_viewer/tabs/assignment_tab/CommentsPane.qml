@@ -7,10 +7,11 @@ Rectangle {
     Palette {
         id: pyqtdarktheme
         base: "#f8f9fa"
+        window: base
+        midlight: base
         accent: "#e02424"
-        midlight: "#f8f9fa"
+        link: accent
         dark: "#dadce0"
-        link: "#e02424"
         text: "#4d5157"
     }
 
