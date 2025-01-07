@@ -13,6 +13,12 @@ from PySide6.QtGui import Qt
 
 
 class AutoModel[T](QAbstractListModel):
+    """
+    Automatically generates named roles for a dataclass instance or QObject.
+    Emulates the `count` property which QML `ListModel`s have.
+    Allows directly accessing the QObject (bypassing this model) item through the `__object` role.
+    """
+
     count_changed = Signal()
 
     def __init__(
@@ -35,7 +41,10 @@ class AutoModel[T](QAbstractListModel):
             role_name: bytes = self.roleNames()[role]
 
             if role_name:
-                return getattr(item, role_name.decode())
+                if role == Qt.ItemDataRole.UserRole and role_name == b"__object":
+                    return item
+                else:
+                    return getattr(item, role_name.decode())
 
     def roleNames(self) -> dict[int, bytes]:
         result = {}
@@ -45,10 +54,15 @@ class AutoModel[T](QAbstractListModel):
             for index, field in enumerate(fields(self._type)):
                 result[Qt.ItemDataRole.DisplayRole + index] = field.name.encode()
         elif QObject in self._type.__bases__:
+            role_index = Qt.ItemDataRole.DisplayRole
             # Expose qobject properties as roles
             for key, value in vars(self._type).items():
                 if isinstance(value, Property):
-                    result[Qt.ItemDataRole.DisplayRole + len(result) - 1] = key.encode()
+                    result[role_index] = key.encode()
+                    role_index += 1
+
+            # Allow access to the actual QObject
+            result[Qt.ItemDataRole.UserRole] = b"__object"
 
         return result
 
