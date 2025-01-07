@@ -8,7 +8,7 @@ Rectangle {
         id: pyqtdarktheme
         base: "#f8f9fa"
         window: base
-        midlight: base
+        midlight: "#f8f9fa"
         accent: "#e02424"
         link: accent
         dark: "#dadce0"
