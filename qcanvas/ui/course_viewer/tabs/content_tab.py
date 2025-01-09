@@ -69,7 +69,7 @@ class ContentTab(QWidget):
         raise NotImplementedError()
 
     def _setup_layout(self) -> None:
-        self.content_grid.addWidget(self._explorer, 0, 0, 3, 1)
+        self.content_grid.addWidget(self._explorer, 0, 0, 4, 1)
         self.content_grid.addWidget(self._title_label, 0, 1)
         self.content_grid.addWidget(self._info_grid, 1, 1)
         self.content_grid.addWidget(self._viewer, 2, 1)
