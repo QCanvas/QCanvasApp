@@ -4,34 +4,50 @@ from PySide6.QtCore import Signal, Slot
 from PySide6.QtQuick import QQuickView
 from PySide6.QtWidgets import QGroupBox, QWidget, QHBoxLayout
 from libqcanvas.util import remove_unwanted_whitespaces, as_local
+from qasync import asyncSlot
 
+from qcanvas.backend_connectors import FrontendResourceManager
 from qcanvas.util.layouts import layout
-from .qml_bridge_types import Comment, Attachment
-from qcanvas.util.auto_model import AutoModel
+from .qml_bridge_types import Attachment, Comment
 from qcanvas.util.context_dict import ContextDict
 from libqcanvas import db
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class CommentsPane(QGroupBox):
     attachment_opened = Signal(str)
 
-    def __init__(self, parent: QWidget | None = None):
-        super().__init__("Comments", parent)
+    def __init__(
+        self, downloader: FrontendResourceManager, parent: QWidget | None = None
+    ):
+        super().__init__(parent)
+        self._downloader = downloader
+        self._resources: dict[str, db.Resource] = {}
+        self._qattachments: dict[str, Attachment] = {}
+
         self._qview = QQuickView()
         self._ctx = ContextDict(self._qview.rootContext())
-        self._comments = AutoModel[Comment](Comment, parent=self)
         # Add comments to context before we load the view
-        self._ctx["comments"] = self._comments
+        self._ctx["comments"] = []
+
         self._qview.setSource(str(Path(__file__).parent / "CommentsPane.qml"))
         self.setLayout(
             layout(QHBoxLayout, QWidget.createWindowContainer(self._qview, self))
         )
 
+        self._downloader.download_finished.connect(self._download_updated)
+        self._downloader.download_failed.connect(self._download_updated)
+
     def clear_comments(self) -> None:
-        self._comments.clear()
+        self._resources.clear()
+        self._qattachments.clear()
 
     def load_comments(self, comments: list[db.SubmissionComment]) -> None:
         qcomments = []
+
+        self.parent().setWindowTitle(f"Comments ({len(comments)})")
 
         for comment in comments:
             attachments = []
@@ -45,17 +61,32 @@ class CommentsPane(QGroupBox):
                 qattachment.opened.connect(self._on_attachment_opened)
                 attachments.append(qattachment)
 
+                self._resources[attachment.id] = attachment
+                self._qattachments[attachment.id] = qattachment
+
             qcomments.append(
                 Comment(
                     body=remove_unwanted_whitespaces(comment.body),
                     author=comment.author,
                     date=as_local(comment.creation_date).strftime("%Y-%m-%d %H:%M"),
-                    attachments=AutoModel(Attachment, items=attachments),
+                    attachments=attachments,
+                    parent=self,
                 )
             )
 
-        self._comments.extend(qcomments)
+        self._ctx["comments"] = qcomments
 
-    @Slot()
-    def _on_attachment_opened(self, resource_id: str) -> None:
-        self.attachment_opened.emit(resource_id)
+    @asyncSlot(str)
+    async def _on_attachment_opened(self, resource_id: str) -> None:
+        if resource_id in self._resources:
+            await self._downloader.download_and_open(self._resources[resource_id])
+        else:
+            _logger.warning(
+                "User opened an attachment that doesn't belong to any comment! id=%s",
+                resource_id,
+            )
+
+    @Slot(db.Resource)
+    def _download_updated(self, resource: db.Resource) -> None:
+        if resource.id in self._qattachments:
+            self._qattachments[resource.id].download_state = resource.download_state
