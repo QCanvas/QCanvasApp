@@ -87,7 +87,9 @@ class AssignmentTab(ContentTab):
         if last_submission and last_submission.score:
             submission_score = last_submission.score
 
-        self._score_label.setText(f"{submission_score}/{assignment.max_score or '?'}")
+        self._score_label.setText(
+            f"<b>{submission_score}</b>/{assignment.max_score or '?'}"
+        )
 
         self._comments_pane.clear_comments()
 
