@@ -1,10 +1,18 @@
 from typing import Any
 
+from PySide6.QtCore import QSize
 from PySide6.QtGui import QAction, QIcon, QKeySequence, QPixmap, QFont
-from PySide6.QtWidgets import QMenu, QSizePolicy, QLabel, QWidget, QFormLayout
+from PySide6.QtWidgets import (
+    QMenu,
+    QSizePolicy,
+    QLabel,
+    QWidget,
+    QFormLayout,
+    QDockWidget,
+)
 
 
-def font(point_size: float | int | None = None, bold: bool | None = None) -> QFont:
+def font(*, point_size: float | int | None = None, bold: bool | None = None) -> QFont:
     _font = QFont()
 
     if point_size is not None:
@@ -24,7 +32,7 @@ def font(point_size: float | int | None = None, bold: bool | None = None) -> QFo
 _bold = font(bold=True)
 
 
-def label(text: str, font: QFont = None, allow_truncation: bool = False) -> QLabel:
+def label(text: str, *, font: QFont = None, allow_truncation: bool = False) -> QLabel:
     _label = QLabel(text)
 
     if font is not None:
@@ -36,7 +44,7 @@ def label(text: str, font: QFont = None, allow_truncation: bool = False) -> QLab
     return _label
 
 
-def bold_label(text: str, allow_truncation: bool = False) -> QLabel:
+def bold_label(text: str, *, allow_truncation: bool = False) -> QLabel:
     return label(text, allow_truncation=allow_truncation, font=_bold)
 
 
@@ -52,6 +60,34 @@ def form_layout(
             layout.addRow(name + label_suffix, widget)
 
     return layout
+
+
+def size(width: int, height: int):
+    return QSize(width, height)
+
+
+def dock_widget(
+    *,
+    widget: QWidget,
+    title: str | None = None,
+    name: str | None = None,
+    min_size: QSize | None = None,
+    features: QDockWidget.DockWidgetFeature | None = None,
+    parent: QWidget | None = None,
+) -> QDockWidget:
+    dock = QDockWidget(title, parent)
+    dock.setWidget(widget)
+
+    if name:
+        dock.setObjectName(name)
+
+    if min_size:
+        dock.setMinimumSize(min_size)
+
+    if features:
+        dock.setFeatures(features)
+
+    return dock
 
 
 def create_qaction(
