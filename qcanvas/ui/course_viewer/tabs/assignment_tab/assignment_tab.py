@@ -1,16 +1,19 @@
 import logging
 
+from PySide6.QtCore import Qt
 from libqcanvas import db
-from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.sync.sync_receipt import SyncReceipt
 from libqcanvas.util import as_local
 from PySide6.QtWidgets import (
     QLabel,
     QLayout,
+    QDockWidget,
+    QMainWindow,
 )
 from typing_extensions import override
 
 import qcanvas.util.ui_tools as ui
+from qcanvas.backend_connectors import FrontendResourceManager
 from .assignment_tree import AssignmentTree
 from .comments_pane import CommentsPane
 from qcanvas.ui.course_viewer.tabs.content_tab import ContentTab
@@ -27,9 +30,10 @@ class AssignmentTab(ContentTab):
         *,
         course: db.Course,
         sync_receipt: SyncReceipt,
-        downloader: ResourceManager,
+        downloader: FrontendResourceManager,
     ):
-        self.comments_pane = CommentsPane()
+        # must be before super init, otherwise _setup_layout will be called before it is initialised
+        self._main_container = QMainWindow()
 
         super().__init__(
             explorer=AssignmentTree.create_from_receipt(
@@ -39,6 +43,19 @@ class AssignmentTab(ContentTab):
             downloader=downloader,
         )
 
+        self._comments_pane = CommentsPane(downloader)
+        self._comments_dock = ui.dock_widget(
+            title="Comments",
+            name="comments_dock",
+            widget=self._comments_pane,
+            min_size=ui.size(150, 150),
+            features=QDockWidget.DockWidgetFeature.DockWidgetMovable,
+        )
+        self._main_container.setCentralWidget(self._viewer)
+        self._main_container.addDockWidget(
+            Qt.DockWidgetArea.RightDockWidgetArea, self._comments_dock
+        )
+
         self._due_date_label = QLabel("")
         self._score_label = QLabel("")
         self.enable_info_grid()
@@ -46,11 +63,7 @@ class AssignmentTab(ContentTab):
     @override
     def _setup_layout(self) -> None:
         super()._setup_layout()
-
-        self.comments_pane.hide()
-        self.content_grid.addWidget(self.comments_pane, 2, 2, 1, 1)
-        self.content_grid.setColumnStretch(0, 1)
-        self.content_grid.setColumnStretch(1, 2)
+        self.content_grid.replaceWidget(self._viewer, self._main_container)
 
     @override
     def setup_info_grid(self) -> QLayout:
@@ -58,6 +71,7 @@ class AssignmentTab(ContentTab):
             {"Due": self._due_date_label, "Score": self._score_label},
         )
 
+    # fixme: kind of a misleading name? it's not just updating the info "grid" anymore
     @override
     def update_info_grid(self, assignment: db.Assignment) -> None:
         if assignment.due_date is not None:
@@ -75,18 +89,10 @@ class AssignmentTab(ContentTab):
 
         self._score_label.setText(f"{submission_score}/{assignment.max_score or '?'}")
 
-        self.comments_pane.clear_comments()
+        self._comments_pane.clear_comments()
 
         if last_submission and last_submission.comments:
-            self.comments_pane.load_comments(last_submission.comments)
-            self._show_comments()
+            self._comments_pane.load_comments(last_submission.comments)
+            self._comments_dock.show()
         else:
-            self._hide_comments()
-
-    def _show_comments(self):
-        self.comments_pane.show()
-        self.content_grid.setColumnStretch(2, 2)
-
-    def _hide_comments(self):
-        self.comments_pane.hide()
-        self.content_grid.setColumnStretch(2, 0)
+            self._comments_dock.hide()
