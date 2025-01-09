@@ -2,11 +2,14 @@ import logging
 from abc import ABCMeta
 from pathlib import Path
 
+from PySide6.QtGui import QDesktopServices
 from libqcanvas import db
 from libqcanvas.database import QCanvasDatabase
 from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.resources.extracting.extractors import Extractors
 from PySide6.QtCore import QObject, Signal
+
+from qcanvas.util.qurl_util import file_url
 
 _logger = logging.getLogger(__name__)
 
@@ -28,6 +31,11 @@ class FrontendResourceManager(QObject, ResourceManager, metaclass=_Meta):
         super().__init__(
             database=database, download_dest=download_dest, extractors=extractors
         )
+
+    async def download_and_open(self, resource: db.Resource) -> None:
+        await self.download(resource)
+        resource_path = file_url(self.resource_download_location(resource))
+        QDesktopServices.openUrl(resource_path)
 
     def on_download_progress(
         self, resource: db.Resource, current: int, total: int

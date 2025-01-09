@@ -4,7 +4,6 @@ from typing import Optional
 
 from libqcanvas import db
 from bs4 import BeautifulSoup, Tag
-from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.resources.extracting.no_extractor_error import NoExtractorError
 from libqcanvas.util import is_link_invisible
 from PySide6.QtCore import QUrl, Slot
@@ -14,13 +13,12 @@ from qasync import asyncSlot
 
 from qcanvas.backend_connectors import FrontendResourceManager
 from qcanvas.util.html_cleaner import clean_up_html
-from qcanvas.util.qurl_util import file_url
 
 _logger = logging.getLogger(__name__)
 
 
 class ResourceRichBrowser(QTextBrowser):
-    def __init__(self, downloader: ResourceManager):
+    def __init__(self, downloader: FrontendResourceManager):
         super().__init__()
         self._downloader = downloader
         self._content: Optional[db.CourseContentItem] = None
@@ -30,9 +28,8 @@ class ResourceRichBrowser(QTextBrowser):
         self.setOpenLinks(False)
         self.anchorClicked.connect(self._open_url)
 
-        if isinstance(self._downloader, FrontendResourceManager):
-            self._downloader.download_finished.connect(self._download_updated)
-            self._downloader.download_failed.connect(self._download_updated)
+        self._downloader.download_finished.connect(self._download_updated)
+        self._downloader.download_failed.connect(self._download_updated)
 
     def show_blank(self, completely_blank: bool = False) -> None:
         if completely_blank:
@@ -137,15 +134,12 @@ class ResourceRichBrowser(QTextBrowser):
         resource = self._current_content_resources[resource_id]
 
         try:
-            await self._downloader.download(resource)
+            await self._downloader.download_and_open(resource)
         except Exception as e:
             _logger.warning(
                 "Download of resource id=%s failed", resource_id, exc_info=e
             )
             return
-
-        resource_path = file_url(self._downloader.resource_download_location(resource))
-        QDesktopServices.openUrl(resource_path)
 
     @Slot(db.Resource)
     def _download_updated(self, resource: db.Resource) -> None:
