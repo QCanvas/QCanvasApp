@@ -28,12 +28,12 @@ Item {
             }
         }
 
-        TextEdit {
+        Text/*Edit*/ {
             id: content
             Layout.fillWidth: true
             color: palette.text
-            readOnly: true
-            textFormat: TextEdit.AutoText
+            //readOnly: true
+            //textFormat: TextEdit.AutoText
             anchors {
                 left: decoration.right
                 leftMargin: 10

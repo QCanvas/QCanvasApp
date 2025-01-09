@@ -50,7 +50,7 @@ Control {
 
                 Text {
                     id: authorText
-                    text: model.author
+                    text: modelData.author
                     clip: true
                     color: palette.text
 
@@ -65,7 +65,7 @@ Control {
 
                 Text {
                     id: commentDate
-                    text: model.date
+                    text: modelData.date
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignRight
                     color: palette.text
@@ -86,7 +86,7 @@ Control {
             }
 
             DecoratedText {
-                text: model.body
+                text: modelData.body
                 lineWidth: 2
                 anchors {
                     left: parent.left
@@ -99,15 +99,15 @@ Control {
 
             Spacer {
                 size: 10
-                visible: attachments.count > 0
+                visible: modelData.attachments.length > 0
             }
 
             AttachmentsList {
                 id: attachmentsList
                 height: contentHeight
-                model: attachments
+                model: modelData.attachments
                 interactive: false
-                visible: attachments.count > 0
+                visible: modelData.attachments.length > 0
                 anchors {
                     left: parent.left
                     right: parent.right

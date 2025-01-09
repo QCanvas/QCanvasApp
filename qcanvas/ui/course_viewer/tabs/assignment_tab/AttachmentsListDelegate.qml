@@ -38,7 +38,7 @@ Item {
                 }
 
                 id: fileIcon
-                source: attachmentIcon(model.download_state)
+                source: attachmentIcon(modelData.download_state)
                 fillMode: Image.PreserveAspectFit
                 sourceSize.height: 17
                 sourceSize.width: 17
@@ -71,8 +71,7 @@ Item {
         target: textClickArea
 
         function onClicked() {
-            // Emit the opened signal on the QObject behind the model
-            model.__object.opened(model.resource_id)
+            modelData.opened(model.resource_id)
         }
     }
 }

@@ -1,9 +1,13 @@
-from dataclasses import dataclass
-
 from PySide6.QtCore import Property, QObject, Signal
+from PySide6.QtQml import ListProperty, QmlElement
 from libqcanvas.database.tables import ResourceDownloadState
 
 
+QML_IMPORT_NAME = "QCanvas"
+QML_IMPORT_MAJOR_VERSION = 1
+
+
+@QmlElement
 class Attachment(QObject):
     file_name_changed = Signal()
     resource_id_changed = Signal()
@@ -43,9 +47,49 @@ class Attachment(QObject):
             self.download_state_changed.emit()
 
 
-@dataclass
-class Comment:
-    body: str
-    author: str
-    date: str
-    attachments: object
+@QmlElement
+class Comment(QObject):
+    body_changed = Signal()
+    author_changed = Signal()
+    date_changed = Signal()
+    attachments_changed = Signal()
+
+    def __init__(
+        self,
+        body: str,
+        author: str,
+        date: str,
+        attachments: list[Attachment],
+        parent: QObject | None = None,
+    ):
+        super().__init__(parent)
+
+        self._body = body
+        self._author = author
+        self._date = date
+        self._attachments = attachments
+
+    @Property(str, notify=body_changed)
+    def body(self) -> str:
+        return self._body
+
+    @Property(str, notify=date_changed)
+    def date(self) -> str:
+        return self._date
+
+    @Property(str, notify=author_changed)
+    def author(self) -> str:
+        return self._author
+
+    def attachment(self, n) -> Attachment:
+        return self._attachments[n]
+
+    def attachment_count(self) -> int:
+        return len(self._attachments)
+
+    # You must set `count`, `at` and `notify` EXPLICTLY (even if you name them according to the examples, which examples are all inconsistent and wrong).
+    # Qt?? Are you ok???
+    # Oh and you have to use `.length` instead of `.count` on the QML side because javascript.
+    attachments = ListProperty(
+        Attachment, count=attachment_count, at=attachment, notify=attachments_changed
+    )
