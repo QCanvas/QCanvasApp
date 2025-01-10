@@ -46,7 +46,7 @@ Item {
 
             Text {
                 id: file_name_text
-                text: model.file_name
+                text: modelData.file_name
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 Layout.fillWidth: true
                 font.underline: true
@@ -71,7 +71,7 @@ Item {
         target: textClickArea
 
         function onClicked() {
-            modelData.opened(model.resource_id)
+            modelData.opened(modelData.resource_id)
         }
     }
 }
