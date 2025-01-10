@@ -29,13 +29,13 @@ class _PlaceholderLogo(QLabel):
         self.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
         # Because we are using a pixmap for the icon, it will not get updated like a normal QIcon when the theme changes,
         # So we need to update it ourselves
-        app_theme.themeChanged.connect(self._theme_changed)
+        app_theme.darkModeChanged.connect(self._dark_mode_changed)
 
     def resizeEvent(self, event) -> None:
         self._update_image()
 
     @Slot()
-    def _theme_changed(self) -> None:
+    def _dark_mode_changed(self) -> None:
         self._update_image(force=True)
 
     def _update_image(self, force: bool = False) -> None:
