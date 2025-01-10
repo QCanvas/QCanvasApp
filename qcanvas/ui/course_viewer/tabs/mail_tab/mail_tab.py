@@ -8,7 +8,7 @@ from PySide6.QtWidgets import QLabel, QLayout
 
 from qcanvas.ui.course_viewer.tabs.content_tab import ContentTab
 from qcanvas.ui.course_viewer.tabs.mail_tab.mail_tree import MailTree
-from qcanvas.ui.course_viewer.tabs.util import date_strftime_format
+from qcanvas.ui.course_viewer.tabs.constants import date_strftime_format
 import qcanvas.util.ui_tools as ui
 
 _logger = logging.getLogger(__name__)

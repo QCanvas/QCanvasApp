@@ -17,7 +17,7 @@ from qcanvas.backend_connectors import FrontendResourceManager
 from .assignment_tree import AssignmentTree
 from .comments_pane import CommentsPane
 from qcanvas.ui.course_viewer.tabs.content_tab import ContentTab
-from qcanvas.ui.course_viewer.tabs.util import (
+from qcanvas.ui.course_viewer.tabs.constants import (
     date_strftime_format,
 )
 
