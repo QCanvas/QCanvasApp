@@ -78,13 +78,13 @@ def dock_widget(
     dock = QDockWidget(title, parent)
     dock.setWidget(widget)
 
-    if name:
+    if name is not None:
         dock.setObjectName(name)
 
-    if min_size:
+    if min_size is not None:
         dock.setMinimumSize(min_size)
 
-    if features:
+    if features is not None:
         dock.setFeatures(features)
 
     return dock
