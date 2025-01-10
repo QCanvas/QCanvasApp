@@ -1,48 +1,39 @@
 from pathlib import Path
 
 from PySide6.QtCore import Signal, Slot
-from PySide6.QtQuick import QQuickView
-from PySide6.QtWidgets import QGroupBox, QWidget, QHBoxLayout
+from PySide6.QtWidgets import QWidget
 from libqcanvas.util import remove_unwanted_whitespaces, as_local
 from qasync import asyncSlot
 
 from qcanvas.backend_connectors import FrontendResourceManager
-from qcanvas.util.layouts import layout
 from .qml_bridge_types import Attachment, Comment
-from qcanvas.util.context_dict import ContextDict
 from libqcanvas import db
 import logging
-from qcanvas.theme import app_theme
+from .qml_pane import QmlPane
 
 _logger = logging.getLogger(__name__)
 
 
-class CommentsPane(QGroupBox):
+class CommentsPane(QmlPane):
     attachment_opened = Signal(str)
 
     def __init__(
         self, downloader: FrontendResourceManager, parent: QWidget | None = None
     ):
-        super().__init__(parent)
+        super().__init__(Path(__file__).parent / "CommentsPane.qml", parent)
         self._downloader = downloader
         self._resources: dict[str, db.Resource] = {}
         self._qattachments: dict[str, Attachment] = {}
 
-        self._qview = QQuickView()
-        self._ctx = ContextDict(self._qview.rootContext())
         # Add context objects before we load the view
-        self._ctx["comments"] = []
-        self._ctx["appTheme"] = app_theme
-
-        self._qview.setSource(str(Path(__file__).parent / "CommentsPane.qml"))
-        self.setLayout(
-            layout(QHBoxLayout, QWidget.createWindowContainer(self._qview, self))
-        )
+        self.ctx["comments"] = []
+        self.load_view()
 
         self._downloader.download_finished.connect(self._download_updated)
         self._downloader.download_failed.connect(self._download_updated)
 
     def clear_comments(self) -> None:
+        self.ctx["comments"] = []
         self._resources.clear()
         self._qattachments.clear()
 
@@ -76,7 +67,7 @@ class CommentsPane(QGroupBox):
                 )
             )
 
-        self._ctx["comments"] = qcomments
+        self.ctx["comments"] = qcomments
 
     @asyncSlot(str)
     async def _on_attachment_opened(self, resource_id: str) -> None:
