@@ -15,7 +15,7 @@ from typing_extensions import override
 import qcanvas.util.ui_tools as ui
 from qcanvas.backend_connectors import FrontendResourceManager
 from .assignment_tree import AssignmentTree
-from qcanvas.ui.qml_components import CommentsPane, SubmissionFilesPane
+from qcanvas.ui.qml_components import CommentsPane, AttachmentsPane
 from qcanvas.ui.course_viewer.tabs.content_tab import ContentTab
 from qcanvas.ui.course_viewer.tabs.constants import (
     date_strftime_format,
@@ -54,7 +54,7 @@ class AssignmentTab(ContentTab):
             hide=False,
         )
 
-        self._submission_files_pane = SubmissionFilesPane(downloader)
+        self._submission_files_pane = AttachmentsPane(downloader)
         self._submission_files_dock = ui.dock_widget(
             title="Submission Files",
             name="sub_files_dock",

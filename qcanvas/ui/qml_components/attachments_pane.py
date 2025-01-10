@@ -13,12 +13,13 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-class SubmissionFilesPane(QmlPane):
+class AttachmentsPane(QmlPane):
     def __init__(
         self, downloader: FrontendResourceManager, parent: QWidget | None = None
     ):
-        super().__init__(Path(__file__).parent / "SubmissionFilesPane.qml", parent)
+        super().__init__(Path(__file__).parent / "AttachmentsPane.qml", parent)
 
+        self._original_dock_name = None
         self._downloader = downloader
         self._files: dict[str, db.Resource] = {}
         self._qfiles: dict[str, Attachment] = {}
@@ -35,6 +36,11 @@ class SubmissionFilesPane(QmlPane):
 
     def load_files(self, files: list[db.Resource]):
         qfiles = []
+
+        if self._original_dock_name is None:
+            self._original_dock_name = self.parent().windowTitle()
+
+        self.parent().setWindowTitle(f"{self._original_dock_name} ({len(files)})")
 
         for file in files:
             qfile = Attachment(
