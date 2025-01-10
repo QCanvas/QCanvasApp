@@ -39,7 +39,7 @@ class _PlaceholderLogo(QLabel):
         self._update_image(force=True)
 
     def _update_image(self, force: bool = False) -> None:
-        # Calculate the size of the logo as half of the width/height with a max size of 1000x1000
+        # Calculate the size of the logo as half of the width/height, but prevent it from becoming too large
         width = min(floor(self.width() * 0.5), 500)
         height = min(floor(self.height() * 0.5), 500)
 
