@@ -20,6 +20,7 @@ from qcanvas.ui.course_viewer.tabs.content_tab import ContentTab
 from qcanvas.ui.course_viewer.tabs.constants import (
     date_strftime_format,
 )
+from .submission_files_pane import SubmissionFilesPane
 
 _logger = logging.getLogger(__name__)
 
@@ -50,10 +51,31 @@ class AssignmentTab(ContentTab):
             widget=self._comments_pane,
             min_size=ui.size(150, 150),
             features=QDockWidget.DockWidgetFeature.DockWidgetMovable,
+            hide=True,
         )
+
+        self._submission_files_pane = SubmissionFilesPane(downloader)
+        self._submission_files_dock = ui.dock_widget(
+            title="Submission Files",
+            name="sub_files_dock",
+            widget=self._submission_files_pane,
+            min_size=ui.size(150, 150),
+            features=QDockWidget.DockWidgetFeature.DockWidgetMovable,
+            hide=True,
+        )
+
         self._main_container.setCentralWidget(self._viewer)
         self._main_container.addDockWidget(
+            Qt.DockWidgetArea.RightDockWidgetArea, self._submission_files_dock
+        )
+        self._main_container.addDockWidget(
             Qt.DockWidgetArea.RightDockWidgetArea, self._comments_dock
+        )
+
+        self._main_container.resizeDocks(
+            [self._submission_files_dock, self._comments_dock],
+            [350, 350],
+            Qt.Orientation.Horizontal,
         )
 
         self._due_date_label = QLabel("")
@@ -63,7 +85,10 @@ class AssignmentTab(ContentTab):
     @override
     def _setup_layout(self) -> None:
         super()._setup_layout()
-        self.content_grid.replaceWidget(self._viewer, self._main_container)
+        self.content_grid.replaceWidget(
+            self._viewer,
+            self._main_container,
+        )
 
     @override
     def setup_info_grid(self) -> QLayout:
@@ -92,6 +117,12 @@ class AssignmentTab(ContentTab):
         )
 
         self._comments_pane.clear_comments()
+
+        if last_submission and last_submission.attachments:
+            self._submission_files_pane.load_files(last_submission.attachments)
+            self._submission_files_dock.show()
+        else:
+            self._submission_files_dock.hide()
 
         if last_submission and last_submission.comments:
             self._comments_pane.load_comments(last_submission.comments)
