@@ -22,7 +22,7 @@ class CommentsPane(QmlPane):
     ):
         super().__init__(Path(__file__).parent / "CommentsPane.qml", parent)
         self._downloader = downloader
-        self._resources: dict[str, db.Resource] = {}
+        self._attachments: dict[str, db.Resource] = {}
         self._qattachments: dict[str, Attachment] = {}
 
         # Add context objects before we load the view
@@ -34,7 +34,7 @@ class CommentsPane(QmlPane):
 
     def clear_comments(self) -> None:
         self.ctx["comments"] = []
-        self._resources.clear()
+        self._attachments.clear()
         self._qattachments.clear()
 
     def load_comments(self, comments: list[db.SubmissionComment]) -> None:
@@ -54,7 +54,7 @@ class CommentsPane(QmlPane):
                 qattachment.opened.connect(self._on_attachment_opened)
                 attachments.append(qattachment)
 
-                self._resources[attachment.id] = attachment
+                self._attachments[attachment.id] = attachment
                 self._qattachments[attachment.id] = qattachment
 
             qcomments.append(
@@ -71,8 +71,8 @@ class CommentsPane(QmlPane):
 
     @asyncSlot(str)
     async def _on_attachment_opened(self, resource_id: str) -> None:
-        if resource_id in self._resources:
-            await self._downloader.download_and_open(self._resources[resource_id])
+        if resource_id in self._attachments:
+            await self._downloader.download_and_open(self._attachments[resource_id])
         else:
             _logger.warning(
                 "User opened an attachment that doesn't belong to any comment! id=%s",
