@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Sequence
 
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QAction, QIcon, QKeySequence, QPixmap, QFont
@@ -9,6 +9,9 @@ from PySide6.QtWidgets import (
     QWidget,
     QFormLayout,
     QDockWidget,
+    QLayout,
+    QHBoxLayout,
+    QVBoxLayout,
 )
 
 
@@ -70,6 +73,7 @@ def dock_widget(
     *,
     widget: QWidget,
     title: str | None = None,
+    hide: bool = False,
     name: str | None = None,
     min_size: QSize | None = None,
     features: QDockWidget.DockWidgetFeature | None = None,
@@ -87,7 +91,34 @@ def dock_widget(
     if features is not None:
         dock.setFeatures(features)
 
+    if hide:
+        dock.hide()
+
     return dock
+
+
+def widget(layout: QLayout) -> QWidget:
+    widget = QWidget()
+    widget.setLayout(layout)
+    return widget
+
+
+def hbox(*items: QWidget | QLayout) -> QHBoxLayout:
+    _add_layout_items(layout := QHBoxLayout(), items)
+    return layout
+
+
+def vbox(*items: QWidget | QLayout) -> QVBoxLayout:
+    _add_layout_items(layout := QVBoxLayout(), items)
+    return layout
+
+
+def _add_layout_items(layout: QLayout, items: Sequence[QWidget | QLayout]):
+    for item in items:
+        if isinstance(item, QLayout):
+            layout.addItem(item)
+        else:
+            layout.addWidget(item)
 
 
 def create_qaction(
