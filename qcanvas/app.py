@@ -13,7 +13,7 @@ from qcanvas.backend_connectors import FrontendResourceManager
 from qcanvas.ui.qcanvas_window import QCanvasWindow
 from qcanvas.ui.setup import SetupDialog, setup_checker
 from qcanvas.util import paths, runtime
-import qcanvas.theme as theme
+from qcanvas.theme import app_theme
 import qcanvas.settings as settings
 
 _logger = logging.getLogger(__name__)
@@ -63,7 +63,7 @@ def launch():
     app.setApplicationName("QCanvas")
 
     task_master.register()
-    theme.apply(settings.ui.theme)
+    app_theme.theme = settings.ui.theme
 
     event_loop = QEventLoop(app)
     asyncio.set_event_loop(event_loop)
