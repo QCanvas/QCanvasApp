@@ -43,6 +43,7 @@ class AssignmentTab(ContentTab):
             downloader=downloader,
         )
 
+        # fixme: can't figure out how to get the panes to have the right size without showing them when nothing is selected
         self._comments_pane = CommentsPane(downloader)
         self._comments_dock = ui.dock_widget(
             title="Comments",
@@ -50,7 +51,7 @@ class AssignmentTab(ContentTab):
             widget=self._comments_pane,
             min_size=ui.size(150, 150),
             features=QDockWidget.DockWidgetFeature.DockWidgetMovable,
-            hide=True,
+            hide=False,
         )
 
         self._submission_files_pane = SubmissionFilesPane(downloader)
@@ -60,7 +61,7 @@ class AssignmentTab(ContentTab):
             widget=self._submission_files_pane,
             min_size=ui.size(150, 150),
             features=QDockWidget.DockWidgetFeature.DockWidgetMovable,
-            hide=True,
+            hide=False,
         )
 
         self._main_container.setCentralWidget(self._viewer)
@@ -75,6 +76,11 @@ class AssignmentTab(ContentTab):
             [self._submission_files_dock, self._comments_dock],
             [350, 350],
             Qt.Orientation.Horizontal,
+        )
+        self._main_container.resizeDocks(
+            [self._submission_files_dock],
+            [200],
+            Qt.Orientation.Vertical,
         )
 
         self._due_date_label = QLabel("")
@@ -115,16 +121,23 @@ class AssignmentTab(ContentTab):
             f"<b>{submission_score}</b>/{assignment.max_score or '?'}"
         )
 
-        self._comments_pane.clear_comments()
-
         if last_submission and last_submission.attachments:
             self._submission_files_pane.load_files(last_submission.attachments)
             self._submission_files_dock.show()
         else:
+            self._submission_files_pane.clear_files()
             self._submission_files_dock.hide()
 
         if last_submission and last_submission.comments:
             self._comments_pane.load_comments(last_submission.comments)
             self._comments_dock.show()
         else:
+            self._comments_pane.clear_comments()
             self._comments_dock.hide()
+
+    @override
+    def _show_blank(self) -> None:
+        super()._show_blank()
+
+        self._comments_dock.hide()
+        self._submission_files_dock.hide()
