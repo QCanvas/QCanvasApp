@@ -15,12 +15,11 @@ from typing_extensions import override
 import qcanvas.util.ui_tools as ui
 from qcanvas.backend_connectors import FrontendResourceManager
 from .assignment_tree import AssignmentTree
-from .comments_pane import CommentsPane
+from qcanvas.ui.qml_components import CommentsPane, SubmissionFilesPane
 from qcanvas.ui.course_viewer.tabs.content_tab import ContentTab
 from qcanvas.ui.course_viewer.tabs.constants import (
     date_strftime_format,
 )
-from .submission_files_pane import SubmissionFilesPane
 
 _logger = logging.getLogger(__name__)
 
