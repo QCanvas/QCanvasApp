@@ -12,6 +12,7 @@ from .qml_bridge_types import Attachment, Comment
 from qcanvas.util.context_dict import ContextDict
 from libqcanvas import db
 import logging
+from qcanvas.theme import app_theme
 
 _logger = logging.getLogger(__name__)
 
@@ -29,8 +30,9 @@ class CommentsPane(QGroupBox):
 
         self._qview = QQuickView()
         self._ctx = ContextDict(self._qview.rootContext())
-        # Add comments to context before we load the view
+        # Add context objects before we load the view
         self._ctx["comments"] = []
+        self._ctx["appTheme"] = app_theme
 
         self._qview.setSource(str(Path(__file__).parent / "CommentsPane.qml"))
         self.setLayout(
