@@ -4,8 +4,7 @@ from typing import Literal
 import qdarktheme
 from PySide6.QtCore import QObject, Signal, Property, Slot
 from PySide6.QtGui import QGuiApplication, Qt, QIcon
-from PySide6.QtWidgets import QStyleFactory
-from qasync import QApplication
+from PySide6.QtWidgets import QStyleFactory, QApplication
 
 type Theme = Literal["native", "auto", "dark", "light"]
 
