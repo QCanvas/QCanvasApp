@@ -128,6 +128,7 @@ class SetupDialog(QDialog):
         self._disable_panopto_checkbox.checkStateChanged.connect(
             self._disable_panopto_check_changed
         )
+        self._panopto_url_box.enabled = not settings.client.panopto_disabled
         self._button_box = self._setup_button_box()
         self._waiting_indicator = self._setup_progress_bar()
 
