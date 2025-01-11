@@ -13,11 +13,26 @@ Rectangle {
             return lightTheme
     }
 
-    LightTheme {
+    Palette {
         id: lightTheme
+        base: "#f8f9fa"
+        window: "#f8f9fa"
+        midlight: "#f8f9fa"
+        accent: "#e02424"
+        link: accent
+        dark: "#dadce0"
+        text: "#4d5157"
     }
-    DarkTheme {
+
+    Palette {
         id: darkTheme
+        base: "#202124"
+        window: "#f8f9fa"
+        midlight: "#202124"
+        accent: "#e02424"
+        link: accent
+        dark: "#3f4042"
+        text: "#e4e7eb"
     }
 
     Connections {
