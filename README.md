@@ -49,5 +49,5 @@ poetry run python -m qcanvas
 > You will need [Appimagetool](https://github.com/AppImage/appimagetool)
 
 ```bash
-bash build_appimage.sh
+bash ./dev_scripts/build_appimage.sh
 ```
