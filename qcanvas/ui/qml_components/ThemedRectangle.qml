@@ -2,6 +2,7 @@ import QtQuick
 
 Rectangle {
     property Palette theme: getTheme()
+    color: theme.base
 
     function getTheme() {
         if (appTheme.theme === "native")
