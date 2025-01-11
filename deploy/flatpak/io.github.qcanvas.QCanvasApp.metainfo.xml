@@ -26,9 +26,17 @@
     </description>
     <launchable type="desktop-id">io.github.qcanvas.QCanvasApp.desktop</launchable>
     <screenshots>
-        <screenshot type="default">
-            <image>https://raw.githubusercontent.com/QCanvas/QCanvasApp/reborn/images/1.png</image>
-            <caption>Screenshot of the main user interface</caption>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/QCanvas/QCanvasApp/refs/heads/reborn/images/page%20resources.png</image>
+            <caption>View your course pages. Click on files downloaded and open them. They can optionally be downloaded automatically</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/QCanvas/QCanvasApp/refs/heads/reborn/images/assignment%20submitted.png</image>
+            <caption>View assignments, submission files and comments</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/QCanvas/QCanvasApp/refs/heads/reborn/images/announcement.png</image>
+            <caption>View announcements and attachments</caption>
         </screenshot>
     </screenshots>
     <releases>
