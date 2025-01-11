@@ -1,6 +1,7 @@
 import asyncio
 import logging
 
+from PySide6.QtCore import Qt
 from libqcanvas import db
 from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.sync.sync_receipt import SyncReceipt
@@ -36,7 +37,8 @@ async def download_new_resources(
         msg.accepted.connect(
             lambda: asyncio.get_running_loop().create_task(
                 downloader.batch_download(resources_to_download),
-            )
+            ),
+            Qt.ConnectionType.SingleShotConnection,
         )
     else:
         await downloader.batch_download(resources_to_download)

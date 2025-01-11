@@ -5,7 +5,7 @@ from PySide6.QtGui import QAction, QActionGroup
 from PySide6.QtWidgets import QMenu
 
 from qcanvas import icons
-import qcanvas.theme as theme
+from qcanvas.theme import app_theme
 import qcanvas.settings as settings
 
 _logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ class _ThemeAction(QAction):
     @Slot()
     def _change_theme(self) -> None:
         settings.ui.theme = self._theme_name
-        theme.apply(self._theme_name)
+        app_theme.theme = self._theme_name
 
 
 class ThemeSelectionMenu(QMenu):

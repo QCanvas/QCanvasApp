@@ -6,15 +6,14 @@ from libqcanvas.net.resources.download.resource_manager import ResourceManager
 from libqcanvas.net.sync.sync_receipt import SyncReceipt
 from PySide6.QtCore import Slot
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QLabel, QTabWidget, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget
 
 from qcanvas import icons
 from qcanvas.ui.course_viewer.tabs.assignment_tab import AssignmentTab
 from qcanvas.ui.course_viewer.tabs.mail_tab import MailTab
 from qcanvas.ui.course_viewer.tabs.page_tab import PageTab
-from qcanvas.util.basic_fonts import bold_font
 from qcanvas.util.layouts import layout
-from qcanvas.util.ui_tools import make_truncatable
+import qcanvas.util.ui_tools as ui
 
 _logger = logging.getLogger(__name__)
 
@@ -39,9 +38,9 @@ class CourseViewer(QWidget):
         self._course_id = course.id
         self._previous_tab_index = 0
 
-        self._course_label = QLabel(course.name)
-        self._course_label.setFont(bold_font)
-        make_truncatable(self._course_label)
+        self._course_label = ui.label(
+            course.name, font=ui.font(point_size=13, bold=True), allow_truncation=True
+        )
 
         self._pages_tab = PageTab.create_from_receipt(
             course=course,

@@ -3,7 +3,7 @@ import logging
 import sys
 
 from libqcanvas.qcanvas import QCanvas
-from PySide6.QtCore import QObject, Signal, Slot
+from PySide6.QtCore import QObject, Signal, Qt
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QApplication
 from qasync import QEventLoop, asyncSlot
@@ -13,10 +13,11 @@ from qcanvas.backend_connectors import FrontendResourceManager
 from qcanvas.ui.qcanvas_window import QCanvasWindow
 from qcanvas.ui.setup import SetupDialog, setup_checker
 from qcanvas.util import paths, runtime
-import qcanvas.theme as theme
+from qcanvas.theme import app_theme
 import qcanvas.settings as settings
 
 _logger = logging.getLogger(__name__)
+app = QApplication(sys.argv)
 
 
 # I couldn't figure out a reliable way of getting the event loop started.
@@ -26,9 +27,8 @@ class _MainStarter(QObject):
 
     def __init__(self):
         super().__init__()
-        self._starting.connect(self._start)
+        self._starting.connect(self._start, Qt.ConnectionType.SingleShotConnection)
 
-    @Slot()
     def start(self):
         self._starting.emit()
 
@@ -54,31 +54,40 @@ class _MainStarter(QObject):
         return _qcanvas
 
 
-def launch():
-    app = QApplication(sys.argv)
+def run_setup():
+    event_loop = QEventLoop(app)
+    asyncio.set_event_loop(event_loop)
 
+    app_close_event = asyncio.Event()
+    app.aboutToQuit.connect(app_close_event.set, Qt.ConnectionType.SingleShotConnection)
+
+    setup_window = SetupDialog()
+    setup_window.show()
+
+    with event_loop:
+        event_loop.run_until_complete(app_close_event.wait())
+
+
+def launch():
     if runtime.is_running_as_flatpak:
         QGuiApplication.setDesktopFileName("io.github.qcanvas.QCanvasApp")
 
     app.setApplicationName("QCanvas")
 
     task_master.register()
-    theme.apply(settings.ui.theme)
+    app_theme.theme = settings.ui.theme
+
+    if setup_checker.needs_setup():
+        run_setup()
 
     event_loop = QEventLoop(app)
     asyncio.set_event_loop(event_loop)
 
     app_close_event = asyncio.Event()
-    app.aboutToQuit.connect(app_close_event.set)
+    app.aboutToQuit.connect(app_close_event.set, Qt.ConnectionType.SingleShotConnection)
 
     _main = _MainStarter()
-
-    if setup_checker.needs_setup():
-        setup_window = SetupDialog()
-        setup_window.show()
-        setup_window.closed.connect(_main.start)
-    else:
-        _main.start()
+    _main.start()
 
     with event_loop:
         event_loop.run_until_complete(app_close_event.wait())

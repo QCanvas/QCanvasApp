@@ -10,7 +10,7 @@ from PySide6.QtWidgets import QLabel, QSizePolicy, QStackedWidget
 
 from qcanvas import icons
 from qcanvas.ui.course_viewer.course_viewer import CourseViewer
-import qcanvas.theme as theme
+from qcanvas.theme import app_theme
 
 _logger = logging.getLogger(__name__)
 
@@ -29,17 +29,17 @@ class _PlaceholderLogo(QLabel):
         self.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
         # Because we are using a pixmap for the icon, it will not get updated like a normal QIcon when the theme changes,
         # So we need to update it ourselves
-        theme.theme_changed().connect(self._theme_changed)
+        app_theme.darkModeChanged.connect(self._dark_mode_changed)
 
     def resizeEvent(self, event) -> None:
         self._update_image()
 
     @Slot()
-    def _theme_changed(self) -> None:
+    def _dark_mode_changed(self) -> None:
         self._update_image(force=True)
 
     def _update_image(self, force: bool = False) -> None:
-        # Calculate the size of the logo as half of the width/height with a max size of 1000x1000
+        # Calculate the size of the logo as half of the width/height, but prevent it from becoming too large
         width = min(floor(self.width() * 0.5), 500)
         height = min(floor(self.height() * 0.5), 500)
 
