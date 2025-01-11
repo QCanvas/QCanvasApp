@@ -95,6 +95,9 @@ class AssignmentTab(ContentTab):
             self._main_container,
         )
 
+        self.content_grid.setColumnStretch(0, 1)
+        self.content_grid.setColumnStretch(1, 3)
+
     @override
     def setup_info_grid(self) -> QLayout:
         return ui.form_layout(
