@@ -2,7 +2,7 @@
 <component type="desktop-application">
     <id>io.github.qcanvas.QCanvasApp</id>
     <name>QCanvas</name>
-    <summary>A desktop client for Canvas LMS</summary>
+    <summary>View courses from Canvas LMS</summary>
     <content_rating type="oars-1.1"/>
     <metadata_license>FSFAP</metadata_license>
     <project_license>AGPL-3.0-only</project_license>
@@ -40,6 +40,25 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="2.0.0" date="2025-01-12">
+            <description>
+                <p>Changes</p>
+                <ul>
+                    <li>Database changes: If you used QCanvas previously, you will need to re-synchronise. The old database is not deleted, and will still work with older versions. The new database will use a new file.</li>
+                    <li>Assignment submissions can now be downloaded (downloaded annotated submissions is still not currently supported)</li>
+                    <li>Assignment comments and comment attachments are now shown</li>
+                    <li>Announcement attachments are now shown (which were previously not stored)</li>
+                    <li>Synchronisation now uses HTTP2, which may improve speed</li>
+                    <li>Minor UI tweaks</li>
+                    <li>Update to Qt 6.8</li>
+                </ul>
+                <p>Bug fixes</p>
+                <ul>
+                    <li>Fixed issue where synchronisation would fail due to announcements not having an author name</li>
+                    <li>Fixed issue which caused incomplete synchronisation after disabling the "ignore old courses" option.</li>
+                </ul>
+            </description>
+        </release>
         <release version="1.2.2" date="2024-09-14T17:48+10:00">
             <description>
                 <ul>
