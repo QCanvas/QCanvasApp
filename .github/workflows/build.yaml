@@ -64,7 +64,7 @@ jobs:
                 run: poetry install --with flatpak-exclude
             -   run: poetry update qcanvas-backend
             -   name: Build pyinstaller
-                run: poetry run pyinstaller --hidden-import aiosqlite --onedir -n AppRun qcanvas/run.py
+                run: poetry run pyinstaller --hidden-import aiosqlite --onedir -n AppRun qcanvas/__init__.py
             -   name: Move files
                 run: mv dist/*/* deploy/appimage/
             -   name: Set version
@@ -94,14 +94,14 @@ jobs:
                 run: poetry install --with flatpak-exclude
             -   run: poetry update qcanvas-backend
             -   name: Build pyinstaller (onedir)
-                run: poetry run pyinstaller --hidden-import aiosqlite --onedir -n QCanvas --icon deploy/windows/qcanvas.ico qcanvas/run.py --windowed --noupx
+                run: poetry run pyinstaller --hidden-import aiosqlite --onedir -n QCanvas --icon deploy/windows/qcanvas.ico qcanvas/__init__.py --windowed --noupx
             -   uses: vimtor/action-zip@v1.2
                 with:
                     files: dist/QCanvas
                     recursive: true
                     dest: QCanvas-onedir.zip
             -   name: Build pyinstaller (onefile)
-                run: poetry run pyinstaller --hidden-import aiosqlite --onefile -n QCanvas --icon deploy/windows/qcanvas.ico qcanvas/run.py --windowed --noupx
+                run: poetry run pyinstaller --hidden-import aiosqlite --onefile -n QCanvas --icon deploy/windows/qcanvas.ico qcanvas/__init__.py --windowed --noupx
             -   name: Upload binaries
                 run: gh release upload ${{ needs.check-version.outputs.new-version }} dist/QCanvas.exe QCanvas-onedir.zip --clobber
                 env:
