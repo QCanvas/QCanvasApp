@@ -1,4 +1,4 @@
-from invoke import task, Context
+from invoke import task
 from pathlib import Path
 
 
@@ -12,10 +12,3 @@ def update_icons(c):
     import dev_scripts.update_icons as icons
 
     icons.update(Path("qcanvas/icons/"))
-
-
-@task
-def push_all(c: Context):
-    out = c.run("git remote", hide=True).stdout
-    for remote in out.splitlines():
-        c.run(f"git push {remote}")
