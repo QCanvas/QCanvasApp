@@ -40,6 +40,19 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="2.0.2" date="2025-01-14T21:45+11:00">
+            <description>
+                <ul>
+                    <li>Fixed log file not being created</li>
+                    <li>Added retries to mitigate ratelimit errors with graphql queries</li>
+                </ul>
+            </description>
+        </release>
+        <release version="2.0.1" date="2025-01-12T">
+            <description>
+                <p>Minor changes to QML files</p>
+            </description>
+        </release>
         <release version="2.0.0" date="2025-01-12T">
             <description>
                 <p>Changes</p>
