@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "qcanvas"
 version = "2.0.2"
-description = "QCanvas is a desktop client for Canvas LMS."
+description = "View courses from Canvas LMS"
 authors = ["QCanvas <QCanvas@noreply.codeberg.org>"]
 readme = "README.md"
 exclude = [

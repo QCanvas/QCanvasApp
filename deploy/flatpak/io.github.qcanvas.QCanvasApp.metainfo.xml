@@ -13,16 +13,13 @@
         <name>QCanvas</name>
     </developer>
     <description>
-        <p>An unofficial desktop client for Canvas LMS, including features such as:
-        </p>
+        <p>An unofficial desktop client for Canvas LMS:</p>
         <ul>
-            <li>Downloading course content, files and videos</li>
-            <li>Viewing content while offline</li>
-            <li>Viewing course mail/announcements</li>
-            <li>Highlighting new content</li>
+            <li>Download and browse course content, files and videos</li>
+            <li>Download videos from Panopto (if your institution uses it)</li>
+            <li>View course mail and announcements</li>
+            <li>Browse downloaded course content while offline</li>
         </ul>
-        <p>To use the Breeze theme on KDE, go to Options &gt; Theme and select "Native"
-        </p>
     </description>
     <launchable type="desktop-id">io.github.qcanvas.QCanvasApp.desktop</launchable>
     <screenshots>
