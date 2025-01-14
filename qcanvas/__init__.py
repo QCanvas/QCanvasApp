@@ -30,10 +30,6 @@ from qcanvas.util import logs, paths
 
 
 def main():
-    app.launch()
-
-
-if __name__ == "__main__":
     paths.data_storage().mkdir(parents=True, exist_ok=True)
 
     logging.basicConfig(
@@ -51,4 +47,8 @@ if __name__ == "__main__":
         }
     )
 
+    app.launch()
+
+
+if __name__ == "__main__":
     main()
