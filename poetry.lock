@@ -161,30 +161,30 @@ files = [
 
 [[package]]
 name = "caio"
-version = "0.9.19"
+version = "0.9.21"
 description = "Asynchronous file IO for Linux MacOS or Windows."
 optional = false
 python-versions = "<4,>=3.7"
 files = [
-    {file = "caio-0.9.19-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:16435621fb176be3dd90a6aa13500bd975970b18538f00bf9802c5c07f651d46"},
-    {file = "caio-0.9.19-cp310-cp310-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_34_x86_64.whl", hash = "sha256:5f04f147a1598787300c36196e35c12c5e776ff28b26b13fe67740f22840975f"},
-    {file = "caio-0.9.19-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.manylinux_2_34_aarch64.whl", hash = "sha256:0e3671dde09b47fca5f83c56b5ecaab788001e18d45881be680a49552611428f"},
-    {file = "caio-0.9.19-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:98d84118e7e8b151c95b3f797425026dfd912a4cf62edebc0c122ace64c8ee96"},
-    {file = "caio-0.9.19-cp311-cp311-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_34_x86_64.whl", hash = "sha256:6e688e1f479694f3aba9936b7aaf5ab36f82f530ca3bab4a7091fe9ab3bf5c7d"},
-    {file = "caio-0.9.19-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.manylinux_2_34_aarch64.whl", hash = "sha256:1d5e867b49a994748d39065a5db183a6fb0e1bdb6c0a0745188ee40239e37d8e"},
-    {file = "caio-0.9.19-cp312-cp312-macosx_10_9_universal2.whl", hash = "sha256:6d426f2e9fcec7b1a767b187861bd0aecae9f88bc36227331d2fb978722bed90"},
-    {file = "caio-0.9.19-cp312-cp312-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_34_x86_64.whl", hash = "sha256:a743fda13e194b21df922ea0cee404e2bcac72a722c469eed6bd893a0cdec1c0"},
-    {file = "caio-0.9.19-cp312-cp312-manylinux_2_34_aarch64.whl", hash = "sha256:f2bc23784f50ac8a2b5a3a0625ff181a92cbb8f4ce532d23a6be441c38deb7c8"},
-    {file = "caio-0.9.19-cp313-cp313-macosx_10_13_universal2.whl", hash = "sha256:865282c9146ca5377ccf31ba93307915c9c55ed7e67ce0217a80cac85725d94b"},
-    {file = "caio-0.9.19-cp313-cp313-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_34_x86_64.whl", hash = "sha256:02dc711c1d00c8f542844ab411b863be5fe471dac5b7c202b9589ded86fde4c3"},
-    {file = "caio-0.9.19-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.manylinux_2_34_aarch64.whl", hash = "sha256:8222af4feb0d2983633c4ef616055157780d50c7a47b519e38a845078b115c55"},
-    {file = "caio-0.9.19-cp38-cp38-macosx_11_0_universal2.whl", hash = "sha256:1ca08c14798b81f0a2aca88f886b42a82df639a07eec31c3924a046162eef69c"},
-    {file = "caio-0.9.19-cp38-cp38-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_34_x86_64.whl", hash = "sha256:a8316beb1f0ca01993563bd559611950110ebc75c811943aee1964941568e252"},
-    {file = "caio-0.9.19-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.manylinux_2_34_aarch64.whl", hash = "sha256:86d5072f83d61cd405adbb154fffb98dbe4d201442e2a9ccae0baa2d61436220"},
-    {file = "caio-0.9.19-cp39-cp39-macosx_10_9_universal2.whl", hash = "sha256:1fac5d8b347b353984e0fcf860e86fd74f27129fdf44d43a8ace8d5d0876a61c"},
-    {file = "caio-0.9.19-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_34_x86_64.whl", hash = "sha256:e861a7839c593d007bea935845bb053ee6f30b7a0ecd5a4734179cbf89bff020"},
-    {file = "caio-0.9.19-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.manylinux_2_34_aarch64.whl", hash = "sha256:1463991a847d46ed531b7b196372982addebcd5edff481d03ca43d21bbe9bb17"},
-    {file = "caio-0.9.19.tar.gz", hash = "sha256:bdcb529330730c4c364b79789620f33bafad8c2c854c1205ecc2d16511c0b690"},
+    {file = "caio-0.9.21-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:a80ae4838696c8e40d860f3de7afea018be4e96bd126706501b1cf34c32c7655"},
+    {file = "caio-0.9.21-cp310-cp310-manylinux_2_34_aarch64.whl", hash = "sha256:35155eba9b6a134f5a0d42d112245c27d8d24b4b3f707f92bb77c4ef6df61796"},
+    {file = "caio-0.9.21-cp310-cp310-manylinux_2_34_x86_64.whl", hash = "sha256:a4f9c48259a1126935ba92e9540de9bec6e295aad2cb5bc3a225b31579c2c708"},
+    {file = "caio-0.9.21-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:2ed8ee09acd1276dfac38fe1b872873e715370fc8fb1dad214c8b983c4bd5a22"},
+    {file = "caio-0.9.21-cp311-cp311-manylinux_2_34_aarch64.whl", hash = "sha256:6e9cadc82495d97f551ec56e67dc4a79ffaf1420aee8dc25676d89dfed97131a"},
+    {file = "caio-0.9.21-cp311-cp311-manylinux_2_34_x86_64.whl", hash = "sha256:4997b64640dc0b72efb4f0f835dcdb5d56027352c9a4d53d5fec6e9abc576d35"},
+    {file = "caio-0.9.21-cp312-cp312-macosx_10_9_universal2.whl", hash = "sha256:e7314a28d69a0397d1d0ac6c7bfe7973f27f4f7216cf42b0358d7d9ba27bc4cd"},
+    {file = "caio-0.9.21-cp312-cp312-manylinux_2_34_aarch64.whl", hash = "sha256:1f4241e2b89f31e1fea342c8da9a987fef71d093df7ba1169f469d0be7592608"},
+    {file = "caio-0.9.21-cp312-cp312-manylinux_2_34_x86_64.whl", hash = "sha256:fdab8c817b6835d997db1532ce7d9f5cbe186265bf0ee9a9840b378aa4a1cba7"},
+    {file = "caio-0.9.21-cp313-cp313-macosx_10_13_universal2.whl", hash = "sha256:de5a805bb646ce687ae7ffd5288d167ab306bef83af15771bd53681b98c46b90"},
+    {file = "caio-0.9.21-cp313-cp313-manylinux_2_34_aarch64.whl", hash = "sha256:1819f4b8ca13f8f24350aa4ada40e5632abb595adf4f3a67babb695916fbb4c8"},
+    {file = "caio-0.9.21-cp313-cp313-manylinux_2_34_x86_64.whl", hash = "sha256:56073b55bf37ec687ae4036b9fd1da365116627cc637f878006e984812270eac"},
+    {file = "caio-0.9.21-cp38-cp38-macosx_11_0_universal2.whl", hash = "sha256:3ffb69b7a6495e2506407ad66739114e23ea646703e0003244bb6f979e6662f3"},
+    {file = "caio-0.9.21-cp38-cp38-manylinux_2_34_aarch64.whl", hash = "sha256:d2fb63523188ab452cfe3f3c650dfc320d4d917542930ae230a79c4be405d8a6"},
+    {file = "caio-0.9.21-cp38-cp38-manylinux_2_34_x86_64.whl", hash = "sha256:833368f04d691d5524f1c21686a404357534c446d85ba0c29e29b7f78bf5f929"},
+    {file = "caio-0.9.21-cp39-cp39-macosx_10_9_universal2.whl", hash = "sha256:c52f9e69b267e081ab96276d5f429240fba3ec99b717db4ac4fccde2c83e2ca3"},
+    {file = "caio-0.9.21-cp39-cp39-manylinux_2_34_aarch64.whl", hash = "sha256:6d2176d06901daa67a3cf5e0587de594d5b2300f9b2535114e66d211806dcb55"},
+    {file = "caio-0.9.21-cp39-cp39-manylinux_2_34_x86_64.whl", hash = "sha256:f5c89fb23fb1f9cc191227c4a38ccd01648dd3d2f0ba87ddca0e7e9b6c9657ff"},
+    {file = "caio-0.9.21.tar.gz", hash = "sha256:4f1d30ad0f975de07b4a3ae1cd2e9275fa574f2ca0b49ba5ab16208575650a92"},
 ]
 
 [package.extras]
@@ -510,13 +510,13 @@ files = [
 
 [[package]]
 name = "libqcanvas"
-version = "0.5.1"
+version = "0.5.4"
 description = "Does most of the heavy lifting for qcanvas"
 optional = false
 python-versions = "<4.0,>=3.12"
 files = [
-    {file = "libqcanvas-0.5.1-py3-none-any.whl", hash = "sha256:242367e4d4eed63c1c97f8e66c9880c306273a691cd65ee711d5a530bf516cfd"},
-    {file = "libqcanvas-0.5.1.tar.gz", hash = "sha256:e390f631dc07c3d8bd8b2a6c73377941b550900efed08c01a5eccff4725b252e"},
+    {file = "libqcanvas-0.5.4-py3-none-any.whl", hash = "sha256:c2bf7fb4041749d8a06347aac9113aad80dd1f6074c43fc1fd0326567385ffbd"},
+    {file = "libqcanvas-0.5.4.tar.gz", hash = "sha256:9be253f4d8af94e67353cb336763885868e4a0cf862577e760e6fd1a064e7b05"},
 ]
 
 [package.dependencies]
@@ -534,13 +534,13 @@ yt-dlp = ">=2024.4.9"
 
 [[package]]
 name = "libqcanvas-clients"
-version = "0.5.4"
+version = "0.5.5"
 description = "Provides some utilities to interact with canvas and panopto"
 optional = false
 python-versions = "<4.0,>=3.10"
 files = [
-    {file = "libqcanvas_clients-0.5.4-py3-none-any.whl", hash = "sha256:fb338b54baea9a664a7d5911de0719111e6bf0c9ffc00d3cea7940121a94d34b"},
-    {file = "libqcanvas_clients-0.5.4.tar.gz", hash = "sha256:b53f199c1983d4810beff36a7fe72adef8533792f6608bd13b02b81d1094950d"},
+    {file = "libqcanvas_clients-0.5.5-py3-none-any.whl", hash = "sha256:81c3b07a8d8eee554aa76b9605dbbeebeee9ecd62964200ab314642e733860c7"},
+    {file = "libqcanvas_clients-0.5.5.tar.gz", hash = "sha256:350c45179e6ec8ae3c5718e1135a74aeeb24771f4ef9784280d567121e357a85"},
 ]
 
 [package.dependencies]
@@ -1533,26 +1533,26 @@ propcache = ">=0.2.0"
 
 [[package]]
 name = "yt-dlp"
-version = "2024.12.23"
+version = "2025.1.12"
 description = "A feature-rich command-line audio/video downloader"
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "yt_dlp-2024.12.23-py3-none-any.whl", hash = "sha256:2fc08a5221a0379628ac4e7324c6c69a95b9fdfa7a7ca3187444b3b7451e38be"},
-    {file = "yt_dlp-2024.12.23.tar.gz", hash = "sha256:ac0e72b5a9017ba104b4258546201a7cedc38e8bd20727e0c63b77c829b425e9"},
+    {file = "yt_dlp-2025.1.12-py3-none-any.whl", hash = "sha256:f7ea19afb64f8e457a1b9598ddb67f8deaa313bf1d57abd5612db9272ab10795"},
+    {file = "yt_dlp-2025.1.12.tar.gz", hash = "sha256:8e7e246e2a5a2cff0a9c13db46844a37a547680702012058c94ec18fce0ca25a"},
 ]
 
 [package.extras]
 build = ["build", "hatchling", "pip", "setuptools (>=71.0.2)", "wheel"]
 curl-cffi = ["curl-cffi (==0.5.10)", "curl-cffi (>=0.5.10,!=0.6.*,<0.7.2)"]
 default = ["brotli", "brotlicffi", "certifi", "mutagen", "pycryptodomex", "requests (>=2.32.2,<3)", "urllib3 (>=1.26.17,<3)", "websockets (>=13.0)"]
-dev = ["autopep8 (>=2.0,<3.0)", "pre-commit", "pytest (>=8.1,<9.0)", "pytest-rerunfailures (>=14.0,<15.0)", "ruff (>=0.8.0,<0.9.0)"]
+dev = ["autopep8 (>=2.0,<3.0)", "pre-commit", "pytest (>=8.1,<9.0)", "pytest-rerunfailures (>=14.0,<15.0)", "ruff (>=0.9.0,<0.10.0)"]
 pyinstaller = ["pyinstaller (>=6.11.1)"]
 secretstorage = ["cffi", "secretstorage"]
-static-analysis = ["autopep8 (>=2.0,<3.0)", "ruff (>=0.8.0,<0.9.0)"]
+static-analysis = ["autopep8 (>=2.0,<3.0)", "ruff (>=0.9.0,<0.10.0)"]
 test = ["pytest (>=8.1,<9.0)", "pytest-rerunfailures (>=14.0,<15.0)"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.12,<3.13"
-content-hash = "0157a972b55c17e25eda020a4e30fa74c91daec1d9aebc16f1935e50a27ece47"
+content-hash = "826caf863a45d7a9340a8dfe24692284d279ad62d16e7e6a03400c28bc9b834c"
