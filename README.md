@@ -15,13 +15,13 @@ https://github.com/QCanvas/QCanvasApp
 You can download a **windows** version from [releases](https://github.com/QCanvas/QCanvasApp/releases)
 
 > [!WARNING] 
-> The appimage version is *not recommended* as it is not a proper portable appimage. It will only work on debian/ubuntu based distros.
+> The appimage version is currently broken and may be dropped in the future.
 
 # Development/Run from source
 
 ## Prerequisites
 
-- Python 3.12+ (use [pyenv](https://github.com/pyenv/pyenv) if your distro does not have that version)
+- Python 3.12
 - Poetry
 
 ## Get started
