@@ -30,13 +30,12 @@ You can download a **windows** version from [releases](https://github.com/QCanva
 git clone https://github.com/QCanvas/QCanvasApp.git
 cd QCanvasApp
 
-# Enter shell and run it
-poetry shell
-poetry install
-python -m qcanvas
+# Install packages and stuff
+poetry install --with flatpak-exclude
 
-# Alternatively you can run it like this:
-poetry install
+# Run QCanvas (If you run `poetry shell`, you can drop the `poetry run` part)
+poetry run qcanvas
+# Alternative
 poetry run python -m qcanvas
 ```
 
