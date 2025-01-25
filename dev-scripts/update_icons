@@ -1,12 +1,19 @@
+#! /usr/bin/env -S xonsh --no-rc
+# This script must be run from the project venv/poetry shell. You must include the `dev-tools` dependency group too.
 # This file regenerates icons.qrc, rc_icons.py and the icons definition file based on the icons in dark/, light/ and universal/
+# The icons are found in qcanvas/icons/
 
-import subprocess
 from pathlib import Path
 
-import xmltodict
-import textwrap
-from mako.template import Template
-from collections import defaultdict
+try:
+    import xmltodict
+    import textwrap
+    from mako.template import Template
+    from collections import defaultdict
+except ModuleNotFoundError:
+    import sys
+    print("The script must be run from the project virtual environment", file=sys.stderr)
+    exit(1)
 
 
 def remove_base_directory(path: str | Path) -> Path:
@@ -64,9 +71,7 @@ def group_icons_by_category(icons: list[Path]) -> dict[str, set[Path]]:
 
 
 def run_rcc(icons_dir: Path) -> None:
-    subprocess.run(
-        ["pyside6-rcc", icons_dir / "icons.qrc", "-o", icons_dir / "rc_icons.py"]
-    )
+    pyside6-rcc @(icons_dir / "icons.qrc") -o @(icons_dir / "rc_icons.py")
 
 
 def write(file_name: Path, content: str) -> None:
@@ -86,3 +91,6 @@ def update(icons_dir: Path):
     write(icons_dir / "icons.qrc", generate_xml(all_icons))
     write(icons_dir / "__init__.py", generate_icon_defs(all_icons))
     run_rcc(icons_dir)
+
+if __name__ == "__main__":
+    update(p"qcanvas/icons/")
