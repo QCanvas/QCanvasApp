@@ -14,8 +14,7 @@ https://github.com/QCanvas/QCanvasApp
 
 You can download a **windows** version from [releases](https://github.com/QCanvas/QCanvasApp/releases)
 
-> [!WARNING] 
-> The appimage version is currently broken and may be dropped in the future.
+An appimage version is also available from releases but is not recommended.
 
 # Development/Run from source
 
@@ -42,7 +41,7 @@ poetry run python -m qcanvas
 ## Build custom AppImage
 
 > [!WARNING]
-> This is not recommended as the appimage produced by this process isn't a proper appimage.
+> This is not recommended as the appimage produced by this process isn't a proper appimage. It's just a pyinstaller build bundled as an appimage.
 
 > [!IMPORTANT]
 > You will need [Appimagetool](https://github.com/AppImage/appimagetool)
