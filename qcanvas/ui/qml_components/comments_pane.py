@@ -1,6 +1,4 @@
-from pathlib import Path
-
-from PySide6.QtCore import Signal, Slot
+from PySide6.QtCore import Signal, Slot, QUrl
 from PySide6.QtWidgets import QWidget
 from libqcanvas.util import remove_unwanted_whitespaces, as_local
 from qasync import asyncSlot
@@ -20,7 +18,7 @@ class CommentsPane(QmlPane):
     def __init__(
         self, downloader: FrontendResourceManager, parent: QWidget | None = None
     ):
-        super().__init__(Path(__file__).parent / "CommentsPane.qml", parent)
+        super().__init__(qml_path=QUrl("qrc:qml/CommentsPane.qml"), parent=parent)
         self._downloader = downloader
         self._attachments: dict[str, db.Resource] = {}
         self._qattachments: dict[str, Attachment] = {}

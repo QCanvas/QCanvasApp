@@ -1,0 +1,16 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+	<qresource prefix="/qml/">
+		<file>AttachmentsList.ui.qml</file>
+		<file>AttachmentsListDelegate.qml</file>
+		<file>AttachmentsListModel.qml</file>
+		<file>AttachmentsPane.qml</file>
+		<file>CommentsList.ui.qml</file>
+		<file>CommentsListDelegate.ui.qml</file>
+		<file>CommentsListModel.qml</file>
+		<file>CommentsPane.qml</file>
+		<file>DecoratedText.ui.qml</file>
+		<file>Spacer.ui.qml</file>
+		<file>ThemedRectangle.qml</file>
+	</qresource>
+</RCC>

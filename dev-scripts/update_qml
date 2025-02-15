@@ -1,0 +1,25 @@
+#! /usr/bin/env -S xonsh --no-rc
+# This script must be run from the project venv/poetry shell. You must include the `dev-tools` dependency group too.
+# This file regenerates `qcanvas/ui/qml_components/qml/qml.rc`
+
+try:
+    import xmltodict
+    from pathlib import Path
+except ModuleNotFoundError:
+    import sys
+    print("The script must be run from the project virtual environment", file=sys.stderr)
+    exit(1)
+
+qml_dir = Path("qcanvas/ui/qml_components/qml")
+qrc_file = qml_dir / "rc_qml.qrc"
+qml_files = list(sorted(f.name for f in qml_dir.glob("*.qml")))
+xml_dict = {
+    "RCC": {
+        "@version": "1.0",
+        "qresource": {"@prefix": "/qml/", "file": qml_files},
+    }
+}
+
+qrc_file.write_text("<!DOCTYPE RCC>\n" + xmltodict.unparse(xml_dict, pretty=True, full_document=False))
+
+pyside6-rcc @(qrc_file) -o @(qrc_file.with_suffix(".py"))

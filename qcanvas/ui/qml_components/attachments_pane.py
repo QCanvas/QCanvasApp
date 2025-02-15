@@ -1,6 +1,4 @@
-from pathlib import Path
-
-from PySide6.QtCore import Slot
+from PySide6.QtCore import Slot, QUrl
 from PySide6.QtWidgets import QWidget
 from qasync import asyncSlot
 
@@ -17,7 +15,7 @@ class AttachmentsPane(QmlPane):
     def __init__(
         self, downloader: FrontendResourceManager, parent: QWidget | None = None
     ):
-        super().__init__(Path(__file__).parent / "AttachmentsPane.qml", parent)
+        super().__init__(qml_path=QUrl("qrc:qml/AttachmentsPane.qml"), parent=parent)
 
         self._original_dock_name = None
         self._downloader = downloader
