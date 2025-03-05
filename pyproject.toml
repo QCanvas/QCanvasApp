@@ -16,12 +16,12 @@ qcanvas = "qcanvas:main"
 
 [tool.poetry.dependencies]
 python = ">=3.12,<3.13"
-libqcanvas = "^0.5.4"
+libqcanvas = "^0.5.5"
 #libqcanvas = { path = "../libqcanvas/", develop = true }
 #libqcanvas-clients = { path = "../libqcanvas_clients/", develop = true }
 asynctaskpool = "^0.2.1"
 sqlalchemy = "^2.0.31"
-aiosqlite = "^0.20.0"
+aiosqlite = "^0.21.0"
 pyqtdarktheme-fork = "^2.3.2"
 qasync = "^0.27.1"
 platformdirs = "^4.2.2"
