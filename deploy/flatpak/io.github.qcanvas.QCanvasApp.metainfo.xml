@@ -39,7 +39,7 @@
     <releases>
         <release version="2.0.4" date="2025-03-05T12:21+11:00">
             <description>
-                Fixed a bug where locked assignments would sometimes not be updated
+                <p>Fixed a bug where locked assignments would sometimes not be updated</p>
             </description>
         </release>
         <release version="2.0.2" date="2025-01-14T21:45+11:00">
