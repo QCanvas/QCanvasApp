@@ -34,7 +34,7 @@ def main():
 
     logging.basicConfig(
         filemode="w",
-        filename=paths.data_storage() / "debug.log",
+        filename=paths.data_storage() / "qcanvas.log",
         level="WARN",
     )
 
