@@ -23,6 +23,7 @@
 # nuitka-project: --nofollow-import-to=yt_dlp.extractor.lazy_extractors
 
 import logging
+import logging.config
 from logging import INFO, WARNING
 
 import qcanvas.app as app
@@ -38,14 +39,19 @@ def main():
         level="WARN",
     )
 
-    logs.set_levels(
-        {
-            "qcanvas": INFO,
-            "qcanvas.ui": WARNING,
-            "libqcanvas": INFO,
-            "qcanvas.ui.main_ui.status_bar_progress_display": INFO,
-        }
-    )
+    log_config = paths.data_storage() / "logging.ini"
+
+    if log_config.exists():
+        logging.config.fileConfig(log_config, disable_existing_loggers=False)
+    else:
+        logs.set_levels(
+            {
+                "qcanvas": INFO,
+                "qcanvas.ui": WARNING,
+                "libqcanvas": INFO,
+                "qcanvas.ui.main_ui.status_bar_progress_display": INFO,
+            }
+        )
 
     app.launch()
 
