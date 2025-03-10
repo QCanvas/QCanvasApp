@@ -234,10 +234,14 @@ class QCanvasWindow(QMainWindow):
         opening_progress_dialog.setWindowTitle("Please wait")
         opening_progress_dialog.show()
 
-        open_url = QUrl(await self._qcanvas.canvas_client.get_temporary_session_url())
-        _logger.info(f"Opening URL {open_url}")
-        QDesktopServices.openUrl(open_url)
-        opening_progress_dialog.close()
+        try:
+            open_url = QUrl(
+                await self._qcanvas.canvas_client.get_temporary_session_url()
+            )
+            _logger.info(f"Opening URL {open_url}")
+            QDesktopServices.openUrl(open_url)
+        finally:
+            opening_progress_dialog.close()
 
     @Slot()
     def _open_downloads_folder(self) -> None:
