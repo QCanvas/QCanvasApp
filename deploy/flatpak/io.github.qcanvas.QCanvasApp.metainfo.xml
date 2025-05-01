@@ -37,6 +37,15 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="2.0.5" date="2025-05-02T07:46+10:00">
+            <description>
+                <ul>
+                <li>Updated to Qt 6.9</li>
+                <li>Updated dependencies</li>
+                <li>Log config can be read from file at runtime</li>
+                </ul>
+            </description>
+        </release>
         <release version="2.0.4" date="2025-03-05T12:21+11:00">
             <description>
                 <p>Fixed a bug where locked assignments would sometimes not be updated</p>
