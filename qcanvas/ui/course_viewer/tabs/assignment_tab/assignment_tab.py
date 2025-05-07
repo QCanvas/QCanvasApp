@@ -56,7 +56,7 @@ class AssignmentTab(ContentTab):
 
         self._submission_files_pane = AttachmentsPane(downloader)
         self._submission_files_dock = ui.dock_widget(
-            title="Submission Files",
+            title="Submitted Files",
             name="sub_files_dock",
             widget=self._submission_files_pane,
             min_size=ui.size(150, 150),
