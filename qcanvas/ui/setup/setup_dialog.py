@@ -5,7 +5,7 @@ from typing import Optional
 from libqcanvas_clients.canvas import CanvasClient, CanvasClientConfig
 from libqcanvas_clients.panopto import PanoptoClient, PanoptoClientConfig
 from libqcanvas_clients.util.request_exceptions import ConfigInvalidError
-from PySide6.QtCore import Qt, QUrl, Signal, Slot
+from PySide6.QtCore import Qt, QUrl, Slot
 from PySide6.QtGui import QDesktopServices, QIcon
 from PySide6.QtWidgets import (
     QCheckBox,
@@ -96,8 +96,6 @@ class _InputRow:
 
 
 class SetupDialog(QDialog):
-    closed = Signal()
-
     def __init__(self):
         super().__init__()
 
@@ -289,8 +287,7 @@ class SetupDialog(QDialog):
 
         settings.client.canvas_api_key = self._canvas_api_key_box.text
 
-        self.closed.emit()
-        self.close()
+        self.accept()
 
     @Slot()
     def _help_requested(self) -> None:

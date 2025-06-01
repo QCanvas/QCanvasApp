@@ -36,6 +36,7 @@ class _MainStarter(QObject):
     async def _start(self):
         _qcanvas = await self._setup_database()
 
+        # TODO it might be more reliable to use self here!
         _main_window = QCanvasWindow(_qcanvas)
         _main_window.show()
         self.setParent(_main_window)
@@ -62,6 +63,7 @@ def run_setup():
     app.aboutToQuit.connect(app_close_event.set, Qt.ConnectionType.SingleShotConnection)
 
     setup_window = SetupDialog()
+    setup_window.rejected.connect(lambda: exit())
     setup_window.show()
 
     with event_loop:
