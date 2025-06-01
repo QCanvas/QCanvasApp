@@ -37,12 +37,18 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="2.0.6" date="2025-06-01T20:50+10">
+            <description>
+                <li>Updated to Qt 6.9</li>
+                <li>Fixed crash when closing the setup dialog</li>
+                <li>Updated dependencies</li>
+            </description>
+        </release>
         <release version="2.0.5" date="2025-05-02T07:46+10:00">
             <description>
                 <ul>
-<!--                <li>Updated to Qt 6.9</li>-->
                 <li>Updated dependencies</li>
-                <li>Log config can be read from file at runtime</li>
+                <li>Log config can now be read from file at runtime</li>
                 </ul>
             </description>
         </release>
