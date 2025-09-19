@@ -177,12 +177,18 @@ class QCanvasWindow(QMainWindow):
         except Exception as e:
             _logger.warning("Sync failed", exc_info=e)
             error = QErrorMessage(self)
-            msg = str(e)
 
-            if isinstance(e, httpx.ConnectError):
-                msg = "You may not be connected to the internet\n - " + msg
+            if isinstance(e, ExceptionGroup):
+                msg = "\n".join(str(ex) for ex in e.exceptions)
+            elif isinstance(e, httpx.ConnectError):
+                msg = "You may not be connected to the Internet"
+            else:
+                msg = str(e)
 
-            error.showMessage(msg)
+            error.setWindowTitle("An error has occurred in QCanvas")
+            error.showMessage(
+                msg + " - Please check the log for more details", "sync error"
+            )
         finally:
             self._operation_semaphore.release()
             self._sync_button.setText("Synchronise")
