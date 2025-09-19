@@ -37,6 +37,13 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="2.0.8" date="2025-09-19T10:14:27.566125+10:00">
+            <description>
+                <ul>
+                    <li>Improve error reporting</li>
+                </ul>
+            </description>
+        </release>
         <release version="2.0.7" date="2025-09-19T09:42+10">
             <description>
                 <ul>
