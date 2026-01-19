@@ -2,72 +2,49 @@ import asyncio
 import logging
 import sys
 
-from libqcanvas.qcanvas import QCanvas
-from PySide6.QtCore import QObject, Signal, Qt
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QApplication
-from qasync import QEventLoop, asyncSlot
+from qasync import QEventLoop
 
 import qcanvas.backend_connectors.qcanvas_task_master as task_master
+import qcanvas.settings as settings
+from libqcanvas.qcanvas import QCanvas
 from qcanvas.backend_connectors import FrontendResourceManager
+from qcanvas.theme import app_theme
 from qcanvas.ui.qcanvas_window import QCanvasWindow
 from qcanvas.ui.setup import SetupDialog, setup_checker
 from qcanvas.util import paths, runtime
-from qcanvas.theme import app_theme
-import qcanvas.settings as settings
 
 _logger = logging.getLogger(__name__)
 app = QApplication(sys.argv)
 
 
-# I couldn't figure out a reliable way of getting the event loop started.
-# This just uses a signal with an async slot to run some async functions and then shows the main window
-class _MainStarter(QObject):
-    _starting = Signal()
+async def setup_database() -> QCanvas[FrontendResourceManager]:
+    _qcanvas = QCanvas[FrontendResourceManager](
+        canvas_config=settings.client.canvas_config,
+        panopto_config=settings.client.panopto_config,
+        storage_path=paths.data_storage(),
+        resource_manager_class=FrontendResourceManager,
+    )
 
-    def __init__(self):
-        super().__init__()
-        self._starting.connect(self._start, Qt.ConnectionType.SingleShotConnection)
+    await _qcanvas.database.upgrade()
+    await _qcanvas.init()
 
-    def start(self):
-        self._starting.emit()
-
-    @asyncSlot()
-    async def _start(self):
-        _qcanvas = await self._setup_database()
-
-        # TODO it might be more reliable to use self here!
-        _main_window = QCanvasWindow(_qcanvas)
-        _main_window.show()
-        self.setParent(_main_window)
-
-    async def _setup_database(self) -> QCanvas[FrontendResourceManager]:
-        _qcanvas = QCanvas[FrontendResourceManager](
-            canvas_config=settings.client.canvas_config,
-            panopto_config=settings.client.panopto_config,
-            storage_path=paths.data_storage(),
-            resource_manager_class=FrontendResourceManager,
-        )
-
-        await _qcanvas.database.upgrade()
-        await _qcanvas.init()
-
-        return _qcanvas
+    return _qcanvas
 
 
 def run_setup():
-    event_loop = QEventLoop(app)
-    asyncio.set_event_loop(event_loop)
-
     app_close_event = asyncio.Event()
     app.aboutToQuit.connect(app_close_event.set, Qt.ConnectionType.SingleShotConnection)
 
-    setup_window = SetupDialog()
-    setup_window.rejected.connect(lambda: exit())
-    setup_window.show()
+    async def coro():
+        setup_window = SetupDialog()
+        setup_window.rejected.connect(lambda: exit())
+        setup_window.show()
+        await app_close_event.wait()
 
-    with event_loop:
-        event_loop.run_until_complete(app_close_event.wait())
+    asyncio.run(coro(), loop_factory=QEventLoop)
 
 
 def launch():
@@ -82,14 +59,14 @@ def launch():
     if setup_checker.needs_setup():
         run_setup()
 
-    event_loop = QEventLoop(app)
-    asyncio.set_event_loop(event_loop)
-
     app_close_event = asyncio.Event()
     app.aboutToQuit.connect(app_close_event.set, Qt.ConnectionType.SingleShotConnection)
 
-    _main = _MainStarter()
-    _main.start()
+    async def async_main():
+        _qcanvas = await setup_database()
 
-    with event_loop:
-        event_loop.run_until_complete(app_close_event.wait())
+        _main_window = QCanvasWindow(_qcanvas)
+        _main_window.show()
+        await app_close_event.wait()
+
+    asyncio.run(async_main(), loop_factory=QEventLoop)
