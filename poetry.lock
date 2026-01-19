@@ -484,13 +484,13 @@ yt-dlp = ">=2024.4.9"
 
 [[package]]
 name = "libqcanvas-clients"
-version = "0.5.5"
+version = "0.5.6"
 description = "Provides some utilities to interact with canvas and panopto"
 optional = false
 python-versions = "<4.0,>=3.10"
 files = [
-    {file = "libqcanvas_clients-0.5.5-py3-none-any.whl", hash = "sha256:81c3b07a8d8eee554aa76b9605dbbeebeee9ecd62964200ab314642e733860c7"},
-    {file = "libqcanvas_clients-0.5.5.tar.gz", hash = "sha256:350c45179e6ec8ae3c5718e1135a74aeeb24771f4ef9784280d567121e357a85"},
+    {file = "libqcanvas_clients-0.5.6-py3-none-any.whl", hash = "sha256:4b44cda3489e330936a9032ae89c2317c8eab214505202c2b3f08f7840a4805a"},
+    {file = "libqcanvas_clients-0.5.6.tar.gz", hash = "sha256:8e695256ebeadbf5adafdd2ad5629ed412a1b26fe13ba6a9f163b71b8755f55b"},
 ]
 
 [package.dependencies]
