@@ -15,7 +15,7 @@ class AttachmentsPane(QmlPane):
     def __init__(
         self, downloader: FrontendResourceManager, parent: QWidget | None = None
     ):
-        super().__init__(qml_path=QUrl("qrc:qml/AttachmentsPane.qml"), parent=parent)
+        super().__init__(qml_path=QUrl("qrc:/qml/AttachmentsPane.qml"), parent=parent)
 
         self._original_dock_name = None
         self._downloader = downloader

@@ -18,7 +18,7 @@ class CommentsPane(QmlPane):
     def __init__(
         self, downloader: FrontendResourceManager, parent: QWidget | None = None
     ):
-        super().__init__(qml_path=QUrl("qrc:qml/CommentsPane.qml"), parent=parent)
+        super().__init__(qml_path=QUrl("qrc:/qml/CommentsPane.qml"), parent=parent)
         self._downloader = downloader
         self._attachments: dict[str, db.Resource] = {}
         self._qattachments: dict[str, Attachment] = {}
