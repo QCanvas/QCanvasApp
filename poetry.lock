@@ -460,13 +460,13 @@ all = ["flake8 (>=7.1.1)", "mypy (>=1.11.2)", "pytest (>=8.3.2)", "ruff (>=0.6.2
 
 [[package]]
 name = "libqcanvas"
-version = "0.5.7"
+version = "2026.1.20"
 description = "Does most of the heavy lifting for qcanvas"
 optional = false
 python-versions = "<4.0,>=3.12"
 files = [
-    {file = "libqcanvas-0.5.7-py3-none-any.whl", hash = "sha256:7b94bf986ef0e27891ddf99af894b2eecd70b12b0be8443faf4e365c76901188"},
-    {file = "libqcanvas-0.5.7.tar.gz", hash = "sha256:c0193a5f2907cd9d6c36b8ee6edb5762c06bbc008e98efdc57cf938fe3e1580a"},
+    {file = "libqcanvas-2026.1.20-py3-none-any.whl", hash = "sha256:950607a70abaf333f998a704e7f333979f9b88660690a045d062421166883a9c"},
+    {file = "libqcanvas-2026.1.20.tar.gz", hash = "sha256:829b1c2575e259e14fc14f03053c8bcb6b9ea3e9a8d09605f88b0b10c62cc0a3"},
 ]
 
 [package.dependencies]
@@ -477,20 +477,20 @@ asynctaskpool = ">=0.2.0,<0.3.0"
 beautifulsoup4 = ">=4.12.3,<5.0.0"
 gql = ">=3.5.1,<4.0.0"
 httpx = {version = ">=0.28.1,<0.29.0", extras = ["http2"]}
-libqcanvas-clients = ">=0.5.2,<0.6.0"
+libqcanvas-clients = ">2026.0.0"
 pydantic = ">=2.7.0,<3.0.0"
 SQLAlchemy = ">=2.0.29,<3.0.0"
 yt-dlp = ">=2024.4.9"
 
 [[package]]
 name = "libqcanvas-clients"
-version = "0.5.6"
+version = "2026.1.20"
 description = "Provides some utilities to interact with canvas and panopto"
 optional = false
 python-versions = "<4.0,>=3.10"
 files = [
-    {file = "libqcanvas_clients-0.5.6-py3-none-any.whl", hash = "sha256:4b44cda3489e330936a9032ae89c2317c8eab214505202c2b3f08f7840a4805a"},
-    {file = "libqcanvas_clients-0.5.6.tar.gz", hash = "sha256:8e695256ebeadbf5adafdd2ad5629ed412a1b26fe13ba6a9f163b71b8755f55b"},
+    {file = "libqcanvas_clients-2026.1.20-py3-none-any.whl", hash = "sha256:43412562b87e198d3083ca294eb1558c8607092d65bda0afe937f941a209860a"},
+    {file = "libqcanvas_clients-2026.1.20.tar.gz", hash = "sha256:b78b6bc061f40ee45416936cd9e3bd337556e72686dc6bbeee321707be3f3c4c"},
 ]
 
 [package.dependencies]
@@ -1802,4 +1802,4 @@ test = ["pytest (>=8.1,<9.0)", "pytest-rerunfailures (>=14.0,<15.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.12,<3.13"
-content-hash = "c06878d9c8f837e4293a0a84fd807a8315188b7433ed48f589feb98f0a02789b"
+content-hash = "996d33af5790782a2a48e60749c380eb09311f722471c6fc544504430f5f0d4b"
