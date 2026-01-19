@@ -37,6 +37,11 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="2026.01.20" date="2026-01-19T10:02:00+11:00">
+            <description>
+                <p>Fixed resources not indexing properly due to API changes in Canvas</p>
+            </description>
+        </release>
         <release version="2026.01.19" date="2026-01-19T23:08:00+11:00">
             <description>
                 <p>Update dependencies.</p>
