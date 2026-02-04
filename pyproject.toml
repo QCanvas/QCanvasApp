@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "qcanvas"
-version = "2026.02.04"
+version = "2026.02.04.post0"
 description = "View courses from Canvas LMS"
 authors = ["QCanvas <QCanvas@noreply.codeberg.org>"]
 readme = "README.md"
@@ -41,7 +41,7 @@ classifiers = [
 qcanvas = "qcanvas:main"
 
 [tool.poetry.dependencies]
-python = ">=3.12,<3.13"
+python = ">=3.13,<3.14"
 libqcanvas = ">=2026.02.04"
 #libqcanvas = { path = "../libqcanvas/", develop = true }
 #libqcanvas-clients = { path = "../libqcanvas_clients/", develop = true }
