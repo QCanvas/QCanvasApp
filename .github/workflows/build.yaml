@@ -45,40 +45,6 @@ jobs:
                 run: gh release create ${{ needs.check-version.outputs.new-version }} --generate-notes
                 env:
                     GH_TOKEN: ${{ github.token }}
-    build-appimage:
-        needs: [ create-release, check-version ]
-        name: Build .AppImage
-        runs-on: ubuntu-22.04
-        steps:
-            -   run: sudo apt install desktop-file-utils -y
-            -   uses: actions/checkout@v4
-            -   name: Download appimagetool
-                run: wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage -O appimagetool
-            -   run: chmod +x appimagetool
-            -   uses: actions/setup-python@v5
-                with:
-                    python-version: 3.12
-            -   name: Install poetry
-                uses: abatilo/actions-poetry@v2
-            -   name: Install deps
-                run: poetry install --with flatpak-exclude
-            -   run: poetry update qcanvas-backend
-            -   name: Build pyinstaller
-                run: poetry run pyinstaller --hidden-import aiosqlite --onedir -n AppRun qcanvas/__init__.py --collect-all libqcanvas.alembic
-            -   name: Move files
-                run: mv dist/*/* deploy/appimage/
-            -   name: Set version
-                uses: richardrigutins/replace-in-files@v2
-                with:
-                    files: "deploy/appimage/qcanvas.desktop"
-                    search-text: "#VERSION#"
-                    replacement-text: ${{ needs.check-version.outputs.new-version }}
-            -   name: Package AppImage
-                run: ./appimagetool deploy/appimage -u "gh-releases-zsync|QCanvas|QCanvasApp|latest|QCanvas-x86_64.AppImage.zsync"
-            -   name: Upload binaries
-                run: gh release upload ${{ needs.check-version.outputs.new-version }} QCanvas-* --clobber
-                env:
-                    GH_TOKEN: ${{ github.token }}
     build-windows:
         needs: [ create-release, check-version ]
         name: Build .exe
