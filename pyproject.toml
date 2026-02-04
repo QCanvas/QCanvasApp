@@ -42,22 +42,22 @@ qcanvas = "qcanvas:main"
 
 [tool.poetry.dependencies]
 python = ">=3.12,<3.13"
-libqcanvas = ">=2026.1.20"
+libqcanvas = ">=2026.02.04"
 #libqcanvas = { path = "../libqcanvas/", develop = true }
 #libqcanvas-clients = { path = "../libqcanvas_clients/", develop = true }
 asynctaskpool = "^0.2.1"
 sqlalchemy = "^2.0.45"
-aiosqlite = "^0.21.0"
+aiosqlite = "^0.22.1"
 pyqtdarktheme-fork = "^2.3.2"
 qasync = "^0.28.0"
 platformdirs = "^4.2.2"
 validators = "^0.35.0"
-cachetools = "^6.2.4"
+cachetools = "^7.0.0"
 aiofile = "^3.9.0"
 
 [tool.poetry.group.flatpak-exclude.dependencies]
-pyside6-essentials = "^6.9.0"
-setuptools = "^71.1.0"
+pyside6-essentials = "^6.10.2"
+setuptools = "^80.10.2"
 pyinstaller = "^6.10.0"
 
 [tool.poetry.group.dev-tools]
@@ -65,11 +65,11 @@ optional = true
 
 [tool.poetry.group.dev-tools.dependencies]
 #nuitka = "^2.4.5"
-rich = "^13.7.1"
+rich = "^14.3.2"
 pre-commit = "^4.0.1"
 xmltodict = "^0.13.0"
 mako = "^1.3.8"
-xonsh = "^0.19.1"
+xonsh = "^0.22.2"
 
 [build-system]
 requires = ["poetry-core"]
