@@ -12,7 +12,7 @@ jobs:
             needs-build: ${{ steps.check.outputs.value }}
             new-version: ${{ steps.new-version.outputs.value }}
         steps:
-            -   uses: actions/checkout@v4
+            -   uses: actions/checkout@v6
                 with:
                     fetch-depth: 0
             -   name: "Get previous tag"
@@ -38,9 +38,9 @@ jobs:
         needs: check-version
         if: ${{ needs.check-version.outputs.needs-build == 'true' }}
         name: Create release
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-latest
         steps:
-            -   uses: actions/checkout@v4
+            -   uses: actions/checkout@v6
             -   name: Create release
                 run: gh release create ${{ needs.check-version.outputs.new-version }} --generate-notes
                 env:
@@ -50,10 +50,10 @@ jobs:
         name: Build .exe
         runs-on: windows-latest
         steps:
-            -   uses: actions/checkout@v4
+            -   uses: actions/checkout@v6
             -   uses: actions/setup-python@v5
                 with:
-                    python-version: 3.12
+                    python-version: 3.13
             -   name: Install poetry
                 uses: abatilo/actions-poetry@v2
             -   name: Install deps
@@ -76,11 +76,11 @@ jobs:
         needs: check-version
         if: ${{ needs.check-version.outputs.needs-build == 'true' }}
         name: Publish PyPI package
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-latest
         steps:
-            -   uses: actions/checkout@v4
+            -   uses: actions/checkout@v6
             -   name: Build and publish to pypi
                 uses: JRubics/poetry-publish@v2.0
                 with:
-                    python_version: 3.11
+                    python_version: 3.13
                     pypi_token: ${{ secrets.PYPI_TOKEN }}
