@@ -37,6 +37,13 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="2026.04.18" date="2026-04-18T21:20:00+10:00">
+            <description>
+                <ul>
+                    <li>Fix sync error due to unexpected null in announcement data</li>
+                </ul>
+            </description>
+        </release>
         <release version="2026.02.19" date="2026-02-18T13:28:00+11:00">
             <description>
                 <ul>
