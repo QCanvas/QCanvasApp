@@ -42,7 +42,7 @@ qcanvas = "qcanvas:main"
 
 [tool.poetry.dependencies]
 python = ">=3.13,<3.14"
-libqcanvas = ">=2026.02.18"
+libqcanvas = ">=2026.0.0"
 #libqcanvas = { path = "../libqcanvas/", develop = true }
 #libqcanvas-clients = { path = "../libqcanvas_clients/", develop = true }
 asynctaskpool = "^0.2.1"
@@ -56,7 +56,7 @@ cachetools = "^7.0.0"
 aiofile = "^3.9.0"
 
 [tool.poetry.group.flatpak-exclude.dependencies]
-pyside6-essentials = "^6.10.2"
+pyside6 = "^6.10.2"
 setuptools = "^80.10.2"
 pyinstaller = "^6.10.0"
 
