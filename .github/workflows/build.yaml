@@ -58,7 +58,7 @@ jobs:
                 uses: abatilo/actions-poetry@v2
             -   name: Install deps
                 run: poetry install --with flatpak-exclude
-            -   run: poetry update qcanvas-backend
+            -   run: poetry update libqcanvas
             -   name: Build pyinstaller (onedir)
                 run: poetry run pyinstaller --hidden-import aiosqlite --onedir -n QCanvas --icon deploy/windows/qcanvas.ico qcanvas/__init__.py --windowed --noupx --collect-all libqcanvas.alembic
             -   uses: vimtor/action-zip@v1.2
