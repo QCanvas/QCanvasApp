@@ -37,6 +37,14 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="2026.06.04" date="2026-06-04T12:32:49.795075+10:00">
+            <description>
+                <ul>
+                    <li>Update dependencies</li>
+                    <li>Fix flatpak crashing at startup</li>
+                </ul>
+            </description>
+        </release>
         <release version="2026.04.18" date="2026-04-18T21:20:00+10:00">
             <description>
                 <ul>
