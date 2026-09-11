@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "qcanvas"
-version = "2026.07.14"
+version = "2026.09.11"
 description = "View courses from Canvas LMS"
 authors = ["QCanvas <QCanvas@noreply.codeberg.org>"]
 readme = "README.md"
@@ -56,7 +56,7 @@ cachetools = "^7.0.0"
 aiofile = "^3.9.0"
 
 [tool.poetry.group.flatpak-exclude.dependencies]
-pyside6 = "^6.10.2"
+pyside6 = "^6.11"
 setuptools = "^80.10.2"
 pyinstaller = "^6.10.0"
 
