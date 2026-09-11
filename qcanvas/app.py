@@ -1,6 +1,14 @@
+import sys
+import httpx2 as httpx
+
+# hacks to alias httpx2 to httpx
+sys.modules["httpx"] = httpx
+for name, module in list(sys.modules.items()):
+    if name.startswith("httpx2.") and module is not None:
+        sys.modules.setdefault("httpx." + name.removeprefix("httpx2."), module)
+
 import asyncio
 import logging
-import sys
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QGuiApplication
