@@ -39,7 +39,7 @@
     <releases>
         <release version="2026.09.11" date="2026-09-11T11:05:33.322807+10:00">
             <description>
-                Updated dependencies
+                <p>Updated dependencies</p>
             </description>
         </release>
         <release version="2026.06.04" date="2026-06-04T12:32:49.795075+10:00">
