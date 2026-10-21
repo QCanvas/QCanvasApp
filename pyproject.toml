@@ -46,7 +46,7 @@ libqcanvas = ">=2026.0.0"
 #libqcanvas = { path = "../libqcanvas/", develop = true }
 #libqcanvas-clients = { path = "../libqcanvas_clients/", develop = true }
 asynctaskpool = "^0.2.1"
-sqlalchemy = "^2.0.45"
+sqlalchemy = "<2.1"
 aiosqlite = "^0.22.1"
 pyqtdarktheme-fork = "^2.3.2"
 qasync = "^0.28.0"
@@ -57,7 +57,7 @@ aiofile = "^3.9.0"
 
 [tool.poetry.group.flatpak-exclude.dependencies]
 pyside6 = "^6.11"
-setuptools = "^80.10.2"
+setuptools = "^84.2.1"
 pyinstaller = "^6.10.0"
 
 [tool.poetry.group.dev-tools]
