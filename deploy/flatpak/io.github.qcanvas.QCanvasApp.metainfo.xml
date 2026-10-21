@@ -37,6 +37,11 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="2026.10.22" date="2026-10-22T09:36:59.297198+11:00">
+            <description>
+                <p>Updated dependencies</p>
+            </description>
+        </release>
         <release version="2026.09.11" date="2026-09-11T11:05:33.322807+10:00">
             <description>
                 <p>Updated dependencies</p>
